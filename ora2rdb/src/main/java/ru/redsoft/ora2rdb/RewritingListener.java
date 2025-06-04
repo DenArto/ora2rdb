@@ -819,13 +819,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitGeneral_element_part(General_element_partContext ctx) {
-
         if (ctx.id_expression().size() == 1) {
             Id_expressionContext id_expr_ctx = ctx.id_expression(0);
             if (id_expr_ctx.regular_id() != null) {
                 Regular_idContext reg_id = id_expr_ctx.regular_id();
                 if (reg_id.non_reserved_keywords_pre12c() != null) {
-
                     if (reg_id.non_reserved_keywords_pre12c().TO_NUMBER() != null) {
                         replace(reg_id.non_reserved_keywords_pre12c().TO_NUMBER(), "CAST");
                         delete(ctx.function_argument().RIGHT_PAREN());
@@ -859,7 +857,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 }
             }
         }
-
         if (ctx.id_expression().size() > 1) {
             for (Id_expressionContext id_expr_ctx : ctx.id_expression()) {
                 String id = getRewriterText(id_expr_ctx);
@@ -868,37 +865,53 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(id_expr_ctx, id.substring(1));
                 String name = Ora2rdb.getRealName(getRuleText(ctx.id_expression(0)));
 
-                // convert COUNT method for associative array
+                // convert methods of associative array
                 if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
-                    for (Id_expressionContext stmt : ctx.id_expression())
-                        if (stmt.regular_id() != null && stmt.regular_id().non_reserved_keywords_pre12c() != null
-                                && stmt.regular_id().non_reserved_keywords_pre12c().COUNT() != null) {
+                    // COUNT
+                    if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
+                            && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().COUNT() != null) {
                             replace(ctx, "(SELECT COUNT(*) FROM " + current_plsql_block.array_to_table.get(name)
                                     + ")");
                         }
-                }
-
-                // convert FIRST method for associative array
-                if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
-                    for (Id_expressionContext stmt : ctx.id_expression())
-                        if (stmt.regular_id() != null && stmt.regular_id().non_reserved_keywords_pre12c() != null
-                                && stmt.regular_id().non_reserved_keywords_pre12c().FIRST() != null) {
-                            replace(ctx, "(SELECT FIRST 1 I1 FROM " + current_plsql_block.array_to_table.get(name)
-                                    + " ORDER BY I1 ASC)");
+                    // FIRST
+                    if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
+                            && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().FIRST() != null) {
+                        replace(ctx, "(SELECT FIRST 1 K FROM " + current_plsql_block.array_to_table.get(name)
+                                + " ORDER BY K ASC)");
                         }
-                }
-
-                // convert NEXT method for associative array
-                if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
-                    for (Id_expressionContext stmt : ctx.id_expression())
-                        if (stmt.regular_id() != null && stmt.regular_id().non_reserved_keywords_pre12c() != null
-                                && stmt.regular_id().non_reserved_keywords_pre12c().NEXT() != null) {
-                            String argument = ":" + getRuleText(ctx.function_argument().argument(0));
-                            replace(ctx, "(SELECT FIRST 1 I1 FROM " + current_plsql_block.array_to_table.get(name)
-                                    + " WHERE I1 > " + argument + " ORDER BY I1 ASC)");
+                    // LAST
+                    if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
+                            && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().LAST() != null) {
+                        replace(ctx, "(SELECT FIRST 1 K FROM " + current_plsql_block.array_to_table.get(name)
+                                + " ORDER BY K DESC)");
+                    }
+                    // NEXT
+                    if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
+                            && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().NEXT() != null) {
+                        String argument = Ora2rdb.getRealName(getRuleText(ctx.function_argument().argument(0)));
+                        if (isVariable(argument))
+                            argument = ":" + argument;
+                        replace(ctx, "(SELECT FIRST 1 K FROM " + current_plsql_block.array_to_table.get(name)
+                                + " WHERE K > " + argument + " ORDER BY K ASC)");
+                    }
+                    // PRIOR
+                    if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
+                            && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().PRIOR() != null) {
+                        String argument = Ora2rdb.getRealName(getRuleText(ctx.function_argument().argument(0)));
+                        if (isVariable(argument))
+                            argument = ":" + argument;
+                        replace(ctx, "(SELECT FIRST 1 K FROM " + current_plsql_block.array_to_table.get(name)
+                                + " WHERE K < " + argument + " ORDER BY K DESC)");
                         }
+                    // EXISTS
+                    if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().EXISTS() != null) {
+                        String argument = Ora2rdb.getRealName(getRuleText(ctx.function_argument().argument(0)));
+                        if (isVariable(argument))
+                            argument = ":" + argument;
+                        replace(ctx, "(SELECT COUNT(*) > 0 FROM " + current_plsql_block.array_to_table.get(name)
+                                + " WHERE K = " + argument + ")");
+                    }
                 }
-
             }
         } else {
             String name = Ora2rdb.getRealName(getRuleText(ctx.id_expression(0)));
@@ -910,7 +923,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
                 if (ctx.function_argument().argument().size() == 1) {
 
-                    select_stmt += "I" + 1 + " = " + getRewriterText(ctx.function_argument().argument(0));
+                    select_stmt += "K" + " = " + getRewriterText(ctx.function_argument().argument(0));
                 } else {
                     abort = true;
                 }
@@ -936,13 +949,33 @@ public class RewritingListener extends PlSqlParserBaseListener {
                                     insertAfter(function_argument_ctx.argument(1), ", ''");
                         }
                     }
-                    replace(regular_id_ctx.non_reserved_keywords_pre12c().LENGTH(), "CHAR_LENGTH");
+                    if (regular_id_ctx.non_reserved_keywords_pre12c().LENGTH() != null)
+                        replace(regular_id_ctx.non_reserved_keywords_pre12c().LENGTH(), "CHAR_LENGTH");
                 }
             }
         }
         if (ctx.function_argument() != null)
             convertFunctionCall(ctx);
     }
+
+    private boolean isVariable(String value) {
+        // true - if argument is variable , false if not
+        if (value.isEmpty())
+            return false;
+        boolean ret_val;
+        // check if argument is number
+        try {
+            Integer.parseInt(value);
+            ret_val = false;
+        } catch (NumberFormatException e) {
+            ret_val = true;
+        }
+        // if argument is not number check if it varchar
+        if (ret_val)
+            ret_val = value.indexOf('\'') == -1;
+        return ret_val;
+    }
+
 
     private void convertFunctionCall(General_element_partContext ctx) {
         StoredBlock storedBlock = findFunctionCall(ctx);
@@ -2907,7 +2940,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitLoop_statement(Loop_statementContext ctx) {
-
         if (ctx.FOR() != null)
             convertLoopFor(ctx);
         else if (ctx.WHILE() != null)
@@ -3243,6 +3275,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitSeq_of_statements(Seq_of_statementsContext ctx) {
+
         for (int i = 0; i < ctx.statement().size(); i++) {
             StatementContext stmt_ctx = ctx.statement(i);
 
@@ -3254,6 +3287,38 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 delete(stmt_ctx.null_statement());
                 delete(ctx.SEMICOLON(i));
 //                deleteSPACESLeft(stmt_ctx.null_statement());
+            }
+            //convert DELETE method of associative array
+            if (stmt_ctx.sql_statement() != null && stmt_ctx.sql_statement().collection_method_call() != null &&
+                    stmt_ctx.sql_statement().collection_method_call().DELETE() != null) {
+
+                String name = Ora2rdb.getRealName(getRuleText(stmt_ctx.sql_statement()
+                        .collection_method_call().expression().stream().findFirst().orElse(null)));
+
+                if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
+                    StringBuilder deleteStmt = new StringBuilder("DELETE FROM " + current_plsql_block.array_to_table.get(name));
+                    List<ExpressionContext> expr_list = stmt_ctx.sql_statement().collection_method_call().expression();
+                    if (expr_list.size() <= 2) {
+                        String argument = Ora2rdb.getRealName(getRuleText(expr_list.get(1)));
+                        if (isVariable(argument))
+                            argument = ":" + argument;
+                        if (!argument.isEmpty())
+                            deleteStmt.append(" WHERE K = ").append(argument);
+                    } else {
+                        deleteStmt.append(" WHERE K >= ");
+                        String argument;
+                        for (int j = 1; j < expr_list.size(); j++) {
+                            if (j != 1)
+                                deleteStmt.append(" AND K <= ");
+                            argument = Ora2rdb.getRealName(getRuleText(expr_list.get(j)));
+                            if (isVariable(argument))
+                                argument = ":" + argument;
+                            deleteStmt.append(argument);
+                        }
+                        deleteStmt.append(" ORDER BY K");
+                    }
+                    replace(stmt_ctx, deleteStmt);
+                }
             }
         }
         popScope();
