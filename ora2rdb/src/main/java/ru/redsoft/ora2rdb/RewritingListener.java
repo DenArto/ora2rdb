@@ -1581,7 +1581,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
     public void exitCreate_function_body(Create_function_bodyContext ctx) {
         replace(ctx.REPLACE(), "ALTER");
         delete(ctx.EDITIONABLE());
-        replace(ctx.IS(), "AS");
+        if (ctx.invoker_rights_clause().isEmpty())
+            replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
+        else
+            replace(ctx.IS(), "AS");
+
 //        replace(ctx.SEMICOLON(), "^");
         StoredFunction currentFunction = (StoredFunction) storedBlocksStack.peek();
         String getWhiteSpace = getIndentation(ctx) + "  ";
@@ -2000,10 +2004,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.PERIOD());
         }
         if (ctx.AS() != null) {
+            if (ctx.invoker_rights_clause() == null)
+                insertBefore(ctx.AS(), "\nSQL SECURITY DEFINER\n");
             insertAfter(ctx.AS(), " BEGIN");
         }
         if (ctx.IS() != null) {
             replace(ctx.IS(), "AS");
+            if (ctx.invoker_rights_clause() == null)
+                insertBefore(ctx.IS(), "\nSQL SECURITY DEFINER\n");
             insertAfter(ctx.IS(), " BEGIN");
         }
         if (!ctx.package_name().isEmpty()) {
@@ -2106,7 +2114,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
         replace(ctx.REPLACE(), "ALTER");
-        replace(ctx.IS(), "AS");
+        if (ctx.invoker_rights_clause() == null)
+            replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
+        else
+            replace(ctx.IS(), "AS");
+
 //        replace(ctx.SEMICOLON(), "^");
 
         String getWhiteSpace = getIndentation(ctx) + "  ";
