@@ -2343,7 +2343,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
 
             delete(ctx.BEGIN());
-            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
+//            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
 
             if (ctx.EXCEPTION() != null)
                 replace(ctx.EXCEPTION(), "/*EXCEPTION*/");
@@ -2729,7 +2729,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitLabel_name(Label_nameContext ctx) {
-        replace(ctx, "/*" + getRewriterText(ctx) + "*/");
+        delete(ctx);
+//        replace(ctx, "/*" + getRewriterText(ctx) + "*/");
+    }
+
+    @Override
+    public void exitLabel_declaration(Label_declarationContext ctx) {
+        replace(ctx, getRuleText(ctx.label_name()) + ":");
     }
 
     @Override
@@ -2805,6 +2811,42 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitSimple_case_statement(Simple_case_statementContext ctx) {
+        deleteSPACESLeft(ctx.ck1);
+        delete(ctx.ck1);
+        delete(ctx.END());
+        delete(ctx.CASE(1));
+        String indentation = getIndentation(ctx);
+        String expression = getRuleText(ctx.expression()) + " = ";
+        delete(ctx.expression());
+        deleteSPACESLeft(ctx.expression());
+        for (Case_when_part_statementContext caseWhenPartStatement : ctx.case_when_part_statement()) {
+            if (caseWhenPartStatement.equals(ctx.case_when_part_statement(0)))
+                replace(caseWhenPartStatement.WHEN(), "IF");
+            else
+                replace(caseWhenPartStatement.WHEN(), "ELSE IF");
+            insertBefore(caseWhenPartStatement.expression(0), "(" + expression);
+            insertAfter(caseWhenPartStatement.expression(0), ")");
+            insertBefore(caseWhenPartStatement.seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
+            insertAfter(caseWhenPartStatement.seq_of_statements(), '\n' + indentation + "\tEND");
+            replace(caseWhenPartStatement.THEN(), "THEN");
+        }
+
+        if (ctx.case_else_part_statement() != null) {
+            replace(ctx.case_else_part_statement().ELSE(), "ELSE");
+            insertBefore(ctx.case_else_part_statement().seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
+            insertAfter(ctx.case_else_part_statement().seq_of_statements(), '\n' + indentation + "\tEND");
+        } else {
+            insertAfter(ctx, "ELSE BEGIN\n" + indentation +
+                    "\t\tEXCEPTION CASE_NOT_FOUND;\n" + indentation +
+                    "\tEND");
+            exceptions.put("CASE_NOT_FOUND", "CASE not found while executing CASE statement");
+        }
+
+        deleteSemicolonRight(ctx);
+    }
+
+    @Override
     public void exitSearched_case_statement(Searched_case_statementContext ctx) {
         deleteSPACESLeft(ctx.ck1);
         delete(ctx.ck1);
@@ -2826,6 +2868,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx.case_else_part_statement().ELSE(), "ELSE");
             insertBefore(ctx.case_else_part_statement().seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
             insertAfter(ctx.case_else_part_statement().seq_of_statements(), '\n' + indentation + "\tEND");
+        } else {
+            insertAfter(ctx, "ELSE BEGIN\n" + indentation +
+                    "\t\tEXCEPTION CASE_NOT_FOUND;\n" + indentation +
+                    "\tEND");
+            exceptions.put("CASE_NOT_FOUND", "CASE not found while executing CASE statement");
         }
         deleteSemicolonRight(ctx);
     }
