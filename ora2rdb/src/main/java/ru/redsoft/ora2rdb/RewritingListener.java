@@ -37,8 +37,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
     TreeMap<String, String> exceptions = new TreeMap<>();
     StoredAnonymousBlock currentAnonymousBlock = null;
 
-    public RewritingListener(CommonTokenStream tokens) {
-        rewriter = new TokenStreamRewriter(tokens);
+    public RewritingListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+        this.rewriter = rewriter;
         this.tokens = tokens;
     }
 
@@ -97,6 +97,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             rewriter.insertBefore(term.getSymbol(), text);
     }
 
+    void insertBefore(Token token, Object text){
+        if(token != null)
+            rewriter.insertBefore(token, text);
+    }
+
     void insertAfter(ParserRuleContext ctx, Object text) {
         if (ctx != null)
             rewriter.insertAfter(ctx.stop, text);
@@ -105,6 +110,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
     void insertAfter(TerminalNode term, Object text) {
         if (term != null)
             rewriter.insertAfter(term.getSymbol(), text);
+    }
+
+    void insertAfter(Token token, Object text) {
+        if(token != null)
+            rewriter.insertAfter(token, text);
     }
 
     void replace(ParserRuleContext ctx, Object text) {
@@ -205,7 +215,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     void deleteSemicolonRight(Token token) {
-        if(token == null) return;
+        if (token == null) return;
         if (token.getType() == PlSqlLexer.SEMICOLON) {
             rewriter.delete(token);
         } else {
@@ -233,7 +243,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             rewriter.delete(token);
         } else {
             Token previousToken = getPreviousToken(token);
-            if(previousToken != null && previousToken.getType() == PlSqlLexer.SEMICOLON)
+            if (previousToken != null && previousToken.getType() == PlSqlLexer.SEMICOLON)
                 rewriter.delete(previousToken);
         }
     }
@@ -1713,7 +1723,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.IS());
             delete(ctx.record_type_def().RECORD());
         } else {
-            commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+            if(ctx.ref_cursor_type_def() == null)
+                commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
             if (ctx.table_type_def() != null) {
                 if (current_plsql_block != null && ctx.table_type_def().TABLE() != null
                         && ctx.table_type_def().table_indexed_by_part() != null) {
@@ -2174,7 +2185,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
 
         // check if nested anonymous block
-        for (StatementContext stm_ctx : ctx.seq_of_statements().statement()) {
+        for (StatementContext stm_ctx : ctx.body().seq_of_statements().statement()) {
             if (stm_ctx.body() != null || stm_ctx.block() != null) {
                 currentAnonymousBlock.setIsNested(true);
                 break;
@@ -2190,18 +2201,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
             else
                 insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
 
-            delete(ctx.BEGIN());
-            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
-
-            if (ctx.EXCEPTION() != null)
-                replace(ctx.EXCEPTION(), "/*EXCEPTION*/");
-
             StringBuilder declare_loop_index_names = new StringBuilder();
             if (!loop_index_names.isEmpty()) {
                 for (String index_name : loop_index_names) {
                     declare_loop_index_names.append("\n  DECLARE VARIABLE ").append(index_name).append(" INTEGER;\n");
                 }
-                insertBefore(ctx.seq_of_statements(), declare_loop_index_names.toString());
+                insertBefore(ctx.body().seq_of_statements(), declare_loop_index_names.toString());
             }
             loop_index_names.clear();
 
@@ -2211,7 +2216,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     declare_loop_rowtype_names.append("\n  DECLARE VARIABLE ").append(rec).
                             append(" TYPE OF TABLE ").append(loop_rec_name_and_cursor_name.get(rec)).append(";\n");
                 }
-                insertBefore(ctx.seq_of_statements(), declare_loop_rowtype_names.toString());
+                insertBefore(ctx.body().seq_of_statements(), declare_loop_rowtype_names.toString());
             }
             loop_rec_name_and_cursor_name.clear();
 
@@ -2231,10 +2236,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
         currentAnonymousBlock = null;
         popScope();
-    }
-
-    @Override
-    public void exitTrigger_name(Trigger_nameContext ctx) {
     }
 
     @Override
@@ -2645,7 +2646,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             insertAfter(caseWhenPartStatement.seq_of_statements(), '\n' + indentation + "\tEND");
             replace(caseWhenPartStatement.THEN(), "THEN");
         }
-        if(ctx.case_else_part_statement() != null) {
+        if (ctx.case_else_part_statement() != null) {
             replace(ctx.case_else_part_statement().ELSE(), "ELSE");
             insertBefore(ctx.case_else_part_statement().seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
             insertAfter(ctx.case_else_part_statement().seq_of_statements(), '\n' + indentation + "\tEND");
@@ -2906,7 +2907,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     private void convertLoopFor(Loop_statementContext ctx) {
-        if(ctx.cursor_loop_param() == null) return;
+        if (ctx.cursor_loop_param() == null) return;
         if (ctx.cursor_loop_param().REVERSE() != null && ctx.cursor_loop_param().DOUBLE_PERIOD() != null) {
             convertLoopForInRangeReverse(ctx);
         } else if (ctx.cursor_loop_param().DOUBLE_PERIOD() != null) {

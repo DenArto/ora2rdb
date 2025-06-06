@@ -1,5 +1,7 @@
 package ru.redsoft.ora2rdb;
 
+import ru.redsoft.ora2rdb.comments.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
@@ -13,6 +15,7 @@ public class StorageInfo {
     public static HashSet<Index> index_names = new HashSet<>();
     public static TreeMap<String, View> views = new TreeMap<String, View>();
     public static TreeMap<String, TreeMap<String, String>> types_of_column = new TreeMap<>();
+    public static ArrayList<CommentedBlock> commentedBlockList = new ArrayList<>();
 
 
 
@@ -25,5 +28,6 @@ public class StorageInfo {
         index_names.clear();
         views.clear();
         types_of_column.clear();
+        commentedBlockList.clear();
     }
 }
