@@ -2817,7 +2817,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         delete(ctx.END());
         delete(ctx.CASE(1));
         String indentation = getIndentation(ctx);
-        String expression = getRuleText(ctx.expression()) + " = ";
+        String expression = getRewriterText(ctx.expression()) + " ";
         delete(ctx.expression());
         deleteSPACESLeft(ctx.expression());
         for (Case_when_part_statementContext caseWhenPartStatement : ctx.case_when_part_statement()) {
@@ -2825,8 +2825,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 replace(caseWhenPartStatement.WHEN(), "IF");
             else
                 replace(caseWhenPartStatement.WHEN(), "ELSE IF");
-            insertBefore(caseWhenPartStatement.expression(0), "(" + expression);
-            insertAfter(caseWhenPartStatement.expression(0), ")");
+            convertCaseExpression(caseWhenPartStatement, expression);
             insertBefore(caseWhenPartStatement.seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
             insertAfter(caseWhenPartStatement.seq_of_statements(), '\n' + indentation + "\tEND");
             replace(caseWhenPartStatement.THEN(), "THEN");
@@ -2844,6 +2843,29 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         deleteSemicolonRight(ctx);
+    }
+
+    private void convertCaseExpression(Case_when_part_statementContext caseWhenPartStatement, String expression) {
+        for (int i = 0; i < caseWhenPartStatement.expression().size(); i++){
+            ExpressionContext expressionContext = caseWhenPartStatement.expression(i);
+            Relational_operatorContext operator;
+            try {
+                operator = expressionContext.logical_expression().unary_logical_expression().
+                        multiset_expression().relational_expression().relational_operator();
+            } catch (NullPointerException e){
+                operator = null;
+            }
+            if (operator == null)
+                insertBefore(expressionContext, expression + "= ");
+            else
+                insertBefore(expressionContext, expression);
+            if (i == 0)
+                insertBefore(expressionContext, "(");
+            if (i == caseWhenPartStatement.expression().size() - 1)
+                insertAfter(expressionContext, ")");
+        }
+        for (TerminalNode comma : caseWhenPartStatement.COMMA())
+            replace(comma, " OR ");
     }
 
     @Override
