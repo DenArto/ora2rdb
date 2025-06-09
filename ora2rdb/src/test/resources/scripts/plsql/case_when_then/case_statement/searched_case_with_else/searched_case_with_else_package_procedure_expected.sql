@@ -2,7 +2,7 @@ CREATE OR ALTER PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
     PROCEDURE searched_case_procedure;
-END;
+END /*PACKAGE_NAME*/;
 
 RECREATE PACKAGE BODY package_name
 AS BEGIN
@@ -22,7 +22,7 @@ AS BEGIN
     		appraisal = 'Good';
     	END
     	ELSE BEGIN
-    		EXCEPTION CASE_NOT_FOUND;
+    		appraisal = 'No such grade';
     	END
     END
-END;
+END /*PACKAGE_NAME*/;

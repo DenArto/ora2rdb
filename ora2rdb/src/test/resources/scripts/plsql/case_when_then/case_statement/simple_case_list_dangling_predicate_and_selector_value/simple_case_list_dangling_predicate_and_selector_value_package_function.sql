@@ -1,9 +1,9 @@
-CREATE OR REPLACE PACKAGE package_name
+CREATE PACKAGE package_name
 AS
     FUNCTION simple_case_function RETURN VARCHAR2;
 END package_name;
 
-CREATE OR REPLACE PACKAGE BODY package_name
+CREATE PACKAGE BODY package_name
 AS
     FUNCTION simple_case_function
     RETURN VARCHAR2
@@ -15,6 +15,6 @@ AS
         CASE grade
             WHEN < 0, > 100, 10, 20, 30, 40, 50 THEN appraisal := 'text';
         END;
-        RETURN status;
+        RETURN appraisal;
     END;
 END package_name;

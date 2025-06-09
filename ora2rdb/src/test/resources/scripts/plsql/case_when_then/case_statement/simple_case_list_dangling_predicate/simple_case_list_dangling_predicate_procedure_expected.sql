@@ -8,7 +8,7 @@ AS
     DECLARE appraisal VARCHAR(20);
 BEGIN
     grade = 50;
-	IF (grade < 0 OR grade > 100) THEN BEGIN
+	IF (:grade < 0 OR :grade > 100) THEN BEGIN
 		appraisal = 'out of range';
 	END
 	ELSE BEGIN
