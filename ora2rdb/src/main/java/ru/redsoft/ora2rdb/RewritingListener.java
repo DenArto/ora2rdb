@@ -1985,6 +1985,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitPackage_function_spec(Package_function_specContext ctx) {
+        replace(ctx.RETURN(), "RETURNS");
+    }
+
+    @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
         pushScope();
         current_package_name = Ora2rdb.getRealName(ctx.package_name(0).getText());
