@@ -4,9 +4,9 @@ AS
     DECLARE appraisal VARCHAR(20);
 BEGIN
     appraisal =
-        CASE :grade
-            WHEN NULL THEN 'No grade assigned'
-            WHEN 'A' THEN 'Excellent'
-            ELSE 'No such grade'
+        CASE
+            WHEN :grade IS NULL THEN 'No grade assigned'
+            WHEN :grade = 'A' THEN 'Excellent'
+            ELSE  'No such grade'
         END;
 END;
