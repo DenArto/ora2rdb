@@ -1851,7 +1851,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 }
             }
         }
-
     }
 
     @Override
@@ -2816,6 +2815,37 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitSimple_case_expression(Simple_case_expressionContext ctx) {
+        String case_expression = getRewriterText(ctx.expression());
+        delete(ctx.expression());
+        for (Case_when_part_expressionContext caseWhenPartStatement : ctx.case_when_part_expression()) {
+            convertCaseExpressionInsideSimpleCaseExpression(caseWhenPartStatement, case_expression);
+        }
+    }
+
+    private void convertCaseExpressionInsideSimpleCaseExpression(Case_when_part_expressionContext caseWhenPartExpressionContext, String expression) {
+        for (int i = 0; i < caseWhenPartExpressionContext.expression().size() - 1; i++) {
+            ExpressionContext expressionContext = caseWhenPartExpressionContext.expression(i);
+            Relational_operatorContext operator;
+            try {
+                operator = expressionContext.logical_expression().unary_logical_expression().
+                        multiset_expression().relational_expression().relational_operator();
+            } catch (NullPointerException e) {
+                operator = null;
+            }
+            if (operator == null) {
+                if (Ora2rdb.getRealName(getRuleText(expressionContext)).equals("NULL"))
+                    insertBefore(expressionContext, expression + " IS ");
+                else
+                    insertBefore(expressionContext, expression + "= ");
+            } else
+                insertBefore(expressionContext, expression);
+        }
+        for (TerminalNode comma : caseWhenPartExpressionContext.COMMA())
+            replace(comma, " OR ");
+    }
+
+    @Override
     public void exitSimple_case_statement(Simple_case_statementContext ctx) {
         deleteSPACESLeft(ctx.ck1);
         delete(ctx.ck1);
@@ -2830,7 +2860,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 replace(caseWhenPartStatement.WHEN(), "IF");
             else
                 replace(caseWhenPartStatement.WHEN(), "ELSE IF");
-            convertCaseExpression(caseWhenPartStatement, expression);
+            convertCaseExpressionInsideSimpleCaseStatement(caseWhenPartStatement, expression);
             insertBefore(caseWhenPartStatement.seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
             insertAfter(caseWhenPartStatement.seq_of_statements(), '\n' + indentation + "\tEND");
             replace(caseWhenPartStatement.THEN(), "THEN");
@@ -2850,7 +2880,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         deleteSemicolonRight(ctx);
     }
 
-    private void convertCaseExpression(Case_when_part_statementContext caseWhenPartStatement, String expression) {
+    private void convertCaseExpressionInsideSimpleCaseStatement(Case_when_part_statementContext caseWhenPartStatement, String expression) {
         for (int i = 0; i < caseWhenPartStatement.expression().size(); i++){
             ExpressionContext expressionContext = caseWhenPartStatement.expression(i);
             Relational_operatorContext operator;
@@ -2860,8 +2890,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
             } catch (NullPointerException e){
                 operator = null;
             }
-            if (operator == null)
-                insertBefore(expressionContext, expression + "= ");
+            if (operator == null) {
+                if (Ora2rdb.getRealName(getRuleText(expressionContext)).equals("NULL"))
+                    insertBefore(expressionContext, expression + " IS ");
+                else
+                    insertBefore(expressionContext, expression + "= ");
+            }
             else
                 insertBefore(expressionContext, expression);
             if (i == 0)
