@@ -138,8 +138,8 @@ public class PLSQLBlock {
                 if (i != 0)
                     key_fields.append(", ");
 
-                table_ddl.append("\tI").append(i + 1).append(" ").append(arr_type.index_types.get(i)).append(",\n");
-                key_fields.append("I").append(i + 1);
+                table_ddl.append("\tK").append(" ").append(arr_type.index_types.get(i)).append(",\n");
+                key_fields.append("K");
             }
 
             table_ddl.append("\tVAL ").append(arr_type.data_type).
