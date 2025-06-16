@@ -8,5 +8,5 @@ BEGIN
 	CASE grade
         WHEN < 0, > 100 THEN appraisal := 'out of range';
 	END;
-    RETURN status;
+    RETURN appraisal;
 END;

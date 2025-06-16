@@ -6,8 +6,8 @@ IS
 BEGIN
   appraisal :=
     CASE
-      WHEN grade IS NULL THEN 'No grade assigned'
-      WHEN grade = 'B' THEN 'Very Good'
+      WHEN :grade IS NULL THEN 'No grade assigned'
+      WHEN :grade = 'B' THEN 'Very Good'
     END;
     RETURN appraisal;
 END;

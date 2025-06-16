@@ -3,12 +3,13 @@ CREATE EXCEPTION CASE_NOT_FOUND
 
 CREATE OR ALTER TRIGGER simple_case_trigger
 BEFORE INSERT ON employees
+SQL SECURITY DEFINER
 AS
     DECLARE grade NUMERIC(34, 8);
     DECLARE appraisal VARCHAR(20);
 BEGIN
     grade = 50;
-	IF (grade < 0 OR grade > 100) THEN BEGIN
+	IF (:grade < 0 OR :grade > 100) THEN BEGIN
 		appraisal = 'out of range';
 	END
 	ELSE BEGIN

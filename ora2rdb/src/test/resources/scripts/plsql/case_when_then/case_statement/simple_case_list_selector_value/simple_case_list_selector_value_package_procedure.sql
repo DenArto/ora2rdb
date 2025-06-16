@@ -1,9 +1,9 @@
-CREATE OR REPLACE PACKAGE package_name
+CREATE PACKAGE package_name
 AS
     PROCEDURE simple_case_procedure;
 END package_name;
 
-CREATE OR REPLACE PACKAGE BODY package_name
+CREATE PACKAGE BODY package_name
 AS
     PROCEDURE simple_case_procedure
     IS

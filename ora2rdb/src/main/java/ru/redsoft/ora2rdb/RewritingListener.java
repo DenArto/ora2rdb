@@ -1888,7 +1888,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 }
             }
         }
-
     }
 
     @Override
@@ -2023,6 +2022,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         popScope();
+    }
+
+    @Override
+    public void exitPackage_function_spec(Package_function_specContext ctx) {
+        replace(ctx.RETURN(), "RETURNS");
     }
 
     @Override
@@ -2388,7 +2392,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
 
             delete(ctx.BEGIN());
-            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
+//            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
 
             if (ctx.EXCEPTION() != null)
                 replace(ctx.EXCEPTION(), "/*EXCEPTION*/");
@@ -2774,7 +2778,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitLabel_name(Label_nameContext ctx) {
-        replace(ctx, "/*" + getRewriterText(ctx) + "*/");
+        delete(ctx);
+//        replace(ctx, "/*" + getRewriterText(ctx) + "*/");
+    }
+
+    @Override
+    public void exitLabel_declaration(Label_declarationContext ctx) {
+        replace(ctx, getRuleText(ctx.label_name()) + ":");
     }
 
     @Override
@@ -2850,6 +2860,99 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitSimple_case_expression(Simple_case_expressionContext ctx) {
+        String case_expression = getRewriterText(ctx.expression());
+        delete(ctx.expression());
+        for (Case_when_part_expressionContext caseWhenPartStatement : ctx.case_when_part_expression()) {
+            convertCaseExpressionInsideSimpleCaseExpression(caseWhenPartStatement, case_expression);
+        }
+    }
+
+    private void convertCaseExpressionInsideSimpleCaseExpression(Case_when_part_expressionContext caseWhenPartExpressionContext, String expression) {
+        for (int i = 0; i < caseWhenPartExpressionContext.expression().size() - 1; i++) {
+            ExpressionContext expressionContext = caseWhenPartExpressionContext.expression(i);
+            Relational_operatorContext operator;
+            try {
+                operator = expressionContext.logical_expression().unary_logical_expression().
+                        multiset_expression().relational_expression().relational_operator();
+            } catch (NullPointerException e) {
+                operator = null;
+            }
+            if (operator == null) {
+                if (Ora2rdb.getRealName(getRuleText(expressionContext)).equals("NULL"))
+                    insertBefore(expressionContext, expression + " IS ");
+                else
+                    insertBefore(expressionContext, expression + "= ");
+            } else
+                insertBefore(expressionContext, expression);
+        }
+        for (TerminalNode comma : caseWhenPartExpressionContext.COMMA())
+            replace(comma, " OR ");
+    }
+
+    @Override
+    public void exitSimple_case_statement(Simple_case_statementContext ctx) {
+        deleteSPACESLeft(ctx.ck1);
+        delete(ctx.ck1);
+        delete(ctx.END());
+        delete(ctx.CASE(1));
+        String indentation = getIndentation(ctx);
+        String expression = getRewriterText(ctx.expression()) + " ";
+        delete(ctx.expression());
+        deleteSPACESLeft(ctx.expression());
+        for (Case_when_part_statementContext caseWhenPartStatement : ctx.case_when_part_statement()) {
+            if (caseWhenPartStatement.equals(ctx.case_when_part_statement(0)))
+                replace(caseWhenPartStatement.WHEN(), "IF");
+            else
+                replace(caseWhenPartStatement.WHEN(), "ELSE IF");
+            convertCaseExpressionInsideSimpleCaseStatement(caseWhenPartStatement, expression);
+            insertBefore(caseWhenPartStatement.seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
+            insertAfter(caseWhenPartStatement.seq_of_statements(), '\n' + indentation + "\tEND");
+            replace(caseWhenPartStatement.THEN(), "THEN");
+        }
+
+        if (ctx.case_else_part_statement() != null) {
+            replace(ctx.case_else_part_statement().ELSE(), "ELSE");
+            insertBefore(ctx.case_else_part_statement().seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
+            insertAfter(ctx.case_else_part_statement().seq_of_statements(), '\n' + indentation + "\tEND");
+        } else {
+            insertAfter(ctx, "ELSE BEGIN\n" + indentation +
+                    "\t\tEXCEPTION CASE_NOT_FOUND;\n" + indentation +
+                    "\tEND");
+            exceptions.put("CASE_NOT_FOUND", "CASE not found while executing CASE statement");
+        }
+
+        deleteSemicolonRight(ctx);
+    }
+
+    private void convertCaseExpressionInsideSimpleCaseStatement(Case_when_part_statementContext caseWhenPartStatement, String expression) {
+        for (int i = 0; i < caseWhenPartStatement.expression().size(); i++){
+            ExpressionContext expressionContext = caseWhenPartStatement.expression(i);
+            Relational_operatorContext operator;
+            try {
+                operator = expressionContext.logical_expression().unary_logical_expression().
+                        multiset_expression().relational_expression().relational_operator();
+            } catch (NullPointerException e){
+                operator = null;
+            }
+            if (operator == null) {
+                if (Ora2rdb.getRealName(getRuleText(expressionContext)).equals("NULL"))
+                    insertBefore(expressionContext, expression + " IS ");
+                else
+                    insertBefore(expressionContext, expression + "= ");
+            }
+            else
+                insertBefore(expressionContext, expression);
+            if (i == 0)
+                insertBefore(expressionContext, "(");
+            if (i == caseWhenPartStatement.expression().size() - 1)
+                insertAfter(expressionContext, ")");
+        }
+        for (TerminalNode comma : caseWhenPartStatement.COMMA())
+            replace(comma, " OR ");
+    }
+
+    @Override
     public void exitSearched_case_statement(Searched_case_statementContext ctx) {
         deleteSPACESLeft(ctx.ck1);
         delete(ctx.ck1);
@@ -2871,6 +2974,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx.case_else_part_statement().ELSE(), "ELSE");
             insertBefore(ctx.case_else_part_statement().seq_of_statements(), "BEGIN \n\t" + indentation + '\t');
             insertAfter(ctx.case_else_part_statement().seq_of_statements(), '\n' + indentation + "\tEND");
+        } else {
+            insertAfter(ctx, "ELSE BEGIN\n" + indentation +
+                    "\t\tEXCEPTION CASE_NOT_FOUND;\n" + indentation +
+                    "\tEND");
+            exceptions.put("CASE_NOT_FOUND", "CASE not found while executing CASE statement");
         }
         deleteSemicolonRight(ctx);
     }
