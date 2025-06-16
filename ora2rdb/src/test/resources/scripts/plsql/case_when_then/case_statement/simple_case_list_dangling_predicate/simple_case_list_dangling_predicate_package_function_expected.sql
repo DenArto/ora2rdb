@@ -1,13 +1,13 @@
 CREATE EXCEPTION CASE_NOT_FOUND
 	'CASE not found while executing CASE statement';
 
-CREATE PACKAGE PACKAGE_NAME
+CREATE PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION simple_case_function RETURNS VARCHAR(32765);
 END /*PACKAGE_NAME*/;
 
-CREATE PACKAGE BODY PACKAGE_NAME
+CREATE PACKAGE BODY package_name
 AS BEGIN
     FUNCTION simple_case_function
     RETURNS VARCHAR(32765)
@@ -16,7 +16,7 @@ AS BEGIN
         DECLARE appraisal VARCHAR(20);
     BEGIN
         grade = 50;
-        IF (grade < 0 OR grade > 100) THEN BEGIN
+        IF (:grade < 0 OR :grade > 100) THEN BEGIN
             appraisal = 'out of range';
         END
         ELSE BEGIN

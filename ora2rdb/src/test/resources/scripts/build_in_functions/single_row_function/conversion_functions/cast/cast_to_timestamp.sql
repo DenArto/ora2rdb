@@ -1,0 +1,34 @@
+DECLARE
+  p1 VARCHAR2(100) := 'January 15, 1989, 11:00 A.M.';
+  p2 DATE := date '2020-10-25';
+  p3 TIMESTAMP WITH TIME ZONE := CURRENT_TIMESTAMP;
+  res TIMESTAMP;
+BEGIN
+  select CAST(p1 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR) into res from dual;
+  select CAST(p1 AS TIMESTAMP, 'Month dd, YYYY, HH:MI A.M.') into res from dual;
+  select CAST(p1 AS TIMESTAMP, 'Month dd, YYYY, HH:MI A.M.', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;
+  select CAST(p1 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR, 'Month dd, YYYY, HH:MI A.M.', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;
+
+  select CAST(p2 AS TIMESTAMP) into res from dual;
+  select CAST(p2 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR) into res from dual;
+  select CAST(p2 AS TIMESTAMP, 'YYYY-MM-DD') into res from dual;
+  select CAST(p2 AS TIMESTAMP, 'YYYY-MM-DD', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;  
+  select CAST(p2 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR, 'YYYY-MM-DD', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;
+
+  select CAST(p3 AS TIMESTAMP) into res from dual;
+  select CAST(p3 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR) into res from dual;
+  select CAST(p3 AS TIMESTAMP, 'DD.MM.YY HH24:MI:SSXFF9TZR') into res from dual;
+  select CAST(p3 AS TIMESTAMP, 'DD.MM.YY HH24:MI:SSXFF9TZR', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;  
+  select CAST(p3 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR, 'DD.MM.YY HH24:MI:SSXFF9TZR', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual; 
+END;
+
+DECLARE
+  p4 TIMESTAMP WITH LOCAL TIME ZONE := timestamp '2020-10-25 02:30:00+02:00';
+  res TIMESTAMP;
+BEGIN
+  select CAST(p4 AS TIMESTAMP) into res from dual;
+  select CAST(p4 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR) into res from dual;
+  select CAST(p4 AS TIMESTAMP, 'DD.MM.YY HH24:MI:SSXFF9TZR') into res from dual;
+  select CAST(p4 AS TIMESTAMP, 'DD.MM.YY HH24:MI:SSXFF9TZR', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;  
+  select CAST(p4 AS TIMESTAMP DEFAULT NULL ON CONVERSION ERROR, 'DD.MM.YY HH24:MI:SSXFF9TZR', 'NLS_DATE_LANGUAGE = AMERICAN') into res from dual;
+END;

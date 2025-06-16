@@ -1,0 +1,6 @@
+/*
+SELECT [-unconvertible CONVERT('Ä Ê Í Õ Ø A B C D E ', 'US7ASCII')] FROM DUAL; 
+*/
+/*
+SELECT [-unconvertible CONVERT('Ä Ê Í Õ Ø A B C D E ', 'US7ASCII', 'WE8ISO8859P1')] FROM DUAL; 
+*/

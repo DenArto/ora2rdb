@@ -10,12 +10,12 @@ AS BEGIN
     RETURNS VARCHAR(32765)
     AS
         DECLARE grade CHAR(1);
-        DECLARE appraisal VARCHAR(20);
+        DECLARE appraisal VARCHAR(100);
     BEGIN
         appraisal =
-            CASE :grade
-                WHEN NULL THEN 'No grade assigned'
-                WHEN 'A' THEN 'Excellent'
+            CASE
+                WHEN :grade IS NULL THEN 'No grade assigned'
+                WHEN :grade = 'A' THEN 'Excellent'
                 ELSE 'No such grade'
             END;
         RETURN appraisal;

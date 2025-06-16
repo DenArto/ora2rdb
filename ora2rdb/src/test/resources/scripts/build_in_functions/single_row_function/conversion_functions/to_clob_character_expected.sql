@@ -1,0 +1,1 @@
+select CAST('Hello world!' AS BLOB SUB_TYPE TEXT) from rdb$database;

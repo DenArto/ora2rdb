@@ -274,59 +274,102 @@ set define off;
    )
 IS
 BEGIN
-INSERT INTO job_history (employee_id, start_date, end_date,
-                         job_id, department_id)
-VALUES(p_emp_id, p_start_date, p_end_date, p_job_id, p_department_id);
+    INSERT INTO job_history (employee_id, start_date, end_date,
+                             job_id, department_id)
+    VALUES(p_emp_id, p_start_date, p_end_date, p_job_id, p_department_id);
 END add_job_history;
 
 /
+
 --------------------------------------------------------
 --  DDL for Procedure EMP_INFO_TO_ARRAY
 --------------------------------------------------------
 set define off;
 
-  CREATE OR REPLACE EDITIONABLE PROCEDURE "HR"."EMP_INFO_TO_ARRAY"
+  CREATE OR REPLACE EDITIONABLE PROCEDURE "EMP_INFO_TO_ARRAY"
 (p_id_dep employees.department_id%type)
 AS
     CURSOR Cur_Emp_Dep IS
-SELECT employee_id, job_id
-FROM employees
-where department_id = p_id_dep;
+        SELECT employee_id, job_id
+        FROM employees
+        where department_id = p_id_dep;
 
-TYPE t_empId_jobId IS TABLE OF VARCHAR2(10) INDEX BY PLS_INTEGER;
+    TYPE t_empId_jobId IS TABLE OF VARCHAR2(10) INDEX BY PLS_INTEGER;
     v_empId_jobId t_empId_jobId;
 
 
     TYPE t_empId_jobTitle IS TABLE OF VARCHAR2(35) INDEX BY PLS_INTEGER;
     v_empId_jobTitle t_empId_jobTitle;
 
+    j Integer;
     i Integer;
     jb_title varchar(35);
+    e_full_name VARCHAR(50);
+
 BEGIN
-FOR ITEM IN Cur_Emp_Dep LOOP
-       v_empId_jobId(ITEM.employee_id) := ITEM.job_id;
-END LOOP;
+
+    FOR ITEM IN Cur_Emp_Dep LOOP
+               v_empId_jobId(ITEM.employee_id) := ITEM.job_id;
+    END LOOP;
 
     IF v_empId_jobId.count > 0 then
-        for i in v_empId_jobId.first..v_empId_jobId.last loop
-select JOB_TITLE into jb_title from jobs where jobs.job_id = v_empId_jobId(i);
-if (jb_title is not null) then
+        i := v_empId_jobId.FIRST;
+        while i is not null loop
+        select JOB_TITLE into jb_title from jobs where jobs.job_id = v_empId_jobId(i);
+        if (jb_title is not null) then
                 v_empId_jobTitle(i) := jb_title;
-end if;
-end loop;
-end if;
+        end if;
+            i := v_empId_jobId.NEXT(i);
+        end loop;
+    end if;
 
-    i := v_empId_jobTitle.FIRST;
 
-    WHILE i IS NOT NULL LOOP
+    j := v_empId_jobTitle.FIRST;
+
+
+    WHILE  j IS NOT NULL LOOP
+    GET_FULL_NAME( j, e_full_name);
     DBMS_Output.PUT_LINE
-      ('id сотрудника ' || i || ' и его job_title ' || v_empId_jobTitle(i)||'');
-    i := v_empId_jobTitle.NEXT(i);
-END LOOP;
+    ('id сотрудника ' ||  j || ', имя ' || e_full_name ||  ' , job_title ' || v_empId_jobTitle(j));
+     j := v_empId_jobTitle.NEXT( j);
+    END LOOP;
 
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN NULL;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN null;
 END;
+
+
+CREATE OR REPLACE PROCEDURE "GET_FULL_NAME" (
+    p_employee_id IN NUMBER,
+    full_name OUT VARCHAR2
+)
+AS
+    f_name employees.first_name%type;
+    l_name employees.last_name%type;
+BEGIN
+    SELECT first_name, last_name
+    INTO f_name, l_name
+    FROM employees
+    WHERE employee_id = p_employee_id;
+
+    combine_and_format_names(f_name, l_name, full_name);
+END;
+
+/
+
+CREATE OR REPLACE PROCEDURE combine_and_format_names
+(
+    first_name_inout IN VARCHAR2,
+    last_name_inout IN VARCHAR2,
+    full_name_out OUT VARCHAR2
+)
+IS
+BEGIN
+
+    full_name_out := UPPER (last_name_inout) || ' ' || UPPER (first_name_inout);
+
+END;
+
 
 /
 --------------------------------------------------------
@@ -347,182 +390,159 @@ end;
   CREATE OR REPLACE EDITIONABLE PACKAGE BODY "HR"."UPDATE_SALARY_PKG"
 as
 
-    PROCEDURE      "GET_EMPLOYEE_DETAILS" (
-    p_employee_id IN NUMBER,
-    p_hire_date OUT DATE
+    PROCEDURE "GET_EMPLOYEE_DETAILS" (
+        p_employee_id IN NUMBER,
+        p_hire_date OUT DATE
     ) AS
-BEGIN
-SELECT hire_date
-INTO p_hire_date
-FROM employees
-WHERE employee_id = p_employee_id;
-END get_employee_details;
+    BEGIN
+        SELECT hire_date
+        INTO p_hire_date
+        FROM employees
+        WHERE employee_id = p_employee_id;
+    END get_employee_details;
 
     FUNCTION  "GET_RATE" (dep_id number)
     return number
     IS
         rate number(8,2);
         empl_hire_date DATE;
-begin
+    begin
         GET_EMPLOYEE_DETAILS(dep_id, empl_hire_date);
 
-case
+        case
             when MONTHS_BETWEEN(SYSDATE, empl_hire_date) / 12 > 8 then rate := 1.4;
-when MONTHS_BETWEEN(SYSDATE, empl_hire_date) / 12 > 6 then rate := 1.2;
-else rate := 1.0;
-end case;
-RETURN rate;
-end;
+            when MONTHS_BETWEEN(SYSDATE, empl_hire_date) / 12 > 6 then rate := 1.2;
+            else rate := 1.0;
+        end case;
+    RETURN rate;
+    end;
 
     PROCEDURE UPDATE_SALARY
     (emp_id number, new_salary number)
-AS
+    AS
         employee_rowid ROWID;
         employee_salary NUMBER;
         rate number(8,2);
-BEGIN
+    BEGIN
 
-SELECT rowid INTO employee_rowid
-FROM employees
-WHERE employee_id = emp_id;
+        SELECT rowid INTO employee_rowid
+        FROM employees
+        WHERE employee_id = emp_id;
 
-rate := GET_RATE(emp_id);
-UPDATE employees
-SET salary = new_salary * rate
-WHERE rowid = employee_rowid;
-end;
+        rate := GET_RATE(emp_id);
+        UPDATE employees
+        SET salary = new_salary * rate
+        WHERE rowid = employee_rowid;
+    end;
 
 end;
 
 /
+
+CREATE OR REPLACE FUNCTION COUNT_AVERAGE_SALARY
+(
+    dept_id number
+)
+    RETURN NUMBER
+IS
+    CURSOR sal_cur (id_department in number)
+    IS
+    SELECT AVG(SALARY)
+        FROM employees
+        WHERE department_id = id_department;
+    sal_rec NUMBER;
+BEGIN
+    OPEN sal_cur(dept_id);
+    FETCH sal_cur INTO sal_rec;
+
+RETURN sal_rec;
+END;
+
+
 --------------------------------------------------------
 --  Constraints for Table JOB_HISTORY
 --------------------------------------------------------
 
-ALTER TABLE "HR"."JOB_HISTORY" MODIFY ("EMPLOYEE_ID" CONSTRAINT "JHIST_EMPLOYEE_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."JOB_HISTORY" MODIFY ("START_DATE" CONSTRAINT "JHIST_START_DATE_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."JOB_HISTORY" MODIFY ("END_DATE" CONSTRAINT "JHIST_END_DATE_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."JOB_HISTORY" MODIFY ("JOB_ID" CONSTRAINT "JHIST_JOB_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."JOB_HISTORY" ADD CONSTRAINT "JHIST_DATE_INTERVAL" CHECK (end_date > start_date) ENABLE;
-ALTER TABLE "HR"."JOB_HISTORY" ADD CONSTRAINT "JHIST_EMP_ID_ST_DATE_PK" PRIMARY KEY ("EMPLOYEE_ID", "START_DATE")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "JOB_HISTORY" MODIFY ("EMPLOYEE_ID" CONSTRAINT "JHIST_EMPLOYEE_NN" NOT NULL ENABLE)
+ALTER TABLE "JOB_HISTORY" MODIFY ("START_DATE" CONSTRAINT "JHIST_START_DATE_NN" NOT NULL ENABLE)
+ALTER TABLE "JOB_HISTORY" MODIFY ("END_DATE" CONSTRAINT "JHIST_END_DATE_NN" NOT NULL ENABLE)
+ALTER TABLE "JOB_HISTORY" MODIFY ("JOB_ID" CONSTRAINT "JHIST_JOB_NN" NOT NULL ENABLE)
+ALTER TABLE "JOB_HISTORY" ADD CONSTRAINT "JHIST_DATE_INTERVAL" CHECK (end_date > start_date) ENABLE
+ALTER TABLE "JOB_HISTORY" ADD CONSTRAINT "JHIST_EMP_ID_ST_DATE_PK" PRIMARY KEY ("EMPLOYEE_ID", "START_DATE") USING INDEX  ENABLE
 --------------------------------------------------------
 --  Constraints for Table COUNTRIES
 --------------------------------------------------------
 
-ALTER TABLE "HR"."COUNTRIES" MODIFY ("COUNTRY_ID" CONSTRAINT "COUNTRY_ID_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."COUNTRIES" ADD CONSTRAINT "COUNTRY_C_ID_PK" PRIMARY KEY ("COUNTRY_ID")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "COUNTRIES" MODIFY ("COUNTRY_ID" CONSTRAINT "COUNTRY_ID_NN" NOT NULL ENABLE)
+ALTER TABLE "COUNTRIES" ADD CONSTRAINT "COUNTRY_C_ID_PK" PRIMARY KEY ("COUNTRY_ID") USING INDEX  ENABLE
 --------------------------------------------------------
 --  Constraints for Table REGIONS
 --------------------------------------------------------
 
-ALTER TABLE "HR"."REGIONS" MODIFY ("REGION_ID" CONSTRAINT "REGION_ID_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."REGIONS" ADD CONSTRAINT "REG_ID_PK" PRIMARY KEY ("REGION_ID")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "REGIONS" MODIFY ("REGION_ID" CONSTRAINT "REGION_ID_NN" NOT NULL ENABLE)
+ALTER TABLE "REGIONS" ADD CONSTRAINT "REG_ID_PK" PRIMARY KEY ("REGION_ID") USING INDEX  ENABLE
 --------------------------------------------------------
 --  Constraints for Table JOBS
 --------------------------------------------------------
 
-ALTER TABLE "HR"."JOBS" MODIFY ("JOB_TITLE" CONSTRAINT "JOB_TITLE_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."JOBS" ADD CONSTRAINT "JOB_ID_PK" PRIMARY KEY ("JOB_ID")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "JOBS" MODIFY ("JOB_TITLE" CONSTRAINT "JOB_TITLE_NN" NOT NULL ENABLE)
+ALTER TABLE "JOBS" ADD CONSTRAINT "JOB_ID_PK" PRIMARY KEY ("JOB_ID") USING INDEX  ENABLE
 --------------------------------------------------------
 --  Constraints for Table LOCATIONS
 --------------------------------------------------------
 
-ALTER TABLE "HR"."LOCATIONS" MODIFY ("CITY" CONSTRAINT "LOC_CITY_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."LOCATIONS" ADD CONSTRAINT "LOC_ID_PK" PRIMARY KEY ("LOCATION_ID")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "LOCATIONS" MODIFY ("CITY" CONSTRAINT "LOC_CITY_NN" NOT NULL ENABLE)
+ALTER TABLE "LOCATIONS" ADD CONSTRAINT "LOC_ID_PK" PRIMARY KEY ("LOCATION_ID") USING INDEX  ENABLE
+
 --------------------------------------------------------
 --  Constraints for Table DEPARTMENTS
 --------------------------------------------------------
 
-ALTER TABLE "HR"."DEPARTMENTS" MODIFY ("DEPARTMENT_NAME" CONSTRAINT "DEPT_NAME_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."DEPARTMENTS" ADD CONSTRAINT "DEPT_ID_PK" PRIMARY KEY ("DEPARTMENT_ID")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "DEPARTMENTS" MODIFY ("DEPARTMENT_NAME" CONSTRAINT "DEPT_NAME_NN" NOT NULL ENABLE)
+ALTER TABLE "DEPARTMENTS" ADD CONSTRAINT "DEPT_ID_PK" PRIMARY KEY ("DEPARTMENT_ID") USING INDEX  ENABLE
 --------------------------------------------------------
 --  Constraints for Table EMPLOYEES
 --------------------------------------------------------
 
-ALTER TABLE "HR"."EMPLOYEES" MODIFY ("LAST_NAME" CONSTRAINT "EMP_LAST_NAME_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."EMPLOYEES" MODIFY ("EMAIL" CONSTRAINT "EMP_EMAIL_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."EMPLOYEES" MODIFY ("HIRE_DATE" CONSTRAINT "EMP_HIRE_DATE_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."EMPLOYEES" MODIFY ("JOB_ID" CONSTRAINT "EMP_JOB_NN" NOT NULL ENABLE);
-ALTER TABLE "HR"."EMPLOYEES" ADD CONSTRAINT "EMP_SALARY_MIN" CHECK (salary > 0) ENABLE;
-ALTER TABLE "HR"."EMPLOYEES" ADD CONSTRAINT "EMP_EMAIL_UK" UNIQUE ("EMAIL")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
-ALTER TABLE "HR"."EMPLOYEES" ADD CONSTRAINT "EMP_EMP_ID_PK" PRIMARY KEY ("EMPLOYEE_ID")
-    USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "SYSAUX"  ENABLE;
+ALTER TABLE "EMPLOYEES" MODIFY ("LAST_NAME" CONSTRAINT "EMP_LAST_NAME_NN" NOT NULL ENABLE)
+ALTER TABLE "EMPLOYEES" MODIFY ("EMAIL" CONSTRAINT "EMP_EMAIL_NN" NOT NULL ENABLE)
+ALTER TABLE "EMPLOYEES" MODIFY ("HIRE_DATE" CONSTRAINT "EMP_HIRE_DATE_NN" NOT NULL ENABLE)
+ALTER TABLE "EMPLOYEES" MODIFY ("JOB_ID" CONSTRAINT "EMP_JOB_NN" NOT NULL ENABLE)
+ALTER TABLE "EMPLOYEES" ADD CONSTRAINT "EMP_SALARY_MIN" CHECK (salary > 0) ENABLE
+ALTER TABLE "EMPLOYEES" ADD CONSTRAINT "EMP_EMAIL_UK" UNIQUE ("EMAIL") USING INDEX  ENABLE
+ALTER TABLE "EMPLOYEES" ADD CONSTRAINT "EMP_EMP_ID_PK" PRIMARY KEY ("EMPLOYEE_ID") USING INDEX  ENABLE
+
 --------------------------------------------------------
 --  Ref Constraints for Table COUNTRIES
 --------------------------------------------------------
 
-ALTER TABLE "HR"."COUNTRIES" ADD CONSTRAINT "COUNTR_REG_FK" FOREIGN KEY ("REGION_ID")
-    REFERENCES "HR"."REGIONS" ("REGION_ID") ENABLE;
+ALTER TABLE "COUNTRIES" ADD CONSTRAINT "COUNTR_REG_FK" FOREIGN KEY ("REGION_ID") REFERENCES "REGIONS" ("REGION_ID") ENABLE
+
 --------------------------------------------------------
 --  Ref Constraints for Table DEPARTMENTS
 --------------------------------------------------------
 
-ALTER TABLE "HR"."DEPARTMENTS" ADD CONSTRAINT "DEPT_LOC_FK" FOREIGN KEY ("LOCATION_ID")
-    REFERENCES "HR"."LOCATIONS" ("LOCATION_ID") ENABLE;
-ALTER TABLE "HR"."DEPARTMENTS" ADD CONSTRAINT "DEPT_MGR_FK" FOREIGN KEY ("MANAGER_ID")
-    REFERENCES "HR"."EMPLOYEES" ("EMPLOYEE_ID") ENABLE;
+ALTER TABLE "DEPARTMENTS" ADD CONSTRAINT "DEPT_LOC_FK" FOREIGN KEY ("LOCATION_ID") REFERENCES "LOCATIONS" ("LOCATION_ID") ENABLE
+ALTER TABLE "DEPARTMENTS" ADD CONSTRAINT "DEPT_MGR_FK" FOREIGN KEY ("MANAGER_ID") REFERENCES "EMPLOYEES" ("EMPLOYEE_ID") ENABLE
+
 --------------------------------------------------------
 --  Ref Constraints for Table EMPLOYEES
 --------------------------------------------------------
 
-ALTER TABLE "HR"."EMPLOYEES" ADD CONSTRAINT "EMP_DEPT_FK" FOREIGN KEY ("DEPARTMENT_ID")
-    REFERENCES "HR"."DEPARTMENTS" ("DEPARTMENT_ID") ENABLE;
-ALTER TABLE "HR"."EMPLOYEES" ADD CONSTRAINT "EMP_JOB_FK" FOREIGN KEY ("JOB_ID")
-    REFERENCES "HR"."JOBS" ("JOB_ID") ENABLE;
-ALTER TABLE "HR"."EMPLOYEES" ADD CONSTRAINT "EMP_MANAGER_FK" FOREIGN KEY ("MANAGER_ID")
-    REFERENCES "HR"."EMPLOYEES" ("EMPLOYEE_ID") ENABLE;
+ALTER TABLE "EMPLOYEES" ADD CONSTRAINT "EMP_DEPT_FK" FOREIGN KEY ("DEPARTMENT_ID") REFERENCES "DEPARTMENTS" ("DEPARTMENT_ID") ENABLE
+ALTER TABLE "EMPLOYEES" ADD CONSTRAINT "EMP_JOB_FK" FOREIGN KEY ("JOB_ID") REFERENCES "JOBS" ("JOB_ID") ENABLE
+ALTER TABLE "EMPLOYEES" ADD CONSTRAINT "EMP_MANAGER_FK" FOREIGN KEY ("MANAGER_ID") REFERENCES "EMPLOYEES" ("EMPLOYEE_ID") ENABLE
+
 --------------------------------------------------------
 --  Ref Constraints for Table JOB_HISTORY
 --------------------------------------------------------
 
-ALTER TABLE "HR"."JOB_HISTORY" ADD CONSTRAINT "JHIST_JOB_FK" FOREIGN KEY ("JOB_ID")
-    REFERENCES "HR"."JOBS" ("JOB_ID") ENABLE;
-ALTER TABLE "HR"."JOB_HISTORY" ADD CONSTRAINT "JHIST_EMP_FK" FOREIGN KEY ("EMPLOYEE_ID")
-    REFERENCES "HR"."EMPLOYEES" ("EMPLOYEE_ID") ENABLE;
-ALTER TABLE "HR"."JOB_HISTORY" ADD CONSTRAINT "JHIST_DEPT_FK" FOREIGN KEY ("DEPARTMENT_ID")
-    REFERENCES "HR"."DEPARTMENTS" ("DEPARTMENT_ID") ENABLE;
+ALTER TABLE "JOB_HISTORY" ADD CONSTRAINT "JHIST_JOB_FK" FOREIGN KEY ("JOB_ID") REFERENCES "JOBS" ("JOB_ID") ENABLE
+ALTER TABLE "JOB_HISTORY" ADD CONSTRAINT "JHIST_EMP_FK" FOREIGN KEY ("EMPLOYEE_ID") REFERENCES "EMPLOYEES" ("EMPLOYEE_ID") ENABLE
+ALTER TABLE "JOB_HISTORY" ADD CONSTRAINT "JHIST_DEPT_FK" FOREIGN KEY ("DEPARTMENT_ID") REFERENCES "DEPARTMENTS" ("DEPARTMENT_ID") ENABLE
 --------------------------------------------------------
 --  Ref Constraints for Table LOCATIONS
 --------------------------------------------------------
 
-ALTER TABLE "HR"."LOCATIONS" ADD CONSTRAINT "LOC_C_ID_FK" FOREIGN KEY ("COUNTRY_ID")
-    REFERENCES "HR"."COUNTRIES" ("COUNTRY_ID") ENABLE;
+ALTER TABLE "LOCATIONS" ADD CONSTRAINT "LOC_C_ID_FK" FOREIGN KEY ("COUNTRY_ID") REFERENCES "COUNTRIES" ("COUNTRY_ID") ENABLE
+--------------------------------------------------------

@@ -1,0 +1,3 @@
+/*
+SELECT [-unconvertible BIN_TO_NUM(1,0,1,0)] FROM DUAL; 
+*/

@@ -10,11 +10,11 @@ AS
         grade CHAR(1);
         appraisal VARCHAR2(100);
     BEGIN
-        grade := 'A';
-        CASE
-            WHEN grade = 'A' THEN appraisal := 'Excellent';
-            WHEN grade = 'B' THEN appraisal := 'Very Good';
-            WHEN grade = 'C' THEN appraisal := 'Good';
-        END CASE;
+        appraisal :=
+        CASE grade
+            WHEN NULL THEN 'No grade assigned'
+            WHEN 'A' THEN 'Excellent'
+            ELSE 'No such grade'
+        END;
     END;
 END package_name;

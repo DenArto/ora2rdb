@@ -1,0 +1,1 @@
+select TO_NCLOB('Hello world!') from dual;

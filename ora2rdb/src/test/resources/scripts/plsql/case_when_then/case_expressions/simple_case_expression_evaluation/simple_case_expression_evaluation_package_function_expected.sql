@@ -13,8 +13,8 @@ AS BEGIN
         DECLARE status VARCHAR(20);
     BEGIN
         status =
-	        CASE :data_val+5
-		        WHEN 10 THEN 'outlier'
+	        CASE
+		        WHEN :data_val+5 = 10 THEN 'outlier'
 	        END;
         RETURN status;
     END

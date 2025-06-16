@@ -1,13 +1,13 @@
 CREATE EXCEPTION CASE_NOT_FOUND
 	'CASE not found while executing CASE statement';
 
-CREATE OR ALTER PACKAGE package_name
+CREATE PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
     PROCEDURE simple_case_procedure;
 END /*PACKAGE_NAME*/;
 
-RECREATE PACKAGE BODY package_name
+CREATE PACKAGE BODY package_name
 AS BEGIN
     PROCEDURE simple_case_procedure
     AS

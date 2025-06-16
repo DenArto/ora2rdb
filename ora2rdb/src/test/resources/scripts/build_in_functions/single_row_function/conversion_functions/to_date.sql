@@ -1,0 +1,14 @@
+SELECT TO_DATE('2025-04-23', 'YYYY-MM-DD') FROM DUAL;
+
+SELECT TO_DATE('February 15, 2016, 11:00 A.M.'
+       DEFAULT 'January 01, 2016 12:00 A.M.' ON CONVERSION ERROR,
+       'Month dd, YYYY, HH:MI A.M.') FROM DUAL;
+
+SELECT TO_DATE('January 15, 1989, 11:00 A.M.',
+    'Month dd, YYYY, HH:MI A.M.',
+    'NLS_DATE_LANGUAGE = American') FROM DUAL;
+
+SELECT TO_DATE('January 15, 1989, 11:00 A.M.'
+    DEFAULT 'January 01, 2016 12:00 A.M.' ON CONVERSION ERROR,
+    'Month dd, YYYY, HH:MI A.M.',
+    'NLS_DATE_LANGUAGE = American') FROM DUAL;

@@ -1,0 +1,12 @@
+SELECT CAST(345.45 AS VARCHAR) FROM RDB$DATABASE;
+
+/*
+SELECT [-unconvertible TO_CHAR(-1, '$9')] FROM DUAL;
+*/
+/*
+SELECT [-unconvertible TO_CHAR(-10000,'L99G999D99MI')] FROM DUAL;
+*/
+/*
+SELECT [-unconvertible TO_CHAR(-10000,'L99G999D99MI', 'NLS_NUMERIC_CHARACTERS = '',.''
+               NLS_CURRENCY = ''AusDollars'' ')] FROM DUAL;
+*/

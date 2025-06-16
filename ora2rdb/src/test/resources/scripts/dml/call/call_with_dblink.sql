@@ -1,0 +1,1 @@
+CALL set_bonus@dbn1(100000, experience => 10);

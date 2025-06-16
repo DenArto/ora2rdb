@@ -17,6 +17,8 @@ public class PLSQLBlock {
     ReferencingAttributes trigger_referencing_attributes = new ReferencingAttributes();
     boolean commentBlock = false;
     List<String> trigger_ddl_event = new ArrayList<>();
+    public TreeMap<String, Cursor> cursor_select_statement = new TreeMap<>();
+    String current_cursor_name;
 
     public void setStatement(PlSqlParser.StatementContext ctx) {
         this.statement = ctx;
@@ -39,16 +41,28 @@ public class PLSQLBlock {
      class ReplaceRecordName {
         String old_record_name;
         String new_record_name;
+        boolean isRowType;
     }
     class ReferencingAttributes{
         String oldValue;
         String newValue;
     }
 
-    void pushReplaceRecordName(String old_record_name, String new_record_name){
+    class Cursor {
+        String table_name;
+        String column_name;
+
+        Cursor(String table_name, String column_name) {
+            this.table_name = table_name;
+            this.column_name = column_name;
+        }
+    }
+
+    void pushReplaceRecordName(String old_record_name, String new_record_name, boolean isRowType){
         ReplaceRecordName replaceRecordName = new ReplaceRecordName();
         replaceRecordName.old_record_name = old_record_name;
         replaceRecordName.new_record_name = new_record_name;
+        replaceRecordName.isRowType = isRowType;
         record_name_cursor_loop.push(replaceRecordName);
     }
     void popReplaceRecordName(){
@@ -56,6 +70,10 @@ public class PLSQLBlock {
     }
     ReplaceRecordName peekReplaceRecordName(){
         return record_name_cursor_loop.peek();
+    }
+
+    void putCursorSelectStatement(String cur_name, String table_name, String column_name){
+        cursor_select_statement.put(cur_name, new Cursor(table_name, column_name));
     }
 
     PLSQLBlock() {
@@ -120,8 +138,8 @@ public class PLSQLBlock {
                 if (i != 0)
                     key_fields.append(", ");
 
-                table_ddl.append("\tI").append(i + 1).append(" ").append(arr_type.index_types.get(i)).append(",\n");
-                key_fields.append("I").append(i + 1);
+                table_ddl.append("\tK").append(" ").append(arr_type.index_types.get(i)).append(",\n");
+                key_fields.append("K");
             }
 
             table_ddl.append("\tVAL ").append(arr_type.data_type).

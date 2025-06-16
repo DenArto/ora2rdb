@@ -1,0 +1,5 @@
+DECLARE
+  raw_col RAW(10);
+BEGIN
+  raw_col := HEXTORAW('4041424344');
+END;

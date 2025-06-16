@@ -10,6 +10,7 @@ public class ScanListener extends PlSqlParserBaseListener {
     String currentProcedureName;
     String current_package_name = null;
     StoredTrigger current_trigger = null;
+    String current_cursor_declaration = null;
 
     @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
@@ -58,7 +59,7 @@ public class ScanListener extends PlSqlParserBaseListener {
                     continue;
                 if (rela_prop.column_definition().datatype() != null)
                     table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
-                            Ora2rdb.getRealName(rela_prop.column_definition().datatype().getText())
+                            Ora2rdb.getRealName(rela_prop.column_definition().datatype().native_datatype_element().getText())
                     );
                 else
                     table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
@@ -169,6 +170,7 @@ public class ScanListener extends PlSqlParserBaseListener {
             }
         }
         storedBlocksStack.push(storedTrigger);
+
     }
 
     @Override
@@ -318,7 +320,7 @@ public class ScanListener extends PlSqlParserBaseListener {
 
         storedFunction.setName(functionName);
         storedFunction.setPackage_name(current_package_name);
-        if (ctx.type_spec().datatype() != null && ctx.type_spec().datatype().native_datatype_element()!= null)
+        if (ctx.type_spec().datatype() != null)
             storedFunction.setFunction_returns_type(Ora2rdb.getRealName(ctx.type_spec().datatype().native_datatype_element().getText()));
         else
             storedFunction.setFunction_returns_type(Ora2rdb.getRealName(ctx.type_spec().getText()));

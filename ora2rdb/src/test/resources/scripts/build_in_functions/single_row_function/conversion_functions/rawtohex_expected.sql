@@ -1,0 +1,7 @@
+EXECUTE BLOCK 
+AS
+  DECLARE raw_col BINARY(10) = 'hello';
+  DECLARE res VARCHAR(100);
+BEGIN
+  res = HEX_ENCODE(raw_col);
+END;

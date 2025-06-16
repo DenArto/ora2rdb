@@ -1,0 +1,1 @@
+select TO_CLOB('Hello world!') from dual;

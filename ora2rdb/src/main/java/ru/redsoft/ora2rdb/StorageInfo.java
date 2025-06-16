@@ -18,8 +18,6 @@ public class StorageInfo {
     public static ArrayList<CommentedBlock> commentedBlockList = new ArrayList<>();
 
 
-
-
     public static void clearInfo() {
         package_constant_names.clear();
         stored_blocks_list.clear();
