@@ -13,7 +13,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
     CommonTokenStream tokens;
     Stack<CommentedBlock> currentBlock = new Stack<>();
 
-    public CommentedListener( TokenStreamRewriter rewriter) {
+    public CommentedListener( CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+        this.tokens = tokens;
         this.rewriter = rewriter;
     }
 
@@ -37,8 +38,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
             rewriter.insertAfter(term.getSymbol(), text);
     }
 
-
-
     void commentBlock(int start_tok_idx, int stop_tok_idx) {
         rewriter.insertBefore(start_tok_idx, "/*");
         rewriter.insertAfter(stop_tok_idx, "*/");
@@ -56,10 +55,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
             insertBefore(unconvertableBlock.getBlockStart(), " [-unconvertible RS-" + unconvertableBlock.getTicketNumber() + " ");
             insertAfter(unconvertableBlock.getBlockStop(), " ]");
         }
-        if (commentedBlock.isConvertAllBlock()) {
+        if ( commentedBlock.isConvertAllBlock()) {
             commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
                     ,commentedBlock.getParentContext().stop.getTokenIndex());
-        } else {
+
+        } else if( commentedBlock.getStartDeclareBlock() == null
+                || commentedBlock.getStartBodyBlock() == null
+                || commentedBlock.getStopBodyBlock() == null) {
+
+            commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
+                    ,commentedBlock.getParentContext().stop.getTokenIndex());
+        }
+        else {
             insertAfter(commentedBlock.getStartDeclareBlock(), "\n/*");
             insertBefore(commentedBlock.getStartBodyBlock(), "*/\n");
 
@@ -78,7 +85,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_function_body(Create_function_bodyContext ctx) {
-        if(ctx.AS() != null)
+        if(ctx.call_spec() != null)
+            currentBlock.push(new CommentedBlock(ctx));
+        else
+        if(ctx.AS() != null )
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
@@ -94,14 +104,166 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
 
     @Override
-    public void enterAnonymous_block(PlSqlParser.Anonymous_blockContext ctx) {
-        CommentedBlock block = new CommentedBlock(ctx, ctx.DECLARE(), ctx.body().BEGIN(), ctx.body().END());
-        block.setConvertAllBlock(true);
-        currentBlock.push(block);
-
+    public void enterCreate_procedure_body(Create_procedure_bodyContext ctx) {
+        if(ctx.AS() != null)
+            currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
+        else
+            currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
     }
 
-    public void exitAnonymous_block(PlSqlParser.Anonymous_blockContext ctx) {
+    @Override
+    public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
+        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterCreate_trigger(Create_triggerContext ctx) {
+        if(ctx.trigger_body().trigger_block() != null)
+            currentBlock.push(
+                    new CommentedBlock(
+                        ctx,
+                        ctx.trigger_body().trigger_block().DECLARE(),
+                        ctx.trigger_body().trigger_block().body().BEGIN(),
+                        ctx.trigger_body().trigger_block().body().END()
+                    )
+            );
+        else
+            currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitCreate_trigger(Create_triggerContext ctx) {
+        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+
+    @Override
+    public void enterCreate_package(Create_packageContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitCreate_package(Create_packageContext ctx) {
+        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterCreate_package_body(Create_package_bodyContext ctx) {
+        if(ctx.AS() != null)
+            currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.BEGIN(), ctx.END()));
+        else
+            currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.BEGIN(), ctx.END()));
+    }
+
+    @Override
+    public void exitCreate_package_body(Create_package_bodyContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+
+    @Override
+    public void enterProcedure_spec(Procedure_specContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitProcedure_spec(Procedure_specContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterProcedure_body(Procedure_bodyContext ctx) {
+        if(ctx.AS() != null)
+            currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
+        else
+            currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+    }
+
+    @Override
+    public void exitProcedure_body(Procedure_bodyContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+
+    @Override
+    public void enterFunction_spec(Function_specContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitFunction_spec(Function_specContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterFunction_body(Function_bodyContext ctx) {
+        if(ctx.AS() != null)
+            currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
+        else
+            currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+    }
+
+    @Override
+    public void exitFunction_body(Function_bodyContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterAnonymous_block(Anonymous_blockContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx, ctx.DECLARE(), ctx.body().BEGIN(), ctx.body().END()));
+    }
+    @Override
+    public void exitAnonymous_block(Anonymous_blockContext ctx) {
+        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterPackage_function_spec(Package_function_specContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitPackage_function_spec(Package_function_specContext ctx) {
+        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterPackage_procedure_spec(Package_procedure_specContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitPackage_procedure_spec(Package_procedure_specContext ctx) {
         if(!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
@@ -111,24 +273,19 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterForall_statement(Forall_statementContext ctx) {
-        currentBlock.peek().addUnconvertableBlock(ctx, 123456);
+
     }
 
     @Override
     public void enterType_declaration(Type_declarationContext ctx) {
-        if(ctx.ref_cursor_type_def()!=null)
-            currentBlock.peek().addUnconvertableBlock(ctx, 123123);
+
+
     }
 
     @Override
     public void enterType_spec(Type_specContext ctx) {
-        if(ctx.type_name()!= null && Ora2rdb.getRealName(ctx.type_name().getText()).equals("SYS_REFCURSOR"))
-            currentBlock.peek().addUnconvertableBlock(ctx, 321123);
-
 
     }
-
-
 
 
 }

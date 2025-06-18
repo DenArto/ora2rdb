@@ -202,7 +202,7 @@ public class Ora2rdb {
         walker.walk(scan_listener, tree);
 
         //Commented of unconvertible blocks
-        CommentedListener commentedListener = new CommentedListener(rewriter);
+        CommentedListener commentedListener = new CommentedListener(tokens, rewriter);
         walker.walk(commentedListener, tree);
 
         // Converting Oracle metadata to a syntax that is understandable for RDB

@@ -2384,7 +2384,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
 
         // check if nested anonymous block
-        for (StatementContext stm_ctx : ctx.seq_of_statements().statement()) {
+        for (StatementContext stm_ctx : ctx.body().seq_of_statements().statement()) {
             if (stm_ctx.body() != null || stm_ctx.block() != null) {
                 currentAnonymousBlock.setIsNested(true);
                 break;
@@ -2400,11 +2400,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             else
                 insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
 
-            delete(ctx.BEGIN());
+            delete(ctx.body().BEGIN());
 //            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
 
-            if (ctx.EXCEPTION() != null)
-                replace(ctx.EXCEPTION(), "/*EXCEPTION*/");
+            if (ctx.body().EXCEPTION() != null)
+                replace(ctx.body().EXCEPTION(), "/*EXCEPTION*/");
 
             StringBuilder declare_loop_index_names = new StringBuilder();
             if (!loop_index_names.isEmpty()) {

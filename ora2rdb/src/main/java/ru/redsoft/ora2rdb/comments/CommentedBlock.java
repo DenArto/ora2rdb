@@ -25,7 +25,7 @@ public class CommentedBlock {
         this.convertAllBlock = convertAllBlock;
     }
     public CommentedBlock(ParserRuleContext parentContext){
-        this(parentContext, true);
+        this(parentContext, false);
     }
 
     public CommentedBlock(ParserRuleContext parentContext, TerminalNode startDeclareBlock, TerminalNode startBodyBlock, TerminalNode stopBodyBlock, boolean convertAllBlock){
