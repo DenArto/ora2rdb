@@ -126,7 +126,7 @@ build_and_test:
     - git submodule update --init
     - mvn $MAVEN_CLI_OPTS -f "${CI_PROJECT_DIR}"/pom.xml package -DfailIfNoTests=false
     - cp ora2rdb/target/ora2rdb-${VERSION_IN_POM}.jar dist/target/ora2rdb-${VERSION}.jar
-    - ci/junit_merge.sh -i ora2rdb/target/surefire-reports -o test-results/TEST-ora2rdb-${VERSION}.xml
+    - ci/junit_merge.sh -i ora2rdb/target/surefire-reports -o test-results/TEST-ora2rdb.xml
 
 deploy:
   tags:
