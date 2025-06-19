@@ -1,14 +1,16 @@
 CREATE OR ALTER TRIGGER T_Grade_meaning7
   AFTER INSERT
   ON students
+  SQL SECURITY DEFINER
 AS
     DECLARE score NUMERIC(34, 8);
     DECLARE pass CHAR(1) = 'T';
     DECLARE res  CHAR(15) = '';
     DECLARE subject VARCHAR(50) = 'Математика';
 BEGIN
-   score = NEW.score;
+   score = :NEW.score;
    IF (:score > 50) THEN
+   BEGIN
       IF (:subject = 'Математика') THEN
       BEGIN
           res = 'Good';
@@ -25,7 +27,8 @@ BEGIN
           BEGIN
             res = 'Good';
             pass = 'T';
-          END 
+          END
+   END
    ELSE
       IF (:subject = 'Математика') THEN
       BEGIN
@@ -38,4 +41,4 @@ BEGIN
           res = 'Poor';
           pass = 'F';
         END
-END /*T_Grade_meaning7*/;
+END;

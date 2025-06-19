@@ -1,8 +1,11 @@
 CREATE OR REPLACE PACKAGE Pack_Grade_meaning5 
-AS 
+AS
+
    FUNCTION PF_Grade_meaning5 (grade CHAR) 
    RETURN VARCHAR2;
-   PROCEDURE PP_Grade_meaning5 (grade CHAR, res OUT CHAR); 
+
+   PROCEDURE PP_Grade_meaning5 (grade CHAR);
+
 END Pack_Grade_meaning5; 
 
 CREATE OR REPLACE PACKAGE BODY Pack_Grade_meaning5 
@@ -35,9 +38,10 @@ AS
        RETURN res;
    END; 
 
-   PROCEDURE PP_Grade_meaning5 (grade CHAR, res OUT CHAR)
+   PROCEDURE PP_Grade_meaning5 (grade CHAR)
    IS
      pass BOOLEAN := TRUE;
+     res CHAR;
    BEGIN
        IF grade = 'A' THEN
          res := 'Excellent';

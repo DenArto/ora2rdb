@@ -6,6 +6,7 @@ AS
    DECLARE subject VARCHAR(50) = 'Математика';
 BEGIN
    IF (:score > 50) THEN
+   BEGIN
       IF (:subject = 'Математика') THEN
       BEGIN
           res = 'Good';
@@ -23,6 +24,7 @@ BEGIN
             res = 'Good';
             pass = TRUE;
           END
+   END
    ELSE
       IF (:subject = 'Математика') THEN
       BEGIN

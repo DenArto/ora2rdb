@@ -15,5 +15,7 @@ BEGIN
       pass = FALSE;
     END     
     IF (:degree < 5) THEN
+    BEGIN
       res = 'Too low';
+    END
 END;

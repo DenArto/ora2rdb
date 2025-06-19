@@ -1943,11 +1943,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitBind_variable(Bind_variableContext ctx) {
-        String var = getRuleText(ctx);
-        String upper = var.toUpperCase();
 
-//        if (upper.startsWith(":OLD.") || upper.startsWith(":NEW."))
-//            replace(ctx, var.substring(1));
+        for(General_element_partContext elementPart : ctx.general_element_part())
+            if(getRewriterText(elementPart).startsWith(":"))
+                replace(elementPart, getRewriterText(elementPart).substring(1));
 
         if (current_plsql_block != null) {
             if (current_plsql_block.trigger_referencing_attributes.oldValue != null) {
@@ -2399,9 +2398,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 replace(ctx.DECLARE(), "EXECUTE BLOCK \n AS \n");
             else
                 insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
-
-            delete(ctx.body().BEGIN());
-//            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
 
             if (ctx.body().EXCEPTION() != null)
                 replace(ctx.body().EXCEPTION(), "/*EXCEPTION*/");
@@ -2990,8 +2986,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitIf_statement(If_statementContext ctx) {
-        insertBefore(ctx.condition(), "(");
-        insertAfter(ctx.condition(), ")");
+        if(ctx.LEFT_PAREN() == null && ctx.RIGHT_PAREN() == null) {
+            insertBefore(ctx.condition(), "(");
+            insertAfter(ctx.condition(), ")");
+        }
 
         if (ctx.seq_of_statements().statement().size() >= 1) {
             String indentation = getIndentation(ctx);
@@ -3006,9 +3004,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitElsif_part(Elsif_partContext ctx) {
         replace(ctx.ELSIF(), "ELSE IF");
-        insertBefore(ctx.condition(), "(");
-        insertAfter(ctx.condition(), ")");
-
+        if(ctx.LEFT_PAREN() == null && ctx.RIGHT_PAREN() == null) {
+            insertBefore(ctx.condition(), "(");
+            insertAfter(ctx.condition(), ")");
+        }
         if (ctx.seq_of_statements().statement().size() > 1) {
             String indentation = getIndentation(ctx);
             insertAfter(ctx.THEN(), "\n" + indentation + "BEGIN");

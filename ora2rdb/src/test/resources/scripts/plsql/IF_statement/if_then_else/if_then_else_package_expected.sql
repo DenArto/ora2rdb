@@ -1,11 +1,13 @@
 CREATE OR ALTER PACKAGE Pack_Grade_meaning2
+SQL SECURITY DEFINER
 AS 
 BEGIN 
    FUNCTION PF_Grade_meaning2 (degree INTEGER)
-   RETURNS VARCHAR(32765);  
-   PROCEDURE PP_Grade_meaning2 (degree INTEGER)
-   RETURNS (res CHAR);
-END /*Pack_Grade_meaning2*/;
+   RETURNS VARCHAR(32765);
+
+   PROCEDURE PP_Grade_meaning2 (degree INTEGER);
+
+END /*PACK_GRADE_MEANING2*/;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning2
 AS 
@@ -30,9 +32,9 @@ BEGIN
    END  
 
    PROCEDURE PP_Grade_meaning2 (degree INTEGER)
-   RETURNS (res CHAR)
    AS
      DECLARE pass BOOLEAN = TRUE;
+     DECLARE res CHAR;
    BEGIN
        res = '';
        IF (:degree > 10) THEN
@@ -46,4 +48,4 @@ BEGIN
          pass = FALSE;
        END
    END  
-END /*Pack_Grade_meaning2*/;
+END /*PACK_GRADE_MEANING2*/;

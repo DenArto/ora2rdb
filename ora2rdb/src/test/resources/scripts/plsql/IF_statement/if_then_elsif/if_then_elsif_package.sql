@@ -2,7 +2,9 @@ CREATE OR REPLACE PACKAGE Pack_Grade_meaning3
 AS 
    FUNCTION PF_Grade_meaning3 (grade CHAR) 
    RETURN VARCHAR2;
-   PROCEDURE PP_Grade_meaning3(grade CHAR, res OUT CHAR); 
+
+   PROCEDURE PP_Grade_meaning3(grade CHAR);
+
 END Pack_Grade_meaning3; 
 
 CREATE OR REPLACE PACKAGE BODY Pack_Grade_meaning3
@@ -32,9 +34,10 @@ AS
        RETURN res;
    END; 
 
-   PROCEDURE PP_Grade_meaning3(grade CHAR, res OUT CHAR)
+   PROCEDURE PP_Grade_meaning3(grade CHAR)
    IS
      pass BOOLEAN := FALSE;
+     res CHAR;
    BEGIN
        res := '';
        IF grade = 'A' THEN
