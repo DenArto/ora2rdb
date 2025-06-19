@@ -10,7 +10,7 @@ cache:
     - .m2/repository/
     - target/
 variables:
-  MAVEN_VERSION: 3.8.8
+  MAVEN_VERSION: 3.8.9
   GIT_SUBMODULE_STRATEGY: recursive
   RELEASE_HUB_PROJECT: ora2rdb
   CI_URL: ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}

@@ -5,10 +5,18 @@ import java.util.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+import ru.redsoft.ora2rdb.comments.*;
 
 public class Ora2rdb {
-    public static boolean reorder = false;
+    public  static boolean reorder = false;
     private static StringBuilder errors = new StringBuilder();
+    private static InputStream inputStream;
+    private static PrintStream printStream;
+    private static String outputFile;
+    static TokenStreamRewriter rewriter;
+    private static CommonTokenStream tokens;
+
+
     final static String errorMessage = "Found error(s) in file while parsing\n";
     private final static String packageBodyStart = "CREATE OR REPLACE PACKAGE BODY package_for_parse IS";
     private final static String packageEnd = "END package_for_parse;";
@@ -21,7 +29,7 @@ public class Ora2rdb {
             return str;
     }
 
-    static String getRealName(String str) {
+    public static String getRealName(String str) {
         if (str.startsWith("\""))
             return str.substring(1, str.length() - 1);
         else
@@ -31,8 +39,18 @@ public class Ora2rdb {
     static String getRealParameterName(String str) {
         return str.toUpperCase()
                 .substring(str.lastIndexOf(".") + 1,
-                           str.length()
+                        str.length()
                 );
+    }
+
+    static void clear() {
+       reorder = false;
+        errors = new StringBuilder();
+        inputStream = null;
+        printStream.close();
+        printStream = null;
+        outputFile = null;
+        StorageInfo.clearInfo();
     }
 
     static void printUsage() {
@@ -45,36 +63,6 @@ public class Ora2rdb {
                 "                        contain DB metadata.\n" +
                 "Notes:\n" +
                 "    \"stdin\" may be used as a value of <input_file>.");
-    }
-
-    static RewritingListener convert(InputStream is) throws IOException {
-        SqlCodeParser sqlCodeParser = new SqlCodeParser();
-        List<String> splitBlocks = sqlCodeParser.splitMetadataIntoBlocks(is);
-
-        StringBuilder mergedBlocks = convertSplitBlocks(splitBlocks, sqlCodeParser);
-
-        CharStream input = CharStreams.fromString(mergedBlocks.toString());
-        PlSqlLexer lexer = new PlSqlLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        PlSqlParser parser = new PlSqlParser(tokens);
-        parser.setErrorHandler(new BailErrorStrategy());
-        ParserRuleContext tree;
-        tree = parser.sql_script();
-
-        mergedBlocks.setLength(0);
-        errors.setLength(0);
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-
-        ScanListener scan_listener = new ScanListener();
-        walker.walk(scan_listener, tree);
-
-        RewritingListener converter = new RewritingListener(tokens);
-        walker.walk(converter, tree);
-
-
-//        StorageInfo.clearInfo();
-        return converter;
     }
 
     private static StringBuilder convertSplitBlocks(List<String> splitBlocks, SqlCodeParser sqlCodeParser) {
@@ -141,20 +129,18 @@ public class Ora2rdb {
         return parsedBlock;
     }
 
-    public static void main(String[] args) throws Exception {
-        InputStream is;
-        PrintStream ps = System.out;
-        String output_file = null;
-
+    public static void parsingArgs(String[] args) {
+        printStream = System.out;
+        outputFile = null;
         if (args.length > 0) {
             if (args[0].equals("stdin")) {
-                is = System.in;
+                inputStream = System.in;
             } else {
                 try {
-                    is = new FileInputStream(args[0]);
+                    inputStream = new FileInputStream(args[0]);
                 } catch (Exception e) {
                     System.err.println("Unable to open: " + args[0]);
-                    return;
+                    System.exit(0);
                 }
             }
 
@@ -163,55 +149,80 @@ public class Ora2rdb {
                     case "-o":
                         if (i < args.length - 1) {
                             i++;
-                            output_file = args[i];
+                            outputFile = args[i];
                         } else {
                             System.err.println("Missing argument for option: " + args[i]);
                             printUsage();
-                            return;
+                            System.exit(0);
                         }
-
                         break;
-
                     case "-r":
                         reorder = true;
                         break;
-
                     default:
                         System.err.println("Unknown option: " + args[i]);
                         printUsage();
-                        return;
+                        System.exit(0);
                 }
             }
         } else {
             printUsage();
-            return;
+            System.exit(0);
         }
+    }
 
-        RewritingListener converter;
+    public static void main(String[] args) throws Exception {
+        parsingArgs(args);
+
+        SqlCodeParser sqlCodeParser = new SqlCodeParser();
+        List<String> splitBlocks = sqlCodeParser.splitMetadataIntoBlocks(inputStream);
+
+        StringBuilder mergedBlocks = convertSplitBlocks(splitBlocks, sqlCodeParser);
+
+        CharStream input = CharStreams.fromString(mergedBlocks.toString());
+        PlSqlLexer lexer = new PlSqlLexer(input);
+        tokens = new CommonTokenStream(lexer);
+        rewriter = new TokenStreamRewriter(tokens);
+        PlSqlParser parser = new PlSqlParser(tokens);
+        parser.setErrorHandler(new BailErrorStrategy());
+        ParserRuleContext tree;
         try {
-            converter = convert(is);
+            tree = parser.sql_script();
         } catch (Exception e) {
-            System.err.println(e.fillInStackTrace());
             System.err.println("Output will not be generated");
             return;
         }
+        mergedBlocks.setLength(0);
+        errors.setLength(0);
 
-        if (output_file != null) {
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        // Scanning of all necessary information for conversion
+        ScanListener scan_listener = new ScanListener();
+        walker.walk(scan_listener, tree);
+
+        //Commented of unconvertible blocks
+        CommentedListener commentedListener = new CommentedListener(tokens, rewriter);
+        walker.walk(commentedListener, tree);
+
+        // Converting Oracle metadata to a syntax that is understandable for RDB
+        RewritingListener converter = new RewritingListener(tokens, rewriter);
+        walker.walk(converter, tree);
+
+
+        if (outputFile != null) {
             try {
-                ps = new PrintStream(output_file);
-            } catch (Exception e) {
-                System.err.println("Unable to write: " + output_file);
+                printStream = new PrintStream(outputFile);
+            } catch (IOException e) {
+                System.err.println("Unable to write: " + outputFile);
                 return;
             }
         }
 
         if (reorder)
-            ps.print(converter.getText());
+            printStream.print(converter.getText());
         else
-            ps.print(converter.rewriter.getText());
-
-        StorageInfo.clearInfo();
-
-        ps.close();
+            printStream.print(rewriter.getText());
+        clear();
     }
 }

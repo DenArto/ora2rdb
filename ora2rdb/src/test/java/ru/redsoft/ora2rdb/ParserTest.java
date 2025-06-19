@@ -87,20 +87,7 @@ class ParserTest {
         return stringBuilder.toString();
     }
 
-    void testConvertMethod(String inputFile) throws IOException {
-        String expectedFile = inputFile.replace(".sql", "_expected.sql");
-        String actual;
-        try (FileInputStream fs = new FileInputStream(startDirPath + inputFile)) {
-            RewritingListener rewritingListener =
-                    Ora2rdb.convert(fs);
-            actual = rewritingListener.rewriter.getText()
-                    .replaceAll("\\s+", "");
-        }
 
-        List<String> expectedList = readFile(expectedFile);
-        String expected = removeWhitespaceInStringList(expectedList);
-        assertEquals(expected, actual);
-    }
 
 
     void testForDevelopers(String inputFile) throws IOException {

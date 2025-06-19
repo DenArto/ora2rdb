@@ -57,9 +57,13 @@ public class ScanListener extends PlSqlParserBaseListener {
             for (Relational_propertyContext rela_prop : ctx.relational_table().relational_property()) {
                 if (rela_prop.column_definition() == null)
                     continue;
-                if (rela_prop.column_definition().datatype() != null)
+                if (rela_prop.column_definition().datatype() != null && rela_prop.column_definition().datatype().native_datatype_element() != null)
                     table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
                             Ora2rdb.getRealName(rela_prop.column_definition().datatype().native_datatype_element().getText())
+                    );
+                else if (rela_prop.column_definition().datatype() != null && rela_prop.column_definition().datatype().INTERVAL() != null)
+                    table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
+                            Ora2rdb.getRealName(rela_prop.column_definition().datatype().getText())
                     );
                 else
                     table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
@@ -320,7 +324,7 @@ public class ScanListener extends PlSqlParserBaseListener {
 
         storedFunction.setName(functionName);
         storedFunction.setPackage_name(current_package_name);
-        if (ctx.type_spec().datatype() != null)
+        if (ctx.type_spec().datatype() != null && ctx.type_spec().datatype().native_datatype_element() != null)
             storedFunction.setFunction_returns_type(Ora2rdb.getRealName(ctx.type_spec().datatype().native_datatype_element().getText()));
         else
             storedFunction.setFunction_returns_type(Ora2rdb.getRealName(ctx.type_spec().getText()));

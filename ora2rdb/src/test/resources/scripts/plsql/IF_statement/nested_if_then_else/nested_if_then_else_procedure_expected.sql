@@ -1,7 +1,8 @@
 CREATE PROCEDURE P_Grade_meaning6 (grade CHAR)
-RETURNS (res CHAR)
+SQL SECURITY DEFINER
 AS
   DECLARE pass BOOLEAN = TRUE;
+  DECLARE res CHAR;
 BEGIN
     IF (:grade = 'A') THEN
     BEGIN

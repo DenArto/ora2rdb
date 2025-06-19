@@ -1,12 +1,13 @@
 CREATE OR ALTER TRIGGER T_Grade_meaning3
   AFTER INSERT
   ON students
+  SQL SECURITY DEFINER
 AS
     DECLARE grade CHAR(1);
     DECLARE pass CHAR(1) = 'F';
     DECLARE res  CHAR(15) = '';
 BEGIN
-   grade = NEW.mark;
+   grade = :NEW.mark;
    IF (:grade = 'A') THEN
    BEGIN
      res = 'Excellent';
@@ -36,4 +37,4 @@ BEGIN
              res = 'Poor';
              pass = 'F';
            END
-END /*T_Grade_meaning3*/;
+END;

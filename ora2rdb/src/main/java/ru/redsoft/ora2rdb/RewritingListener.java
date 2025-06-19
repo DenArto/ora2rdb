@@ -38,8 +38,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
     TreeMap<String, String> exceptions = new TreeMap<>();
     StoredAnonymousBlock currentAnonymousBlock = null;
 
-    public RewritingListener(CommonTokenStream tokens) {
-        rewriter = new TokenStreamRewriter(tokens);
+    public RewritingListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+        this.rewriter = rewriter;
         this.tokens = tokens;
     }
 
@@ -98,6 +98,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             rewriter.insertBefore(term.getSymbol(), text);
     }
 
+    void insertBefore(Token token, Object text){
+        if(token != null)
+            rewriter.insertBefore(token, text);
+    }
+
     void insertAfter(ParserRuleContext ctx, Object text) {
         if (ctx != null)
             rewriter.insertAfter(ctx.stop, text);
@@ -106,6 +111,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
     void insertAfter(TerminalNode term, Object text) {
         if (term != null)
             rewriter.insertAfter(term.getSymbol(), text);
+    }
+
+    void insertAfter(Token token, Object text) {
+        if(token != null)
+            rewriter.insertAfter(token, text);
     }
 
     void replace(ParserRuleContext ctx, Object text) {
@@ -1878,7 +1888,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.IS());
             delete(ctx.record_type_def().RECORD());
         } else {
-            commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+            if(ctx.ref_cursor_type_def() == null)
+                commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
             if (ctx.table_type_def() != null) {
                 if (current_plsql_block != null && ctx.table_type_def().TABLE() != null
                         && ctx.table_type_def().table_indexed_by_part() != null) {
@@ -1932,11 +1943,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitBind_variable(Bind_variableContext ctx) {
-        String var = getRuleText(ctx);
-        String upper = var.toUpperCase();
 
-//        if (upper.startsWith(":OLD.") || upper.startsWith(":NEW."))
-//            replace(ctx, var.substring(1));
+        for(General_element_partContext elementPart : ctx.general_element_part())
+            if(getRewriterText(elementPart).startsWith(":"))
+                replace(elementPart, getRewriterText(elementPart).substring(1));
 
         if (current_plsql_block != null) {
             if (current_plsql_block.trigger_referencing_attributes.oldValue != null) {
@@ -2122,8 +2132,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
         else
             replace(ctx.IS(), "AS");
-
-//        replace(ctx.SEMICOLON(), "^");
 
         String getWhiteSpace = getIndentation(ctx) + "  ";
         StoredProcedure currentProcedure = (StoredProcedure) storedBlocksStack.peek();
@@ -2375,7 +2383,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
 
         // check if nested anonymous block
-        for (StatementContext stm_ctx : ctx.seq_of_statements().statement()) {
+        for (StatementContext stm_ctx : ctx.body().seq_of_statements().statement()) {
             if (stm_ctx.body() != null || stm_ctx.block() != null) {
                 currentAnonymousBlock.setIsNested(true);
                 break;
@@ -2391,18 +2399,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
             else
                 insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
 
-            delete(ctx.BEGIN());
-//            insertBefore(ctx.seq_of_statements(), "BEGIN\n");
-
-            if (ctx.EXCEPTION() != null)
-                replace(ctx.EXCEPTION(), "/*EXCEPTION*/");
+            if (ctx.body().EXCEPTION() != null)
+                replace(ctx.body().EXCEPTION(), "/*EXCEPTION*/");
 
             StringBuilder declare_loop_index_names = new StringBuilder();
             if (!loop_index_names.isEmpty()) {
                 for (String index_name : loop_index_names) {
                     declare_loop_index_names.append("\n  DECLARE VARIABLE ").append(index_name).append(" INTEGER;\n");
                 }
-                insertBefore(ctx.seq_of_statements(), declare_loop_index_names.toString());
+                insertBefore(ctx.body().seq_of_statements(), declare_loop_index_names.toString());
             }
             loop_index_names.clear();
 
@@ -2418,7 +2423,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                         declare_loop_rowtype_names.append("\n  DECLARE VARIABLE ").append(rec).
                                 append(" TYPE OF TABLE ").append(loop_rec_name_and_cursor_name.get(rec)).append(";\n");
                 }
-                insertBefore(ctx.seq_of_statements(), declare_loop_rowtype_names.toString());
+                insertBefore(ctx.body().seq_of_statements(), declare_loop_rowtype_names.toString());
             }
             loop_rec_name_and_cursor_name.clear();
 
@@ -2438,10 +2443,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
         currentAnonymousBlock = null;
         popScope();
-    }
-
-    @Override
-    public void exitTrigger_name(Trigger_nameContext ctx) {
     }
 
     @Override
@@ -2985,8 +2986,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitIf_statement(If_statementContext ctx) {
-        insertBefore(ctx.condition(), "(");
-        insertAfter(ctx.condition(), ")");
+        if(ctx.LEFT_PAREN() == null && ctx.RIGHT_PAREN() == null) {
+            insertBefore(ctx.condition(), "(");
+            insertAfter(ctx.condition(), ")");
+        }
 
         if (ctx.seq_of_statements().statement().size() >= 1) {
             String indentation = getIndentation(ctx);
@@ -3001,9 +3004,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitElsif_part(Elsif_partContext ctx) {
         replace(ctx.ELSIF(), "ELSE IF");
-        insertBefore(ctx.condition(), "(");
-        insertAfter(ctx.condition(), ")");
-
+        if(ctx.LEFT_PAREN() == null && ctx.RIGHT_PAREN() == null) {
+            insertBefore(ctx.condition(), "(");
+            insertAfter(ctx.condition(), ")");
+        }
         if (ctx.seq_of_statements().statement().size() > 1) {
             String indentation = getIndentation(ctx);
             insertAfter(ctx.THEN(), "\n" + indentation + "BEGIN");
@@ -3395,7 +3399,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitSeq_of_statements(Seq_of_statementsContext ctx) {
-
         for (int i = 0; i < ctx.statement().size(); i++) {
             StatementContext stmt_ctx = ctx.statement(i);
 
@@ -3454,12 +3457,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (Ora2rdb.getRealName(ctx.getText()).equals("ROWID"))
             replace(ctx, "RDB$DB_KEY");
     }
+
     @Override
     public void exitRelational_expression(Relational_expressionContext ctx) {
         if (Ora2rdb.getRealName(ctx.getText()).equals("ROWID"))
             replace(ctx, "RDB$DB_KEY");
     }
-
 
     @Override
     public void exitException_handler(Exception_handlerContext ctx) {

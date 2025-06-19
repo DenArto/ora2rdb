@@ -2,7 +2,9 @@ CREATE OR REPLACE PACKAGE Pack_Grade_meaning7
 AS 
    FUNCTION PF_Grade_meaning7 (score NUMERIC, subject VARCHAR2) 
    RETURN VARCHAR2;
-   PROCEDURE PP_Grade_meaning7 (score NUMERIC, subject VARCHAR2); 
+
+   PROCEDURE PP_Grade_meaning7 (score NUMERIC, subject VARCHAR2);
+
 END Pack_Grade_meaning7; 
 
 CREATE OR REPLACE PACKAGE BODY Pack_Grade_meaning7
