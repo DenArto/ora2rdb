@@ -1,4 +1,5 @@
 CREATE OR ALTER PACKAGE Pack_While_Label
+SQL SECURITY DEFINER
 AS 
 BEGIN 
    FUNCTION PF_While_Label
@@ -20,7 +21,7 @@ BEGIN
      BEGIN
        done = TRUE;
        res = 'Hello, world!';
-     END /*loopA*/
+     END
      RETURN res;
    END  
 
@@ -34,6 +35,6 @@ BEGIN
      BEGIN
        done = TRUE;
        res = 'Hello, world!';
-     END /*loopA*/
+     END
    END  
 END /*PACK_WHILE_LABEL*/;

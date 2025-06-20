@@ -2986,7 +2986,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitIf_statement(If_statementContext ctx) {
-        if(ctx.LEFT_PAREN() == null && ctx.RIGHT_PAREN() == null) {
+        if(ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
             insertBefore(ctx.condition(), "(");
             insertAfter(ctx.condition(), ")");
         }
@@ -3004,7 +3004,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitElsif_part(Elsif_partContext ctx) {
         replace(ctx.ELSIF(), "ELSE IF");
-        if(ctx.LEFT_PAREN() == null && ctx.RIGHT_PAREN() == null) {
+        if(ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
             insertBefore(ctx.condition(), "(");
             insertAfter(ctx.condition(), ")");
         }
@@ -3346,8 +3346,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     public void convertLoopWhile(Loop_statementContext ctx) {
-        insertBefore(ctx.condition(), "(");
-        insertAfter(ctx.condition(), ") DO");
+        if(ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
+            insertBefore(ctx.condition(), "(");
+            insertAfter(ctx.condition(), ") DO");
+        }
+        else
+            insertAfter(ctx.condition(), " DO");
+
+
         deleteSPACESRight(ctx.condition());
         String indentation = getIndentation(ctx);
         insertAfter(ctx.LOOP(0), "\n" + indentation + "BEGIN");
