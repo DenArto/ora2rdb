@@ -129,7 +129,7 @@ public class Ora2rdb {
         return parsedBlock;
     }
 
-    public static void parsingArgs(String[] args) {
+    public static int parsingArgs(String[] args) {
         printStream = System.out;
         outputFile = null;
         if (args.length > 0) {
@@ -140,7 +140,7 @@ public class Ora2rdb {
                     inputStream = new FileInputStream(args[0]);
                 } catch (Exception e) {
                     System.err.println("Unable to open: " + args[0]);
-                    System.exit(0);
+                    return 1;
                 }
             }
 
@@ -153,7 +153,7 @@ public class Ora2rdb {
                         } else {
                             System.err.println("Missing argument for option: " + args[i]);
                             printUsage();
-                            System.exit(0);
+                            return 1;
                         }
                         break;
                     case "-r":
@@ -162,17 +162,19 @@ public class Ora2rdb {
                     default:
                         System.err.println("Unknown option: " + args[i]);
                         printUsage();
-                        System.exit(0);
+                        return 1;
                 }
             }
         } else {
             printUsage();
-            System.exit(0);
+            return 1;
         }
+        return 0;
     }
 
     public static void main(String[] args) throws Exception {
-        parsingArgs(args);
+        if(parsingArgs(args) == 1)
+            return;
 
         SqlCodeParser sqlCodeParser = new SqlCodeParser();
         List<String> splitBlocks = sqlCodeParser.splitMetadataIntoBlocks(inputStream);
