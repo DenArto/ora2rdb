@@ -1,17 +1,22 @@
 CREATE OR ALTER TRIGGER T_While
   AFTER INSERT
   ON students
+  SQL SECURITY DEFINER
 AS
   DECLARE done BOOLEAN = FALSE;
   DECLARE res  VARCHAR(50) = '';
 BEGIN
-  WHILE (:done) DO 
-    res = 'This line does not print.';  
+  WHILE (:done) DO
+  BEGIN
+    res = 'This line does not print.';
+  END
   WHILE (NOT :done) DO 
   BEGIN
     done = TRUE;
     res = 'Hello, world!';
   END   
-  WHILE (NOT :done) DO 
+  WHILE (NOT :done) DO
+  BEGIN
     res = 'This line does not print.';
- END /*T_While*/;
+  END
+ END;

@@ -1,15 +1,20 @@
 CREATE PROCEDURE P_While
+SQL SECURITY DEFINER
 AS
   DECLARE done BOOLEAN = FALSE;
   DECLARE res VARCHAR(50) = '';
 BEGIN
-  WHILE (:done) DO 
+  WHILE (:done) DO
+  BEGIN
     res = 'This line does not print.';
+  END
   WHILE (NOT :done) DO 
   BEGIN
     done = TRUE;
     res = 'Hello, world!';
   END   
-  WHILE (NOT :done) DO 
-    res = 'This line does not print.';   
+  WHILE (NOT :done) DO
+  BEGIN
+    res = 'This line does not print.';
+  END
 END;

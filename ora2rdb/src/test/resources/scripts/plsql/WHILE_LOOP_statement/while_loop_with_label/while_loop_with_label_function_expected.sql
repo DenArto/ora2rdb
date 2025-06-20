@@ -1,5 +1,6 @@
 CREATE FUNCTION F_While_Label
 RETURNS VARCHAR(32765)
+SQL SECURITY DEFINER
 AS
   DECLARE done BOOLEAN = FALSE;
   DECLARE res VARCHAR(50) = '';
@@ -9,6 +10,6 @@ BEGIN
   BEGIN
     done = TRUE;
     res = 'Hello, world!';
-  END /*loopA*/
+  END
   RETURN res;
 END;

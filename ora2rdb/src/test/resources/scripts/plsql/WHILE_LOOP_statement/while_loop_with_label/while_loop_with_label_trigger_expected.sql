@@ -1,6 +1,7 @@
 CREATE OR ALTER TRIGGER T_While_Label
   AFTER INSERT
-  ON students 
+  ON students
+  SQL SECURITY DEFINER
 AS
   DECLARE done BOOLEAN = FALSE;
   DECLARE res  VARCHAR(50) = '';
@@ -10,5 +11,5 @@ BEGIN
   BEGIN
     done = TRUE;
     res = 'Hello, world!';
-  END /*loopA*/
-END /*T_While_Label*/;
+  END
+END;

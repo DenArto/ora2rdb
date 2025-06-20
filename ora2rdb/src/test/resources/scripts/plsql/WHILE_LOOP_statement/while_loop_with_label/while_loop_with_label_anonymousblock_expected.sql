@@ -8,5 +8,5 @@ BEGIN
   BEGIN
     done = TRUE;
     res = 'Hello, world!';
-  END /*loopA*/
+  END
 END;
