@@ -4,7 +4,7 @@
   <parent>
     <groupId>ru.redsoft.ora2rdb</groupId>
     <artifactId>ora2rdb-root</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>ora2rdb</artifactId>
