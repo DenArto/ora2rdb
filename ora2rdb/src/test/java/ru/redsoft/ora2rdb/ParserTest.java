@@ -1,7 +1,7 @@
 package ru.redsoft.ora2rdb;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -182,9 +183,21 @@ class ParserTest {
         return fileNameArray.stream();
     }
 
+    public static boolean isSkippedTest(String argument) throws IOException {
+       try( BufferedReader reader = new BufferedReader(new FileReader(startDirPath + argument))){
+           String st = reader.readLine();
+           if(st != null)
+               return st.contains("--skip") ;
+       } catch (IOException e){
+           throw new IOException("directory not found: " + argument);
+       }
+       return false;
+    }
+
     @ParameterizedTest(name = "{arguments}")
     @MethodSource("argsProviderFactory")
     void testAllScripts(String argument) throws Exception {
+        Assumptions.assumeTrue(!isSkippedTest(argument), "This is a skipped test");
         test(argument);
     }
 
