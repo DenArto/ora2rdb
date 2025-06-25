@@ -172,6 +172,86 @@ public class Ora2rdb {
         return 0;
     }
 
+
+
+    public static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext){
+        return getFirstRuleContext(ctx, ruleContext, ctx);
+    }
+
+
+    private static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree StartContext) {
+
+        if (ctx instanceof ErrorNode)
+            return null;
+
+        if (ctx.getClass().equals(ruleContext))
+            return ctx;
+
+        if (ctx instanceof TerminalNode)
+            return null;
+
+        RuleNode r = (RuleNode) ctx;
+        int n = r.getChildCount();
+        for (int i = 0; i < n; i++) {
+            if(r.getChild(i).getClass().equals(StartContext.getClass()))
+                break;
+            ParseTree find = getFirstRuleContext(r.getChild(i), ruleContext, StartContext);
+            if (find != null)
+                return find;
+        }
+        return null;
+    }
+
+
+    public static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext){
+        return getLastRuleContext(ctx, ruleContext, ctx);
+    }
+
+    private static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree startContext) {
+        if (ctx instanceof ErrorNode) {
+            return null;
+        }
+
+        if (ctx.getClass().equals(ruleContext)) {
+            ParseTree lastFound = null;
+            if (!(ctx instanceof TerminalNode)) {
+                RuleNode r = (RuleNode) ctx;
+                int n = r.getChildCount();
+                for (int i = n - 1; i >= 0; i--) {
+                    if (r.getChild(i).getClass().equals(startContext.getClass())) {
+                        break;
+                    }
+                    ParseTree find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
+                    if (find != null) {
+                        lastFound = find;
+                        break;
+                    }
+                }
+            }
+            return lastFound != null ? lastFound : ctx;
+        }
+
+        if (ctx instanceof TerminalNode) {
+            return null;
+        }
+
+        RuleNode r = (RuleNode) ctx;
+        int n = r.getChildCount();
+        ParseTree lastFound = null;
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (r.getChild(i).getClass().equals(startContext.getClass())) {
+                break;
+            }
+            ParseTree find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
+            if (find != null) {
+                lastFound = find;
+                break;
+            }
+        }
+        return lastFound;
+    }
+
     public static void main(String[] args) throws Exception {
         if(parsingArgs(args) == 1)
             return;

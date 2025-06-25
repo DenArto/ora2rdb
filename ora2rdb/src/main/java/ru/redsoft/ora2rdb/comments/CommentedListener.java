@@ -234,7 +234,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
     @Override
     public void exitAnonymous_block(Anonymous_blockContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
@@ -247,7 +247,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitPackage_function_spec(Package_function_specContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
@@ -260,13 +260,14 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitPackage_procedure_spec(Package_procedure_specContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
     }
 
 
+    //The markup of PL SQL constructions begins
     @Override
     public void enterForall_statement(Forall_statementContext ctx) {
 
@@ -283,5 +284,42 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     }
 
+    @Override
+    public void enterLoop_statement(Loop_statementContext ctx) {
+
+
+        Pred_clause_seqContext predClauseSeq = (Pred_clause_seqContext) Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class);
+        if(predClauseSeq != null) {
+            if (predClauseSeq.WHILE() != null && predClauseSeq.WHEN() != null) {
+                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHILE().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHILE_STOP_CLAUSE);
+                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHEN().getSymbol(), predClauseSeq.logical_expression(1).stop, Ticket.FOR_WITH_WHEN_SKIP_CLAUSE);
+            }
+            else if (predClauseSeq.WHILE() != null)
+                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHILE().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHILE_STOP_CLAUSE);
+            else if (predClauseSeq.WHEN() != null)
+                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHEN().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHEN_SKIP_CLAUSE);
+        }
+
+        Values_indices_pairs_of_controlContext values_indices_pairs_of_control =
+                (Values_indices_pairs_of_controlContext) Ora2rdb.getFirstRuleContext(ctx, Values_indices_pairs_of_controlContext.class);
+        if (values_indices_pairs_of_control != null) {
+            if (values_indices_pairs_of_control.VALUES() != null)
+                currentBlock.peek().addUnconvertableBlock(ctx.start, values_indices_pairs_of_control.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+            else if (values_indices_pairs_of_control.INDICES() != null)
+                currentBlock.peek().addUnconvertableBlock(ctx.start, values_indices_pairs_of_control.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+            else if (values_indices_pairs_of_control.PAIRS() != null)
+                currentBlock.peek().addUnconvertableBlock(ctx.start, values_indices_pairs_of_control.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+            return;
+        }
+
+        Single_expression_controlContext single_expression_control =
+                (Single_expression_controlContext) Ora2rdb.getLastRuleContext(ctx, Single_expression_controlContext.class);
+        if (single_expression_control != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.start, single_expression_control.stop, Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+            return;
+        }
+
+
+    }
 
 }

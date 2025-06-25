@@ -261,8 +261,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     void commentBlock(int start_tok_idx, int stop_tok_idx) {
-        rewriter.insertBefore(start_tok_idx, "/*");
-        rewriter.insertAfter(stop_tok_idx, "*/");
+        rewriter.insertBefore(start_tok_idx, "--");
+//        rewriter.insertAfter(stop_tok_idx, "*/");
 
         List<Token> multi_line_comments = tokens.getTokens(start_tok_idx, stop_tok_idx, PlSqlLexer.MULTI_LINE_COMMENT);
 
