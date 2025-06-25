@@ -13,13 +13,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
     CommonTokenStream tokens;
     Stack<CommentedBlock> currentBlock = new Stack<>();
 
-    public CommentedListener( CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+    public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.tokens = tokens;
         this.rewriter = rewriter;
     }
 
-    void insertBefore(Token token, Object text){
-        if(token != null)
+    void insertBefore(Token token, Object text) {
+        if (token != null)
             rewriter.insertBefore(token, text);
     }
 
@@ -29,7 +29,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     void insertAfter(Token token, Object text) {
-        if(token != null)
+        if (token != null)
             rewriter.insertAfter(token, text);
     }
 
@@ -53,20 +53,19 @@ public class CommentedListener extends PlSqlParserBaseListener {
     private void commendUnconvertibleBlock(CommentedBlock commentedBlock) {
         for (UnconvertableBlock unconvertableBlock : commentedBlock.getUnconvertableBlockList()) {
             insertBefore(unconvertableBlock.getBlockStart(), " [-unconvertible RS-" + unconvertableBlock.getTicketNumber() + " ");
-            insertAfter(unconvertableBlock.getBlockStop(), " ]");
+            insertAfter(unconvertableBlock.getBlockStop(), "]");
         }
-        if ( commentedBlock.isConvertAllBlock()) {
+        if (commentedBlock.isConvertAllBlock()) {
             commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
                     ,commentedBlock.getParentContext().stop.getTokenIndex());
 
-        } else if( commentedBlock.getStartDeclareBlock() == null
+        } else if (commentedBlock.getStartDeclareBlock() == null
                 || commentedBlock.getStartBodyBlock() == null
                 || commentedBlock.getStopBodyBlock() == null) {
 
             commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
                     ,commentedBlock.getParentContext().stop.getTokenIndex());
-        }
-        else {
+        } else {
             insertAfter(commentedBlock.getStartDeclareBlock(), "\n/*");
             insertBefore(commentedBlock.getStartBodyBlock(), "*/\n");
 
@@ -85,18 +84,16 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_function_body(Create_function_bodyContext ctx) {
-        if(ctx.call_spec() != null)
+        if (ctx.call_spec() != null)
             currentBlock.push(new CommentedBlock(ctx));
-        else
-        if(ctx.AS() != null )
+        else if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
     }
-
     @Override
     public void exitCreate_function_body(Create_function_bodyContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
@@ -105,15 +102,14 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_procedure_body(Create_procedure_bodyContext ctx) {
-        if(ctx.AS() != null)
+        if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
     }
-
     @Override
     public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
@@ -121,13 +117,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_trigger(Create_triggerContext ctx) {
-        if(ctx.trigger_body().trigger_block() != null)
+        if (ctx.trigger_body().trigger_block() != null)
             currentBlock.push(
                     new CommentedBlock(
-                        ctx,
-                        ctx.trigger_body().trigger_block().DECLARE(),
-                        ctx.trigger_body().trigger_block().body().BEGIN(),
-                        ctx.trigger_body().trigger_block().body().END()
+                            ctx,
+                            ctx.trigger_body().trigger_block().DECLARE(),
+                            ctx.trigger_body().trigger_block().body().BEGIN(),
+                            ctx.trigger_body().trigger_block().body().END()
                     )
             );
         else
@@ -136,7 +132,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitCreate_trigger(Create_triggerContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
@@ -150,7 +146,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitCreate_package(Create_packageContext ctx) {
-        if(!currentBlock.peek().unconvertableBlocksIsEmpty())
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
             StorageInfo.commentedBlockList.add(currentBlock.pop());
         else
             currentBlock.pop();
@@ -158,7 +154,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
-        if(ctx.AS() != null)
+        if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.BEGIN(), ctx.END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.BEGIN(), ctx.END()));
@@ -188,7 +184,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterProcedure_body(Procedure_bodyContext ctx) {
-        if(ctx.AS() != null)
+        if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
@@ -218,7 +214,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterFunction_body(Function_bodyContext ctx) {
-        if(ctx.AS() != null)
+        if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
