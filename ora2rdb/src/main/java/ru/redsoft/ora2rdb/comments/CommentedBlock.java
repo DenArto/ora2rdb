@@ -56,15 +56,11 @@ public class CommentedBlock {
         return unconvertableBlockList;
     }
 
-    public void addUnconvertableBlock(UnconvertableBlock unconvertableBlockList) {
-        this.unconvertableBlockList.add(unconvertableBlockList);
+    public void addUnconvertableBlock(UnconvertableBlock unconvertableBlock) {
+        this.unconvertableBlockList.add(unconvertableBlock);
     }
 
-    public void addUnconvertableBlock(ParserRuleContext ctx, Integer ticketNumber) {
-        if(ctx != null) {
-            this.unconvertableBlockList.add(new UnconvertableBlock(ctx,ticketNumber));
-        }
-    }
+
 
     public void addUnconvertableBlock(ParserRuleContext ctx, Ticket ticket) {
         if(ctx != null) {
@@ -72,21 +68,11 @@ public class CommentedBlock {
         }
     }
 
-    public void addUnconvertableBlock(Token start, Token stop, Integer ticketNumber) {
-        if(start != null && stop != null) {
-            this.unconvertableBlockList.add(new UnconvertableBlock(start, stop, ticketNumber));
-        }
-    }
+
 
     public void addUnconvertableBlock(Token start, Token stop, Ticket ticket) {
         if(start != null && stop != null) {
             this.unconvertableBlockList.add(new UnconvertableBlock(start, stop, ticket.getTicketCode()));
-        }
-    }
-
-    public void addUnconvertableBlock(TerminalNode term, Integer ticketNumber) {
-        if(term != null) {
-            this.unconvertableBlockList.add(new UnconvertableBlock(term, ticketNumber));
         }
     }
 
