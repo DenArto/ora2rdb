@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import ru.redsoft.ora2rdb.*;
 import ru.redsoft.ora2rdb.PlSqlParser.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -12,6 +13,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
     TokenStreamRewriter rewriter;
     CommonTokenStream tokens;
     Stack<CommentedBlock> currentBlock = new Stack<>();
+
+    ArrayList<String> associative_array_types = new ArrayList<>();
+    ArrayList<String> nested_array_types = new ArrayList<>();
+    ArrayList<String> varray_types = new ArrayList<>();
 
     public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.tokens = tokens;
@@ -55,7 +60,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
             StringBuilder ticketNumbers = new StringBuilder();
             for (int ticket : unconvertableBlock.getTicketNumbersList())
                 ticketNumbers.append("RS-").append(ticket).append(" ");
-            insertBefore(unconvertableBlock.getBlockStart(), " [-unconvertible " + ticketNumbers + " ");
+            insertBefore(unconvertableBlock.getBlockStart(), "[-unconvertible " + ticketNumbers);
             insertAfter(unconvertableBlock.getBlockStop(), "]");
         }
         if (commentedBlock.isConvertAllBlock()) {
@@ -284,7 +289,49 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterType_declaration(Type_declarationContext ctx) {
+        Table_type_defContext tableType = (Table_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Table_type_defContext.class);
+        if(tableType != null)
+            associative_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
 
+
+        Nested_table_type_defContext nestedTableType = (Nested_table_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Nested_table_type_defContext.class);
+        if(nestedTableType != null) {
+            nested_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
+        }
+
+        Varray_type_defContext varrayType = (Varray_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Varray_type_defContext.class);
+        if(varrayType != null){
+            varray_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
+        }
+
+    }
+
+    @Override
+    public void enterVariable_declaration(Variable_declarationContext ctx) {
+
+        if(nested_array_types.contains(Ora2rdb.getRealName(ctx.type_spec().getText()))) {
+            currentBlock.peek().addUnconvertableBlock(ctx.start, ctx.type_spec().stop, Ticket.NESTED_TABLE_TYPE_VARIABLE);
+        }
+        else if(varray_types.contains(Ora2rdb.getRealName(ctx.type_spec().getText()))) {
+            currentBlock.peek().addUnconvertableBlock(ctx.start, ctx.type_spec().stop, Ticket.VARRAY_TYPE_VARIABLE);
+        }
+
+        if(ctx.default_value_part() != null){
+            General_element_partContext generalElementPart = (General_element_partContext) Ora2rdb.getFirstRuleContext(ctx.default_value_part(), General_element_partContext.class);
+            if(generalElementPart != null && generalElementPart.function_argument() != null) {
+                if(associative_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+                    currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.ASSOCIATIVE_ARRAY_CONSTRUCTOR);
+                }
+                else if(nested_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+                    currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.NESTED_TABLE_CONSTRUCTOR);
+                }
+                else if(varray_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+                    currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.VARRAY_CONSTRUCTOR);
+                }
+            }
+        }
 
     }
 
@@ -295,8 +342,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterLoop_statement(Loop_statementContext ctx) {
-
-
         Pred_clause_seqContext predClauseSeq = (Pred_clause_seqContext) Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class);
         if(predClauseSeq != null) {
             if (predClauseSeq.WHILE() != null && predClauseSeq.WHEN() != null) {

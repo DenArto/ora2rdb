@@ -1857,9 +1857,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
             String type = Ora2rdb.getRealName(getRuleText(ctx.type_spec()));
 
             if (current_plsql_block != null) {
-                if (current_plsql_block.array_types.containsKey(type)) {
-                    current_plsql_block.declareArray(name, type);
-                    commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+                if (current_plsql_block.associative_array_types.containsKey(type)) {
+                        current_plsql_block.declareAssociativeArray(name, type);
+                        commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+                    return;
+                }
+                if(current_plsql_block.nested_array_types.containsKey(type)){
+                    return;
+                }
+                if(current_plsql_block.varray_types.containsKey(type)){
                     return;
                 }
 
@@ -1888,15 +1894,24 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.IS());
             delete(ctx.record_type_def().RECORD());
         } else {
-            if(ctx.ref_cursor_type_def() == null)
-                commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
             if (ctx.table_type_def() != null) {
-                if (current_plsql_block != null && ctx.table_type_def().TABLE() != null
+                commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+                if (current_plsql_block != null && ctx.table_type_def() != null
                         && ctx.table_type_def().table_indexed_by_part() != null) {
-                    current_plsql_block.declareTypeOfArray(Ora2rdb.getRealName(getRuleText(ctx.identifier())),
+                    current_plsql_block.declareTypeOfAssociativeArray(Ora2rdb.getRealName(getRuleText(ctx.identifier())),
                             getRewriterText(ctx.table_type_def().type_spec()),
                             getRewriterText(ctx.table_type_def().table_indexed_by_part().type_spec()));
                 }
+            }
+            else if(ctx.nested_table_type_def() != null){
+                if(current_plsql_block != null)
+                    current_plsql_block.declareTypeOfNestedTableArray( Ora2rdb.getRealName(getRuleText(ctx.identifier())),
+                            getRewriterText(ctx.nested_table_type_def().type_spec()));
+            }
+            else if(ctx.varray_type_def() != null){
+                if(current_plsql_block != null)
+                    current_plsql_block.declareTypeOfVarray(Ora2rdb.getRealName(getRuleText(ctx.identifier())),
+                            getRewriterText(ctx.varray_type_def().type_spec()));
             }
         }
     }

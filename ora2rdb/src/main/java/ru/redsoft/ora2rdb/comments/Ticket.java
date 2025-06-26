@@ -14,7 +14,15 @@ public enum Ticket {
     , NESTED_TABLE_MULTISET_UNION       (239287)
 
 
-    ,FOR_WITH_SET_ITERATOR_CONTROLS     (239328)
+    , FOR_WITH_SET_ITERATOR_CONTROLS    (239328)
+
+    , NESTED_TABLE_TYPE_VARIABLE        (239346)
+    , VARRAY_TYPE_VARIABLE              (239343)
+
+    , ASSOCIATIVE_ARRAY_CONSTRUCTOR     (239362)
+    , NESTED_TABLE_CONSTRUCTOR          (239380)
+    , VARRAY_CONSTRUCTOR                (239379)
+
     ,test                               (1)
     ;
 

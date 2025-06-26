@@ -11,7 +11,9 @@ public class PLSQLBlock {
     String procedure_name;
     Stack<ReplaceRecordName> record_name_cursor_loop = new Stack<>();
     ArrayList<String> procedure_names_with_out_parameters = new ArrayList<>();
-    TreeMap<String, ArrayType> array_types = new TreeMap<String, ArrayType>();
+    TreeMap<String, ArrayType> associative_array_types = new TreeMap<String, ArrayType>();
+    TreeMap<String, ArrayType> nested_array_types = new TreeMap<>();
+    TreeMap<String, ArrayType> varray_types = new TreeMap<>();
     TreeMap<String, String> array_to_table = new TreeMap<String, String>();
     ArrayList<String> temporary_tables_ddl = new ArrayList<String>();
     ReferencingAttributes trigger_referencing_attributes = new ReferencingAttributes();
@@ -101,11 +103,11 @@ public class PLSQLBlock {
         return false;
     }
 
-    void declareTypeOfArray(String name, String type, String index_type) {
+    void declareTypeOfAssociativeArray(String name, String type, String index_type) {
         ArrayType new_arr_type = new ArrayType();
 
-        if (array_types.containsKey(type)) {
-            ArrayType arr_type = array_types.get(type);
+        if (associative_array_types.containsKey(type)) {
+            ArrayType arr_type = associative_array_types.get(type);
             new_arr_type.data_type = arr_type.data_type;
             new_arr_type.index_types.addAll(arr_type.index_types);
             new_arr_type.index_types.add(0, index_type);
@@ -113,13 +115,36 @@ public class PLSQLBlock {
             new_arr_type.data_type = type;
             new_arr_type.index_types.add(index_type);
         }
-        array_types.put(name, new_arr_type);
+        associative_array_types.put(name, new_arr_type);
     }
 
+    void declareTypeOfNestedTableArray(String name, String type) {
+        ArrayType new_arr_type = new ArrayType();
+        if (nested_array_types.containsKey(type)) {
+            ArrayType arr_type = nested_array_types.get(type);
+            new_arr_type.data_type = arr_type.data_type;
+            new_arr_type.index_types.addAll(arr_type.index_types);
+        } else {
+            new_arr_type.data_type = type;
+        }
+        nested_array_types.put(name, new_arr_type);
+    }
 
-    void declareArray(String name, String type) {
-        if (array_types.containsKey(type)) {
-            ArrayType arr_type = array_types.get(type);
+    void declareTypeOfVarray(String name, String type) {
+        ArrayType new_arr_type = new ArrayType();
+        if (varray_types.containsKey(type)) {
+            ArrayType arr_type = varray_types.get(type);
+            new_arr_type.data_type = arr_type.data_type;
+            new_arr_type.index_types.addAll(arr_type.index_types);
+        } else {
+            new_arr_type.data_type = type;
+        }
+        varray_types.put(name, new_arr_type);
+    }
+
+    void declareAssociativeArray(String name, String type) {
+        if (associative_array_types.containsKey(type)) {
+            ArrayType arr_type = associative_array_types.get(type);
             String new_name = name;
 
             for (int i = 1; ; i++) {
