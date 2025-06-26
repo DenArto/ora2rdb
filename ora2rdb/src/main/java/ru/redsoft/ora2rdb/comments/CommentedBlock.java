@@ -5,9 +5,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CommentedBlock {
 
@@ -17,9 +15,9 @@ public class CommentedBlock {
     private TerminalNode startBodyBlock;
     private TerminalNode stopBodyBlock;
 
-//    private List<UnconvertableBlock> unconvertableBlockList = new ArrayList<>();
-    private Map<Integer, UnconvertableBlock> unconvertableBlockMap = new HashMap<>();
+    private List<UnconvertableBlock> unconvertableBlockList = new ArrayList<>();
     private boolean convertAllBlock;
+
 
 
     public CommentedBlock(ParserRuleContext parentContext, boolean convertAllBlock){
@@ -42,7 +40,7 @@ public class CommentedBlock {
     }
 
     public boolean unconvertableBlocksIsEmpty(){
-        return unconvertableBlockMap.isEmpty();
+        return unconvertableBlockList.isEmpty();
     }
 
     public ParserRuleContext getParentContext() {
@@ -55,23 +53,18 @@ public class CommentedBlock {
 
 
     public List<UnconvertableBlock> getUnconvertableBlockList() {
-        return new ArrayList<>(unconvertableBlockMap.values());
+        return unconvertableBlockList;
     }
 
-//    public void addUnconvertableBlock(UnconvertableBlock unconvertableBlock) {
-//        this.unconvertableBlockList.add(unconvertableBlock);
-//    }
+    public void addUnconvertableBlock(UnconvertableBlock unconvertableBlock) {
+        this.unconvertableBlockList.add(unconvertableBlock);
+    }
+
+
 
     public void addUnconvertableBlock(ParserRuleContext ctx, Ticket ticket) {
         if(ctx != null) {
-            int startIndex = ctx.getStart().getTokenIndex();
-            if (!this.unconvertableBlockMap.containsKey(startIndex))
-                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(ctx, ticket.getTicketCode()));
-            else {
-                unconvertableBlockMap.get(startIndex).setBlockStop(ctx.getStop());
-                unconvertableBlockMap.get(startIndex).addTicketNumber(ticket);
-            }
-//            this.unconvertableBlockList.add(new UnconvertableBlock(ctx,ticket.getTicketCode()));
+            this.unconvertableBlockList.add(new UnconvertableBlock(ctx,ticket.getTicketCode()));
         }
     }
 
@@ -79,22 +72,13 @@ public class CommentedBlock {
 
     public void addUnconvertableBlock(Token start, Token stop, Ticket ticket) {
         if(start != null && stop != null) {
-            int startIndex = start.getTokenIndex();
-            if (!this.unconvertableBlockMap.containsKey(startIndex))
-                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(start, stop, ticket.getTicketCode()));
-            else {
-                unconvertableBlockMap.get(startIndex).setBlockStop(stop);
-                unconvertableBlockMap.get(startIndex).addTicketNumber(ticket);
-            }
-//            this.unconvertableBlockList.add(new UnconvertableBlock(start, stop, ticket.getTicketCode()));
+            this.unconvertableBlockList.add(new UnconvertableBlock(start, stop, ticket.getTicketCode()));
         }
     }
 
     public void addUnconvertableBlock(TerminalNode term, Ticket ticket) {
         if(term != null) {
-            int startIndex = term.getSymbol().getTokenIndex();
-            this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(term, ticket.getTicketCode()));
-//            this.unconvertableBlockList.add(new UnconvertableBlock(term, ticket.getTicketCode()));
+            this.unconvertableBlockList.add(new UnconvertableBlock(term, ticket.getTicketCode()));
         }
     }
 
