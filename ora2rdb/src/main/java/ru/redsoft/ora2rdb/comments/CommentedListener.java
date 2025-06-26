@@ -1,6 +1,8 @@
 package ru.redsoft.ora2rdb.comments;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStreamRewriter;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import ru.redsoft.ora2rdb.*;
 import ru.redsoft.ora2rdb.PlSqlParser.*;
@@ -12,7 +14,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
     TokenStreamRewriter rewriter;
     CommonTokenStream tokens;
     Stack<CommentedBlock> currentBlock = new Stack<>();
-
     public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.tokens = tokens;
         this.rewriter = rewriter;
@@ -94,6 +95,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
     }
+
     @Override
     public void exitCreate_function_body(Create_function_bodyContext ctx) {
         if (!currentBlock.peek().unconvertableBlocksIsEmpty())
@@ -309,38 +311,38 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHEN().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHEN_SKIP_CLAUSE);
         }
 
-        UnconvertableBlock unconvertableBlock = new UnconvertableBlock();
-        unconvertableBlock.setBlockStart(ctx.start);
-        Iteration_controlContext iterationControl = (Iteration_controlContext) Ora2rdb.getLastRuleContext(ctx, Iteration_controlContext.class);
-        if(iterationControl != null)
-            unconvertableBlock.setBlockStop(iterationControl.stop);
-        IteratorContext iterator = (IteratorContext) Ora2rdb.getFirstRuleContext(ctx, IteratorContext.class);
-        if(iterator != null && iterator.iteration_control().size()>=2)
-            unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
+//        UnconvertableBlock unconvertableBlock = new UnconvertableBlock();
+//        unconvertableBlock.setBlockStart(ctx.start);
+//        Iteration_controlContext iterationControl = (Iteration_controlContext) Ora2rdb.getLastRuleContext(ctx, Iteration_controlContext.class);
+//        if(iterationControl != null)
+//            unconvertableBlock.setBlockStop(iterationControl.stop);
+//        IteratorContext iterator = (IteratorContext) Ora2rdb.getFirstRuleContext(ctx, IteratorContext.class);
+//        if(iterator != null && iterator.iteration_control().size()>=2)
+//            unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
 
         Values_indices_pairs_of_controlContext values_indices_pairs_of_control =
                 (Values_indices_pairs_of_controlContext) Ora2rdb.getLastRuleContext(ctx, Values_indices_pairs_of_controlContext.class);
         if (values_indices_pairs_of_control != null) {
             if (values_indices_pairs_of_control.VALUES() != null) {
-                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+                currentBlock.peek().addUnconvertableBlock(ctx.start, values_indices_pairs_of_control.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+//                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
             }else if (values_indices_pairs_of_control.INDICES() != null) {
-                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+                currentBlock.peek().addUnconvertableBlock(ctx.start, values_indices_pairs_of_control.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+//                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
             }else if (values_indices_pairs_of_control.PAIRS() != null) {
-                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+                currentBlock.peek().addUnconvertableBlock(ctx.start, values_indices_pairs_of_control.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+                return;
+//                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
             }
         }
         Single_expression_controlContext single_expression_control =
                 (Single_expression_controlContext) Ora2rdb.getLastRuleContext(ctx, Single_expression_controlContext.class);
         if (single_expression_control != null) {
-            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+            currentBlock.peek().addUnconvertableBlock(ctx.start, single_expression_control.stop, Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+            return;
+//            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
         }
-        currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
-
-
-
-
-
-
+//        currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
     }
 
 }
