@@ -362,8 +362,14 @@ public class CommentedListener extends PlSqlParserBaseListener {
         if(iterationControl != null)
             unconvertableBlock.setBlockStop(iterationControl.stop);
         IteratorContext iterator = (IteratorContext) Ora2rdb.getFirstRuleContext(ctx, IteratorContext.class);
-        if(iterator != null && iterator.iteration_control().size()>=2)
-            unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
+        if(iterator != null) {
+            if (iterator.iteration_control().size() >= 2)
+                unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
+            for (Iteration_controlContext iterationControl_ctx : iterator.iteration_control()) {
+                if (iterationControl_ctx.stepped_control() != null && iterationControl_ctx.stepped_control().BY() != null)
+                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+            }
+        }
 
         Values_indices_pairs_of_controlContext values_indices_pairs_of_control =
                 (Values_indices_pairs_of_controlContext) Ora2rdb.getLastRuleContext(ctx, Values_indices_pairs_of_controlContext.class);

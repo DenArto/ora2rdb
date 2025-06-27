@@ -57,7 +57,8 @@ public class CommentedBlock {
     }
 
     public void addUnconvertableBlock(UnconvertableBlock unconvertableBlock) {
-        this.unconvertableBlockList.add(unconvertableBlock);
+        if(unconvertableBlock.blockIsReady())
+            this.unconvertableBlockList.add(unconvertableBlock);
     }
 
 
