@@ -1591,10 +1591,27 @@ public class RewritingListener extends PlSqlParserBaseListener {
     public void exitCreate_function_body(Create_function_bodyContext ctx) {
         replace(ctx.REPLACE(), "ALTER");
         delete(ctx.EDITIONABLE());
-        if (ctx.invoker_rights_clause().isEmpty())
+        delete(ctx.NONEDITIONABLE());
+        //convert invoker_rights_clause statement
+        if (ctx.invoker_rights_clause().isEmpty()) {
             replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
-        else
-            replace(ctx.IS(), "AS");
+            replace(ctx.AS(), "\n SQL SECURITY DEFINER \n AS");
+        } else {
+            if (ctx.invoker_rights_clause().get(0).CURRENT_USER() != null) {
+                replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
+                replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
+            }
+            if (ctx.invoker_rights_clause().get(0).DEFINER() != null){
+                replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
+                replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
+            }
+            delete(ctx.invoker_rights_clause().get(0));
+            deleteSPACESLeft(ctx.invoker_rights_clause().get(0));
+        }
+
+        //delete default collation clause
+        if (!ctx.default_collation_clause().isEmpty())
+            delete(ctx.default_collation_clause().get(0));
 
 //        replace(ctx.SEMICOLON(), "^");
         StoredFunction currentFunction = (StoredFunction) storedBlocksStack.peek();
@@ -2130,7 +2147,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
     public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
 
         replace(ctx.REPLACE(), "ALTER");
-
         //convert invoker_rights_clause statement
         if (ctx.invoker_rights_clause().isEmpty()) {
             replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
