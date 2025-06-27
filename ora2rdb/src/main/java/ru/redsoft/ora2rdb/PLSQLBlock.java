@@ -21,6 +21,7 @@ public class PLSQLBlock {
     List<String> trigger_ddl_event = new ArrayList<>();
     public TreeMap<String, Cursor> cursor_select_statement = new TreeMap<>();
     String current_cursor_name;
+    private TreeSet<String> used_temporary_table_names = new TreeSet<String>();
 
     public void setStatement(PlSqlParser.StatementContext ctx) {
         this.statement = ctx;
@@ -33,8 +34,6 @@ public class PLSQLBlock {
     public void clearStatement() {
         statement = null;
     }
-
-    private static TreeSet<String> used_temporary_table_names = new TreeSet<String>();
 
     class ArrayType {
         String data_type;
@@ -157,7 +156,7 @@ public class PLSQLBlock {
             used_temporary_table_names.add(new_name);
             array_to_table.put(name, new_name);
             StringBuilder key_fields = new StringBuilder();
-            StringBuilder table_ddl = new StringBuilder("CREATE GLOBAL TEMPORARY TABLE " + new_name + " (\n");
+            StringBuilder table_ddl = new StringBuilder("--" + name +" " + type + "\nCREATE GLOBAL TEMPORARY TABLE " + new_name + " (\n");
 
             for (int i = 0; i < arr_type.index_types.size(); i++) {
                 if (i != 0)
