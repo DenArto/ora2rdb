@@ -344,25 +344,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterLoop_statement(Loop_statementContext ctx) {
-        Pred_clause_seqContext predClauseSeq = (Pred_clause_seqContext) Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class);
-        if(predClauseSeq != null) {
-            if (predClauseSeq.WHILE() != null && predClauseSeq.WHEN() != null) {
-                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHILE().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHILE_STOP_CLAUSE);
-                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHEN().getSymbol(), predClauseSeq.logical_expression(1).stop, Ticket.FOR_WITH_WHEN_SKIP_CLAUSE);
-            }
-            else if (predClauseSeq.WHILE() != null)
-                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHILE().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHILE_STOP_CLAUSE);
-            else if (predClauseSeq.WHEN() != null)
-                currentBlock.peek().addUnconvertableBlock(predClauseSeq.WHEN().getSymbol(), predClauseSeq.logical_expression(0).stop, Ticket.FOR_WITH_WHEN_SKIP_CLAUSE);
-        }
+
 
         UnconvertableBlock unconvertableBlock = new UnconvertableBlock();
         unconvertableBlock.setBlockStart(ctx.FOR().getSymbol());
-        Iteration_controlContext iterationControl = (Iteration_controlContext) Ora2rdb.getLastRuleContext(ctx, Iteration_controlContext.class);
-        if(iterationControl != null)
-            unconvertableBlock.setBlockStop(iterationControl.stop);
         IteratorContext iterator = (IteratorContext) Ora2rdb.getFirstRuleContext(ctx, IteratorContext.class);
         if(iterator != null) {
+            unconvertableBlock.setBlockStop(iterator.stop);
             if (iterator.iteration_control().size() >= 2)
                 unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
             for (Iteration_controlContext iterationControl_ctx : iterator.iteration_control()) {
@@ -376,16 +364,30 @@ public class CommentedListener extends PlSqlParserBaseListener {
         if (values_indices_pairs_of_control != null) {
             if (values_indices_pairs_of_control.VALUES() != null) {
                 unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+                if(Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
+                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
             }else if (values_indices_pairs_of_control.INDICES() != null) {
                 unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+                if(Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
+                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
             }else if (values_indices_pairs_of_control.PAIRS() != null) {
                 unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+                if(Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
+                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
             }
         }
         Single_expression_controlContext single_expression_control =
                 (Single_expression_controlContext) Ora2rdb.getLastRuleContext(ctx, Single_expression_controlContext.class);
         if (single_expression_control != null) {
             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+        }
+
+        Stepped_controlContext steppedControl = (Stepped_controlContext) Ora2rdb.getFirstRuleContext(ctx, Stepped_controlContext.class);
+        if(steppedControl != null){
+            if(Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null){
+                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+            }
+
         }
         currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
 
