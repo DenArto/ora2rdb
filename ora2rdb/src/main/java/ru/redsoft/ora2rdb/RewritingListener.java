@@ -2757,12 +2757,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         delete(ctx.DECLARE());
         deleteSPACESLeft(ctx.DECLARE());
         if (ctx.body() != null) {
-            String indentation = getIndentation(ctx);
-            deleteSPACESLeft(ctx.body().BEGIN());
-            replace(ctx.body().BEGIN(), "\n " + indentation + "BEGIN");
-            deleteSPACESLeft(ctx.body().END());
-            replace(ctx.body().END(), "\n " + indentation + "END");
-
             StringBuilder declare_loop_rowtype_names = new StringBuilder();
             if (!loop_rec_name_and_cursor_name.isEmpty()) {
                 for (String rec : loop_rec_name_and_cursor_name.keySet()) {

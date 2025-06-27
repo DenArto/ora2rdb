@@ -357,7 +357,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
 
         UnconvertableBlock unconvertableBlock = new UnconvertableBlock();
-        unconvertableBlock.setBlockStart(ctx.start);
+        unconvertableBlock.setBlockStart(ctx.FOR().getSymbol());
         Iteration_controlContext iterationControl = (Iteration_controlContext) Ora2rdb.getLastRuleContext(ctx, Iteration_controlContext.class);
         if(iterationControl != null)
             unconvertableBlock.setBlockStop(iterationControl.stop);
