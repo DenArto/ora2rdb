@@ -1678,7 +1678,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
         if (!Ora2rdb.reorder)
-            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
+            insertBefore(ctx,  temp_tables_ddl + "\n");
+//            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
         else
             create_temporary_tables.add(temp_tables_ddl.toString());
 
@@ -2082,7 +2083,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
         if (!Ora2rdb.reorder)
-            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
+            insertBefore(ctx,  temp_tables_ddl + "\n");
+//            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
         else
             create_temporary_tables.add(temp_tables_ddl.toString());
         popScope();
@@ -2233,6 +2235,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
         for (String table_ddl : current_plsql_block.temporary_tables_ddl)
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
+        System.out.println(getRewriterText(ctx));
+        System.out.println(rewriter.getText());
         if (!Ora2rdb.reorder)
             insertBefore(ctx,  temp_tables_ddl + "\n");
 //        replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
@@ -2454,7 +2458,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 temp_tables_ddl.append(table_ddl).append("\n\n");
 
             if (!Ora2rdb.reorder)
-                replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx) + "\n");
+                insertBefore(ctx,  temp_tables_ddl + "\n");
+//                replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx) + "\n");
             else
                 create_temporary_tables.add(temp_tables_ddl.toString());
         } else {
@@ -2594,7 +2599,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         if (!Ora2rdb.reorder)
-            replace(ctx, temp_tables_ddl + getRewriterText(ctx));
+            insertBefore(ctx,  temp_tables_ddl + "\n");
+//            replace(ctx, temp_tables_ddl + getRewriterText(ctx));
         else
             create_temporary_tables.add(temp_tables_ddl.toString());
 
