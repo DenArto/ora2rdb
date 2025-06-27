@@ -2122,16 +2122,35 @@ public class RewritingListener extends PlSqlParserBaseListener {
     public void enterCreate_procedure_body(Create_procedure_bodyContext ctx) {
         pushScope();
         storedBlocksStack.push(findStorageProcedure(ctx));
-
     }
 
     @Override
     public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
+
         replace(ctx.REPLACE(), "ALTER");
-        if (ctx.invoker_rights_clause() == null)
+
+        //convert invoker_rights_clause statement
+        if (ctx.invoker_rights_clause().isEmpty()) {
             replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
-        else
-            replace(ctx.IS(), "AS");
+            replace(ctx.AS(), "\n SQL SECURITY DEFINER \n AS");
+        } else {
+            if (ctx.invoker_rights_clause().get(0).CURRENT_USER() != null) {
+                replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
+                replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
+            }
+            if (ctx.invoker_rights_clause().get(0).DEFINER() != null){
+                replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
+                replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
+            }
+            delete(ctx.invoker_rights_clause().get(0));
+            deleteSPACESLeft(ctx.invoker_rights_clause().get(0));
+        }
+
+        //delete sharing clause
+        if (ctx.ddl_sharing_clause() != null){
+            delete(ctx.ddl_sharing_clause());
+            deleteSPACESLeft(ctx.ddl_sharing_clause());
+        }
 
         String getWhiteSpace = getIndentation(ctx) + "  ";
         StoredProcedure currentProcedure = (StoredProcedure) storedBlocksStack.peek();
@@ -2215,11 +2234,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
         if (!Ora2rdb.reorder)
-            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
-        else
+            insertBefore(ctx,  temp_tables_ddl + "\n");
+//        replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
+         else
             create_temporary_tables.add(temp_tables_ddl.toString());
 
         popScope();
+
         create_procedures.add(ctx);
         storedBlocksStack.pop();
     }
@@ -2476,9 +2497,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         // delete SHARING clause
-        if (ctx.trigger_sharing_clause() != null) {
-            delete(ctx.trigger_sharing_clause());
-            deleteSPACESLeft(ctx.trigger_sharing_clause());
+        if (ctx.ddl_sharing_clause() != null) {
+            delete(ctx.ddl_sharing_clause());
+            deleteSPACESLeft(ctx.ddl_sharing_clause());
         }
 
         if (ctx.instead_of_dml_trigger() != null) {

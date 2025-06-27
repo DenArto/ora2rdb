@@ -49,8 +49,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 rewriter.delete(tok);
     }
 
-
-    private void commendUnconvertibleBlock(CommentedBlock commentedBlock) {
+    private void commentUnconvertibleBlock(CommentedBlock commentedBlock) {
         for (UnconvertableBlock unconvertableBlock : commentedBlock.getUnconvertableBlockList()) {
             StringBuilder ticketNumbers = new StringBuilder();
             for (int ticket : unconvertableBlock.getTicketNumbersList())
@@ -81,7 +80,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void exitSql_script(Sql_scriptContext ctx) {
         for (CommentedBlock commentedBlock : StorageInfo.commentedBlockList) {
-            commendUnconvertibleBlock(commentedBlock);
+            commentUnconvertibleBlock(commentedBlock);
         }
     }
 
@@ -102,14 +101,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.pop();
     }
 
-
     @Override
     public void enterCreate_procedure_body(Create_procedure_bodyContext ctx) {
         if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+        if (!ctx.accessible_by_clause().isEmpty()) {
+            currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(0), Ticket.ACCESSIBLE_BY_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
     }
+
     @Override
     public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
         if (!currentBlock.peek().unconvertableBlocksIsEmpty())
