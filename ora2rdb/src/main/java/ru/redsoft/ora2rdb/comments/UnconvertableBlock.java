@@ -13,6 +13,10 @@ public class UnconvertableBlock {
     private Token stop;
     private HashSet<Integer> ticketNumbers = new HashSet<Integer>();
 
+    public boolean blockIsReady(){
+        return start != null && stop!= null && !ticketNumbers.isEmpty();
+    }
+
     public UnconvertableBlock(){}
 
     public UnconvertableBlock(ParserRuleContext ctx, Integer ticketNumber) {
