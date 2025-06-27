@@ -3255,6 +3255,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     private void convertLoopForInRange(Loop_statementContext ctx) {
+
+        Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
+        if(cursorLoopParam != null){
+            if(Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+                    || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
+                return;
+        }
+
         boolean isCollection = Ora2rdb.getRealName(getRuleText(ctx.cursor_loop_param().lower_bound())).contains(".");
         if (isCollection) {
             convertForInCollection(ctx);
@@ -3293,6 +3301,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     private void convertLoopForInRangeReverse(Loop_statementContext ctx) {
+
+        Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
+        if(cursorLoopParam != null){
+            if(Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+                    || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
+                return;
+        }
+
         String index_name = ctx.cursor_loop_param().index_name().getText();
 
         if (!loop_index_names.contains(index_name))

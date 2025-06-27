@@ -342,9 +342,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     }
 
+    private Stack<String> labelLoopArea = new Stack<>();
     @Override
     public void enterLoop_statement(Loop_statementContext ctx) {
 
+        if(ctx.label_declaration()!= null){
+            labelLoopArea.push(Ora2rdb.getRealName(ctx.label_declaration().label_name().getText()));
+        }
 
         UnconvertableBlock unconvertableBlock = new UnconvertableBlock();
         unconvertableBlock.setBlockStart(ctx.FOR().getSymbol());
@@ -383,19 +387,42 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
 
         Stepped_controlContext steppedControl = (Stepped_controlContext) Ora2rdb.getFirstRuleContext(ctx, Stepped_controlContext.class);
-        if(steppedControl != null){
-            if(Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null){
+        if(steppedControl != null) {
+            if (Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null
+                    || Ora2rdb.getFirstRuleContext(steppedControl.lower_bound(), General_element_partContext.class) != null
+                    || Ora2rdb.getFirstRuleContext(steppedControl.upper_bound(), General_element_partContext.class) != null) {
                 unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
             }
 
         }
+
+        Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
+        if(cursorLoopParam != null){
+            unconvertableBlock.setBlockStop(cursorLoopParam.stop);
+            if(Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+            || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
+                unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+        }
+
         currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
 
+    }
 
+    @Override
+    public void exitLoop_statement(Loop_statementContext ctx){
+        if(ctx.label_declaration()!= null) {
+            labelLoopArea.pop();
+        }
+    }
 
-
-
-
+    @Override
+    public void enterGeneral_element_part(General_element_partContext ctx) {
+        if(labelLoopArea.empty())
+            return;
+        for( Id_expressionContext id : ctx.id_expression()){
+            if(Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.test);
+        }
     }
 
 }
