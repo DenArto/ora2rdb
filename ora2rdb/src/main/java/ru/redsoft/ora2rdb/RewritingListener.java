@@ -2235,8 +2235,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         for (String table_ddl : current_plsql_block.temporary_tables_ddl)
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
-        System.out.println(getRewriterText(ctx));
-        System.out.println(rewriter.getText());
         if (!Ora2rdb.reorder)
             insertBefore(ctx,  temp_tables_ddl + "\n");
 //        replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
