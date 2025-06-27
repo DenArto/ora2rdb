@@ -2422,7 +2422,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 for (String index_name : loop_index_names) {
                     declare_loop_index_names.append("\n  DECLARE VARIABLE ").append(index_name).append(" INTEGER;\n");
                 }
-                insertBefore(ctx.body().seq_of_statements(), declare_loop_index_names.toString());
+                insertBefore(ctx.seq_of_declare_specs(), declare_loop_index_names.toString());
             }
             loop_index_names.clear();
 
