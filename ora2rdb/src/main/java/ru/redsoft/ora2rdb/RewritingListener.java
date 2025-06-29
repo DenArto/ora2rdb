@@ -2023,8 +2023,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (ctx.REPLACE() != null) {
             replace(ctx.REPLACE(), "ALTER");
         }
-        if (ctx.EDITIONABLE() != null) {
-            delete(ctx.EDITIONABLE());
+        delete(ctx.EDITIONABLE());
+        delete(ctx.NONEDITIONABLE());
+        //delete sharing clause
+        if (ctx.sharing_clause() != null) {
+            delete(ctx.sharing_clause());
+        }
+        if (ctx.default_collation_clause() != null) {
+            delete(ctx.default_collation_clause());
         }
         if (ctx.schema_object_name() != null) {
             delete(ctx.schema_object_name());
@@ -2044,8 +2050,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (!ctx.package_name().isEmpty()) {
             if (ctx.package_name().size() > 1) {
                 //if (ctx.package_name(ctx.package_name().size() - 1) != null) {
-                replace(ctx.package_name(ctx.package_name().size() - 1),
-                        "/*" + Ora2rdb.getRealName(ctx.package_name(ctx.package_name().size() - 1).getText()) + "*/");
+//                replace(ctx.package_name(ctx.package_name().size() - 1),
+//                        "/*" + Ora2rdb.getRealName(ctx.package_name(ctx.package_name().size() - 1).getText()) + "*/");
+                delete(ctx.package_name(ctx.package_name().size() - 1));
             }
         }
 
@@ -2073,9 +2080,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 replace(ctx.CREATE(), "RECREATE");
             }
         }
-        if (ctx.EDITIONABLE() != null) {
-            delete(ctx.EDITIONABLE());
-        }
+        delete(ctx.EDITIONABLE());
+        delete(ctx.NONEDITIONABLE());
         if (ctx.schema_object_name() != null) {
             delete(ctx.schema_object_name());
             delete(ctx.PERIOD());
@@ -2089,9 +2095,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
         if (!ctx.package_name().isEmpty()) {
             if (ctx.package_name().size() > 1) {
-                replace(ctx.package_name(ctx.package_name().size() - 1),
-                        "/*" + Ora2rdb.getRealName(ctx.package_name(ctx.package_name().size() - 1).getText()) + "*/");
-//                delete(ctx.package_name(ctx.package_name().size() - 1));
+//                replace(ctx.package_name(ctx.package_name().size() - 1),
+//                        "/*" + Ora2rdb.getRealName(ctx.package_name(ctx.package_name().size() - 1).getText()) + "*/");
+                delete(ctx.package_name(ctx.package_name().size() - 1));
             }
         }
 
