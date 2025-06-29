@@ -4,4 +4,4 @@ AS BEGIN
 
     FUNCTION get_salary(emp_id NUMERIC(34, 8)) RETURNS NUMERIC(34, 8);
 
-END /*PACKAGE_NAME*/;
+END;

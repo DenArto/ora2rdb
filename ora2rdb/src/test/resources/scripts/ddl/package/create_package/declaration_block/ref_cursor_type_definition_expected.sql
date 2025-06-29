@@ -6,4 +6,4 @@ AS BEGIN
 
     [-unconvertible TYPE t_cursor_return IS REF CURSOR RETURN employees%ROWTYPE];
 */
-END /*PACKAGE_NAME*/;
+END;
