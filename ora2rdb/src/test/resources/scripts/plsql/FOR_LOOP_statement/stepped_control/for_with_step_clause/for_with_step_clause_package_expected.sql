@@ -1,43 +1,46 @@
-CREATE OR ALTER PACKAGE Pack_For_With_Step
-AS BEGIN
-   FUNCTION PF_For_With_Step
-   RETURNS INTEGER;
-   PROCEDURE PP_For_With_Step; 
-END; 
 
-RECREATE PACKAGE BODY Pack_For_With_Step
-AS BEGIN 
+
+
+CREATE OR ALTER PACKAGE Pack_For_With_Step
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_For_With_Step
+   RETURNS INTEGER;  
+   PROCEDURE PP_For_With_Step;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_For_With_Step
+AS BEGIN  
    FUNCTION PF_For_With_Step
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 5;
-     bound_i_FOR1 = 15;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 + 5;
-     END
-     i_FOR1 = bound_i_FOR1;
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238758 FOR i IN 5..15 BY 5] 
+     LOOP
+       summa = :summa + i;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_For_With_Step
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 5;
-     bound_i_FOR1 = 15;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 + 5;
-     END
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238758 FOR i IN 5..15 BY 5] 
+     LOOP
+       summa = :summa + i;
+     END LOOP
+   */
+END   
+  END; 
