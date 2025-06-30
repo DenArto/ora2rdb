@@ -1,12 +1,15 @@
+
 EXECUTE BLOCK 
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
+ AS 
+
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN
-    i_FOR1 = 1;
-    summa = :summa + i_FOR1;
-    LEAVE; 
-  END
-END; 
+/*
+  [-unconvertible RS-238757 FOR i IMMUTABLE IN 1] LOOP
+      summa = :summa + i;   
+  END LOOP
+*/
+END;
+ 

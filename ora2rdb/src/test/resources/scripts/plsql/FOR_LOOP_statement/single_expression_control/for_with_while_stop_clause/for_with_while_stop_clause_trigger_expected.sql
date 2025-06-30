@@ -1,20 +1,17 @@
 CREATE OR ALTER TRIGGER T_For_With_While
   AFTER INSERT 
   ON students
+SQL SECURITY DEFINER
 AS
-  DECLARE summa INTEGER = 0;
-  DECLARE power_FOR1 INTEGER;
+
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN 
-    power_FOR1 = 2;
-    summa = :summa + :power_FOR1;
-    LEAVE;
-  END
-  WHILE (1=1) DO
-  BEGIN 
-    power_FOR1 = power_FOR1*2;
-    IF (NOT (power_FOR1 <= 64)) THEN LEAVE;
-    summa = :summa + :power_FOR1;
-  END
+/*
+  [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHILE power <= 64]
+  LOOP
+      summa = :summa + power;
+  END LOOP
+*/
 END;

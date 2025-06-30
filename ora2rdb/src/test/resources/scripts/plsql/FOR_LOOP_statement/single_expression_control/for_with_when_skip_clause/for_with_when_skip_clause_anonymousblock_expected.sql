@@ -1,19 +1,19 @@
+
 EXECUTE BLOCK 
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE power_FOR1 INTEGER;
+ AS 
+
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN 
-    power_FOR1 = 2;
-    summa = :summa + :power_FOR1;
-    LEAVE;
-  END
-  WHILE (1=1) DO
-  BEGIN 
-    power_FOR1 = power_FOR1*2;
-    IF (NOT (MOD(power_FOR1, 32) = 0)) THEN CONTINUE;
-    if (power_FOR1 > 64) then LEAVE; 
-    summa = :summa + :power_FOR1;
-  END
-END; 
+/*
+   [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHEN MOD(power, 32)= 0] 
+   LOOP
+      if (power > 64) then
+      BEGIN ;
+      END
+      summa = :summa + power;
+   END LOOP
+*/
+END;
+ 

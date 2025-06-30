@@ -1,17 +1,19 @@
 CREATE OR ALTER TRIGGER T_Same_Name_Var
   AFTER INSERT 
   ON students
+SQL SECURITY DEFINER
 AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i INTEGER;
-  DECLARE i_FOR1 INTEGER;
+
+/*
+   DECLARE summa INTEGER = 0;
+   DECLARE i INTEGER;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN
-    i_FOR1 = 1;
-    summa = :summa + i_FOR1;
-    LEAVE;
-  END
+/*
+  [-unconvertible RS-238757 FOR :i IN 1] LOOP
+      summa = :summa + :i;
+  END LOOP
   i = 10;
-  summa = :summa + i;
+  summa = :summa + :i;
+*/
 END;

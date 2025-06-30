@@ -1,15 +1,21 @@
+
 CREATE FUNCTION F_For_With_Mutable_Index
 RETURNS INTEGER
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN
-    i_FOR1 = 1;
-    i_FOR1 = i_FOR1 +1;
-    summa = :summa + i_FOR1;
-    if (summa > 10) then LEAVE; 
-  END
-  RETURN summa;  -- 12
+/*
+  [-unconvertible RS-238757 FOR i MUTABLE IN REPEAT 1] LOOP
+      i = i+1;
+      summa = :summa + i;   
+      if (:summa > 10) then
+      BEGIN ;
+      END
+  END LOOP
+  RETURN summa;  
+*/
 END; 
