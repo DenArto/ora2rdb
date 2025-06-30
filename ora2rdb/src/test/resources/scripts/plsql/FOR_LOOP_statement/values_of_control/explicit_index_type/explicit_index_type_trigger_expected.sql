@@ -1,26 +1,26 @@
-CREATE GLOBAL TEMPORARY TABLE VEC_T_Explicit_Index (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_T_Explicit_Index PRIMARY KEY (K)
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC PRIMARY KEY (K)
 );
 
 CREATE OR ALTER TRIGGER T_Explicit_Index
   AFTER INSERT 
   ON students
+SQL SECURITY DEFINER
 AS
-  /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-  /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-  DECLARE summa NUMERIC(5,1) = 0;
-  DECLARE n_FOR1 NUMERIC(5,1);
+
+/*
+  --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+  --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+   DECLARE summa NUMERIC(5,1)  = 0;
+*/
 BEGIN
-  UPDATE OR INSERT INTO VEC_T_Explicit_Index VALUES (3, 10);
-  UPDATE OR INSERT INTO VEC_T_Explicit_Index VALUES (1, 11);
-  UPDATE OR INSERT INTO VEC_T_Explicit_Index VALUES (100, 34);
-  FOR SELECT VAL FROM VEC_T_Explicit_Index
-  ORDER BY K ASC
-  INTO :n_FOR1
-  DO
-  BEGIN
-    summa = summa + n_FOR1; -- 55
-  END
+/*
+  [-unconvertible RS-238760 FOR n NUMERIC(5,1) IN VALUES OF vec]
+  LOOP
+      summa = :summa + n; 
+  END LOOP
+*/
 END;
