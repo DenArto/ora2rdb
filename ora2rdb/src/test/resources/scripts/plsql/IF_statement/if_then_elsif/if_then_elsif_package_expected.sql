@@ -7,7 +7,7 @@ BEGIN
 
    PROCEDURE PP_Grade_meaning3(grade CHAR);
 
-END /*PACK_GRADE_MEANING3*/;
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning3
 AS 
@@ -86,5 +86,5 @@ BEGIN
                  res = 'Poor';
                  pass = FALSE;
                END
-   END  
-END /*PACK_GRADE_MEANING3*/;
+   END
+END;

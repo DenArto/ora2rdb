@@ -4,7 +4,7 @@ BEGIN
    FUNCTION PF_Grade_meaning1 (degree INTEGER)
    RETURNS BOOLEAN ;
    PROCEDURE PP_Grade_meaning1;
-END /*Pack_Grade_meaning1*/;
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning1
 AS
@@ -32,4 +32,4 @@ BEGIN
             IF( (:I > 5) ) THEN LEAVE;
         END
     END
-END /*Pack_Grade_meaning1*/;
+END;

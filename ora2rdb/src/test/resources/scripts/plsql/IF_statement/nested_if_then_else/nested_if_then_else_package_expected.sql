@@ -7,7 +7,7 @@ BEGIN
 
    PROCEDURE PP_Grade_meaning6 (grade CHAR);
 
-END /*PACK_GRADE_MEANING6*/;
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning6
 AS 
@@ -94,5 +94,5 @@ BEGIN
                  res = 'Error';
                  pass = FALSE;
                END
-   END  
-END /*PACK_GRADE_MEANING6*/;
+   END
+END;
