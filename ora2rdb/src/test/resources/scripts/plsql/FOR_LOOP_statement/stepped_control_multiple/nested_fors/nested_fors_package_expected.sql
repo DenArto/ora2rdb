@@ -1,124 +1,48 @@
-CREATE OR ALTER PACKAGE Pack_Nested_Fors
-AS BEGIN
-   FUNCTION PF_Nested_Fors
-   RETURNS INTEGER;
-   PROCEDURE PP_Nested_Fors; 
-END; 
 
-/* Тело пакета */
-RECREATE PACKAGE BODY Pack_Nested_Fors
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Nested_Fors
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Nested_Fors
+   RETURNS INTEGER;  
+   PROCEDURE PP_Nested_Fors;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Nested_Fors
+AS BEGIN  
    FUNCTION PF_Nested_Fors
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-     DECLARE n_FOR2 INTEGER;
-     DECLARE bound_n_FOR2 INTEGER;  
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       n_FOR2 = 1;
-       bound_n_FOR2 = 3;
-       WHILE (n_FOR2 <= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 + 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       n_FOR2 = 3;
-       bound_n_FOR2 = 1;
-       WHILE (n_FOR2 >= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 - 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-       n_FOR2 = 1;
-       bound_n_FOR2 = 3;
-       WHILE (n_FOR2 <= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 + 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       n_FOR2 = 3;
-       bound_n_FOR2 = 1;
-       WHILE (n_FOR2 >= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 - 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-239328 FOR i IN 1..3, REVERSE 1..3] LOOP
+       [-unconvertible RS-239328 FOR n IN 1..3, REVERSE 1..3] LOOP
+         summa = :summa + i*n; 
+       END LOOP
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Nested_Fors
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-     DECLARE n_FOR2 INTEGER;
-     DECLARE bound_n_FOR2 INTEGER;  
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       n_FOR2 = 1;
-       bound_n_FOR2 = 3;
-       WHILE (n_FOR2 <= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 + 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       n_FOR2 = 3;
-       bound_n_FOR2 = 1;
-       WHILE (n_FOR2 >= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 - 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-       n_FOR2 = 1;
-       bound_n_FOR2 = 3;
-       WHILE (n_FOR2 <= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 + 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       n_FOR2 = 3;
-       bound_n_FOR2 = 1;
-       WHILE (n_FOR2 >= bound_n_FOR2) DO
-       BEGIN 
-         summa = :summa + :i_FOR1*:n_FOR2;
-         n_FOR2 = n_FOR2 - 1;
-       END    
-       n_FOR2 = bound_n_FOR2;
-       i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-239328 FOR i IN 1..3, REVERSE 1..3] LOOP
+       [-unconvertible RS-239328 FOR n IN 1..3, REVERSE 1..3] LOOP
+         summa = :summa + i*n; 
+       END LOOP
+     END LOOP
+   */
+END   
+  END; 

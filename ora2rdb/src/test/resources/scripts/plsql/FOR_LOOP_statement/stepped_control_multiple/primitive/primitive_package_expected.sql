@@ -1,83 +1,50 @@
-CREATE OR ALTER PACKAGE Pack_Primitive
-AS BEGIN
-   FUNCTION PF_Primitive 
-   RETURNS INTEGER;
-   PROCEDURE PP_Primitive; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Primitive
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Primitive
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Primitive 
+   RETURNS INTEGER;  
+   PROCEDURE PP_Primitive;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Primitive
+AS BEGIN  
    FUNCTION PF_Primitive
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE done CHAR(1) = 'F';
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        done = 'T';
-        i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        done = 'T';
-        i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 10;
-     bound_i_FOR1 = 12;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        done = 'T';
-        i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE done CHAR(1) = 'F';
+   */
+BEGIN
+/*
+     [-unconvertible RS-239328 FOR i IN 1..3, REVERSE 1..3, 10..12]  
+     LOOP
+      summa = :summa + i;
+      done = 'T';
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Primitive
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE done CHAR(1) = 'F';
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        done = 'T';
-        i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        done = 'T';
-        i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 10;
-     bound_i_FOR1 = 12;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        done = 'T';
-        i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE done CHAR(1) = 'F';
+   */
+BEGIN
+/*
+     [-unconvertible RS-239328 FOR i IN 1..3, REVERSE 1..3, 10..12] 
+     LOOP
+      summa = :summa + i;
+      done = 'T';
+     END LOOP
+   */
+END   
+  END; 
