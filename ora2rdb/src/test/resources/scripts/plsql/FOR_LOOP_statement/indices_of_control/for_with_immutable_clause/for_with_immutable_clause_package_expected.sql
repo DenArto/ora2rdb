@@ -1,61 +1,62 @@
-CREATE GLOBAL TEMPORARY TABLE VEC_Pack_For_With_Immut_Index_PF_For_With_Immut_Index (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_Pack_For_With_Immut_Index_PF_For_With_Immut_Index PRIMARY KEY (K)
+
+
+
+CREATE OR ALTER PACKAGE Pack_From_Assoc_Array
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_From_Assoc_Array
+   RETURNS INTEGER;  
+   PROCEDURE PP_From_Assoc_Array;   
+  END;
+
+
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC PRIMARY KEY (K)
 );
 
-CREATE GLOBAL TEMPORARY TABLE VEC_Pack_For_With_Immut_Index_PP_For_With_Immut_Index (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_Pack_For_With_Immut_Index_PP_For_With_Immut_Index PRIMARY KEY (K)
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC1 (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC1 PRIMARY KEY (K)
 );
 
-CREATE OR ALTER PACKAGE Pack_For_With_Immut_Index
-AS BEGIN
-   FUNCTION PF_For_With_Immut_Index
-   RETURNS INTEGER;
-   PROCEDURE PP_For_With_Immut_Index; 
-END; 
 
-RECREATE PACKAGE BODY Pack_For_With_Immut_Index
-AS BEGIN
-   FUNCTION PF_For_With_Immut_Index
+RECREATE   PACKAGE BODY Pack_From_Assoc_Array
+AS BEGIN  
+   FUNCTION PF_From_Assoc_Array
    RETURNS INTEGER
    AS
-     /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-     /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
-     UPDATE OR INSERT INTO VEC_Pack_For_With_Immut_Index_PF_For_With_Immut_Index VALUES (3, 10);
-     UPDATE OR INSERT INTO VEC_Pack_For_With_Immut_Index_PF_For_With_Immut_Index VALUES (1, 11);
-     UPDATE OR INSERT INTO VEC_Pack_For_With_Immut_Index_PF_For_With_Immut_Index VALUES (100, 34);
-     FOR SELECT K FROM VEC_Pack_For_With_Immut_Index_PF_For_With_Immut_Index
-     ORDER BY K ASC
-     INTO :i_FOR1
-     DO
-     BEGIN
-       summa = summa + i_FOR1; 
-     END
-     RETURN summa; -- 55
-   END
+/*
+      DECLARE summa INTEGER = 0;
+     --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+     --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+   */
+BEGIN
+/*
+     [-unconvertible RS-238745 FOR i IMMUTABLE IN INDICES OF vec] LOOP
+      summa = :summa + i;   
+     END LOOP
+     RETURN summa;
+   */
+END  
 
-   PROCEDURE PP_For_With_Immut_Index
+   PROCEDURE PP_From_Assoc_Array
    AS
-     /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-     /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
-     UPDATE OR INSERT INTO VEC_Pack_For_With_Immut_Index_PP_For_With_Immut_Index VALUES (3, 10);
-     UPDATE OR INSERT INTO VEC_Pack_For_With_Immut_Index_PP_For_With_Immut_Index VALUES (1, 11);
-     UPDATE OR INSERT INTO VEC_Pack_For_With_Immut_Index_PP_For_With_Immut_Index VALUES (100, 34);
-     FOR SELECT K FROM VEC_Pack_For_With_Immut_Index_PP_For_With_Immut_Index
-     ORDER BY K ASC
-     INTO :i_FOR1
-     DO
-     BEGIN
-       summa = summa + i_FOR1; -- 55
-     END
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+     --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+     --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+   */
+BEGIN
+/*
+     [-unconvertible RS-238745 FOR i IMMUTABLE IN INDICES OF vec] LOOP
+      summa = :summa + i; 
+     END LOOP
+   */
+END   
+  END; 
