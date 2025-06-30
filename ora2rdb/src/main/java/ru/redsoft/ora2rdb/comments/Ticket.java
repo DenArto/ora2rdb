@@ -24,6 +24,7 @@ public enum Ticket {
     , VARRAY_CONSTRUCTOR                (239379)
 
     ,test                               (1)
+    ,SYS_REFCURSOR_REF_CURSOR_TYPE_DEF  (239691)
     ;
 
 

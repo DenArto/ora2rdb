@@ -1930,10 +1930,29 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitFetch_statement(Fetch_statementContext ctx){
+        if (current_plsql_block != null) {
+            String cursor_name = getRuleText(ctx.cursor_name());
+            Token t = getNextToken(ctx.stop);
+            while (!t.getText().contains(";"))
+                t = getNextToken(t);
+            current_plsql_block.fetch_statement.put(cursor_name, getNextToken(t));
+        }
+    }
+
+    @Override
     public void exitOther_function(Other_functionContext ctx) {
         if (ctx.cursor_name() != null) {
             if (ctx.PERCENT_FOUND() != null) {
-                replace(ctx, "ROW_COUNT != 0");
+                String cursor_name = getRuleText(ctx.cursor_name());
+                String variable_name = cursor_name + "_found";
+                if (current_plsql_block != null){
+                    current_plsql_block.cursor_found_attr.add(variable_name);
+                    if (current_plsql_block.fetch_statement.containsKey(cursor_name))
+                        insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
+                                "\n" + variable_name + " = DECODE(ROW_COUNT, 0, FALSE, TRUE);\n");
+                replace(ctx, variable_name);
+                }
             }
             if (ctx.PERCENT_NOTFOUND() != null) {
                 replace(ctx, "ROW_COUNT != 1");
@@ -2749,6 +2768,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
             execute_condition.append(update_condition).append(") THEN").append("\nBEGIN");
             insertAfter(ctx.BEGIN(), execute_condition);
             insertBefore(ctx.END(), "\nEND\n");
+        }
+        // declare variable that stores ROW_COUNT value
+        if (current_plsql_block != null  && current_plsql_block.cursor_found_attr != null){
+            ListIterator<String> li = new ArrayList<>(current_plsql_block.cursor_found_attr).
+                    listIterator(current_plsql_block.cursor_found_attr.size());
+            while (li.hasPrevious()) {
+                insertBefore(ctx, "\nDECLARE " + li.previous() + " BOOLEAN = NULL; \n");
+            }
         }
     }
 
