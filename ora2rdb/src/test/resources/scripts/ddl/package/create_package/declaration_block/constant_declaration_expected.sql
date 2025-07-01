@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible CONSTANT global_constant  NUMERIC(34, 8) = 100];
 */
-END /*PACKAGE_NAME*/;
+END;

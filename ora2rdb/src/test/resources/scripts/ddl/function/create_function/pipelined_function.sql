@@ -1,6 +1,6 @@
-/* Pipelined Table Functions
-Пример использования
-https://newtechaudit.ru/pipelined-ili-konvejernaya-funkcziya/?ysclid=m4cvg9rfhe828016807
-https://oracle-base.com/articles/misc/pipelined-table-functions
-Скорее всего в связанные задачи пойдет конвертация create type
- */
+create or replace function get_persons return t_persons
+pipelined 
+is
+begin
+null;
+end;

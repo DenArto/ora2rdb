@@ -3,7 +3,7 @@ SQL SECURITY DEFINER
 AS BEGIN
   /*FUNCTION CALLING_FUNCTION RETURNS NUMERIC(34, 8);*/
    /*PROCEDURE CALLING_PROCEDURE;*/
-END /*CALLING_PACKAGE*/;
+END;
 
 CREATE PACKAGE BODY CALLING_PACKAGE
 AS BEGIN
@@ -25,4 +25,4 @@ AS BEGIN
          return_value_from_function = FUNCTION_NAME([-unconvertible :cursor_variable]); -- call function
     END*/
 
-  END /*CALLING_PACKAGE*/;
+  END;

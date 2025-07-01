@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible DECLARE cur_emp RETURN TYPE OF TABLE employee];
 */
-END /*PACKAGE_NAME*/;
+END;

@@ -2,7 +2,7 @@ CREATE OR ALTER PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION simple_case_function RETURNS VARCHAR(32765);
-END /*PACKAGE_NAME*/;
+END;
 
 RECREATE PACKAGE BODY package_name
 AS BEGIN
@@ -18,4 +18,4 @@ AS BEGIN
 	        END;
         RETURN status;
     END
-END /*PACKAGE_NAME*/;
+END;

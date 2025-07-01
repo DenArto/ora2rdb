@@ -1,5 +1,1 @@
-/*CREATE INDEX cost_ix ON sales (amount_sold)
-    [-unconvertible GLOBAL PARTITION BY RANGE (amount_sold)
-      (PARTITION p1 VALUES LESS THAN (1000),
-       PARTITION p2 VALUES LESS THAN (2500),
-       PARTITION p3 VALUES LESS THAN (MAXVALUE))];*/
+CREATE INDEX cost_ix ON sales (amount_sold) IN TABLESPACE PRIMARY;

@@ -8,7 +8,7 @@ BEGIN
 
    PROCEDURE PP_Grade_meaning5 (grade CHAR);
 
-END /*PACK_GRADE_MEANING5*/;
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning5
 AS 
@@ -95,5 +95,5 @@ BEGIN
                  res = 'Error';
                  pass = FALSE;
                END
-   END  
-END /*PACK_GRADE_MEANING5*/;
+   END
+END;

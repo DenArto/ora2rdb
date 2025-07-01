@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible DECLARE cur_emp CURSOR FOR (SELECT * FROM employees)];
 */
-END /*PACKAGE_NAME*/;
+END;

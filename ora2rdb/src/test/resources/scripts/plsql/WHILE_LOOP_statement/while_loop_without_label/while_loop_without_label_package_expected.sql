@@ -4,8 +4,8 @@ AS
 BEGIN 
    FUNCTION PF_While
    RETURNS VARCHAR(32765);  
-   PROCEDURE PP_While;  
-END /*PACK_WHILE*/;
+   PROCEDURE PP_While;
+END;
 
 RECREATE PACKAGE BODY Pack_While
 AS 
@@ -50,5 +50,5 @@ BEGIN
      BEGIN
        res = 'This line does not print.';
      END
-   END  
-END /*PACK_WHILE*/;
+   END
+END;

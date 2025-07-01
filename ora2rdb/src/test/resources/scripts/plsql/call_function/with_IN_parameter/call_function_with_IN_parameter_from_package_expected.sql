@@ -3,7 +3,7 @@ SQL SECURITY DEFINER
 AS BEGIN
    FUNCTION CALLING_FUNCTION RETURNS VARCHAR(32765);
    PROCEDURE CALLING_PROCEDURE;
-END /*PACKAGE_NAME*/;
+END;
 
 CREATE PACKAGE BODY PACKAGE_NAME
 AS BEGIN
@@ -26,4 +26,4 @@ AS BEGIN
     		value_in_function = 'value';
 	    	value_from_function = FUNCTION_NAME(:value_in_function); -- call function
     END
-END /*PACKAGE_NAME*/;
+END;

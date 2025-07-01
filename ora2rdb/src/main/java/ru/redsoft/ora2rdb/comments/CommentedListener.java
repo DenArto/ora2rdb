@@ -54,8 +54,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 rewriter.delete(tok);
     }
 
-
-    private void commendUnconvertibleBlock(CommentedBlock commentedBlock) {
+    private void commentUnconvertibleBlock(CommentedBlock commentedBlock) {
         for (UnconvertableBlock unconvertableBlock : commentedBlock.getUnconvertableBlockList()) {
             if(!unconvertableBlock.blockIsReady())
                 continue;
@@ -88,7 +87,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void exitSql_script(Sql_scriptContext ctx) {
         for (CommentedBlock commentedBlock : StorageInfo.commentedBlockList) {
-            commendUnconvertibleBlock(commentedBlock);
+            commentUnconvertibleBlock(commentedBlock);
         }
     }
 
@@ -100,7 +99,29 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+
+        if (!ctx.accessible_by_clause().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(0), Ticket.ACCESSIBLE_BY_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (!ctx.result_cache_clause().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.result_cache_clause(0), Ticket.RESULT_CACHE_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (!ctx.parallel_enable_clause().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.parallel_enable_clause(0), Ticket.PARALLEL_ENABLE_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (ctx.call_spec() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx.call_spec(), Ticket.EXTERNAL_FUNCTION);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (ctx.PIPELINED() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
     }
+
     @Override
     public void exitCreate_function_body(Create_function_bodyContext ctx) {
         if (!currentBlock.peek().unconvertableBlocksIsEmpty())
@@ -109,14 +130,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.pop();
     }
 
-
     @Override
     public void enterCreate_procedure_body(Create_procedure_bodyContext ctx) {
         if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+        if (!ctx.accessible_by_clause().isEmpty()) {
+            currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(0), Ticket.ACCESSIBLE_BY_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
     }
+
     @Override
     public void exitCreate_procedure_body(Create_procedure_bodyContext ctx) {
         if (!currentBlock.peek().unconvertableBlocksIsEmpty())

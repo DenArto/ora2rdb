@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible TYPE rec_type IS RECORD (id NUMBER, name VARCHAR2(100))];
 */
-END /*PACKAGE_NAME*/;
+END;
