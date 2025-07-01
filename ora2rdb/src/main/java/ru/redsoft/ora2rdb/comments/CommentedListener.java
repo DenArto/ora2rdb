@@ -116,7 +116,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx.call_spec(), Ticket.EXTERNAL_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (ctx.PIPELINED() != null){
+        if (!ctx.PIPELINED().isEmpty()){
             currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
