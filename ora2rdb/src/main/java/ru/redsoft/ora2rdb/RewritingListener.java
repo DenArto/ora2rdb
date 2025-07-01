@@ -98,8 +98,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             rewriter.insertBefore(term.getSymbol(), text);
     }
 
-    void insertBefore(Token token, Object text){
-        if(token != null)
+    void insertBefore(Token token, Object text) {
+        if (token != null)
             rewriter.insertBefore(token, text);
     }
 
@@ -114,7 +114,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     void insertAfter(Token token, Object text) {
-        if(token != null)
+        if (token != null)
             rewriter.insertAfter(token, text);
     }
 
@@ -312,7 +312,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitSql_script(Sql_scriptContext ctx) {
-        for(TerminalNode solid : ctx.SOLIDUS())
+        for (TerminalNode solid : ctx.SOLIDUS())
             delete(solid);
         if (!Ora2rdb.reorder)
             for (Map.Entry<String, String> entry : exceptions.entrySet())
@@ -485,11 +485,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitAlter_table(Alter_tableContext ctx) {
-        if(ctx.constraint_clauses() != null) {
+        if (ctx.constraint_clauses() != null) {
             Constraint_clausesContext constraintClausesContext = ctx.constraint_clauses();
-            if (constraintClausesContext.out_of_line_constraint().size() != 0){
+            if (!constraintClausesContext.out_of_line_constraint().isEmpty()) {
                 Out_of_line_constraintContext out_of_line_constraintContext = constraintClausesContext.out_of_line_constraint(0);
-                if(out_of_line_constraintContext.constraint_state() != null && out_of_line_constraintContext.constraint_state().ENABLE(0) != null){
+                if (out_of_line_constraintContext.constraint_state() != null && out_of_line_constraintContext.constraint_state().ENABLE(0) != null) {
                     delete(out_of_line_constraintContext.constraint_state());
                 }
             }
@@ -880,15 +880,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     // COUNT
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
                             && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().COUNT() != null) {
-                            replace(ctx, "(SELECT COUNT(*) FROM " + current_plsql_block.array_to_table.get(name)
-                                    + ")");
-                        }
+                        replace(ctx, "(SELECT COUNT(*) FROM " + current_plsql_block.array_to_table.get(name)
+                                + ")");
+                    }
                     // FIRST
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
                             && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().FIRST() != null) {
                         replace(ctx, "(SELECT FIRST 1 K FROM " + current_plsql_block.array_to_table.get(name)
                                 + " ORDER BY K ASC)");
-                        }
+                    }
                     // LAST
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
                             && id_expr_ctx.regular_id().non_reserved_keywords_pre12c().LAST() != null) {
@@ -912,7 +912,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                             argument = ":" + argument;
                         replace(ctx, "(SELECT FIRST 1 K FROM " + current_plsql_block.array_to_table.get(name)
                                 + " WHERE K < " + argument + " ORDER BY K DESC)");
-                        }
+                    }
                     // EXISTS
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().EXISTS() != null) {
                         String argument = Ora2rdb.getRealName(getRuleText(ctx.function_argument().argument(0)));
@@ -1077,16 +1077,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitCall_statement(Call_statementContext ctx) {
-        if(Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).identifier())).equals("DBMS_OUTPUT")) {
-            if(Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).id_expression(0))).equals("PUT_LINE"))
+        if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).identifier())).equals("DBMS_OUTPUT")) {
+            if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).id_expression(0))).equals("PUT_LINE"))
                 replace(ctx.routine_name(0), "RDB$TRACE_MSG");
             insertBefore(ctx.function_argument(0).RIGHT_PAREN(), ", TRUE");
-            if(Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).id_expression(0))).equals("PUT")) {
+            if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).id_expression(0))).equals("PUT")) {
                 replace(ctx.routine_name(0), "RDB$TRACE_MSG");
                 insertBefore(ctx.function_argument(0).RIGHT_PAREN(), ", FALSE");
             }
-        } else
-        if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0))).equals("RAISE_APPLICATION_ERROR")) {
+        } else if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0))).equals("RAISE_APPLICATION_ERROR")) {
             exceptions.put("CUSTOM_EXCEPTION", "error");
 //            containsException = true;
             replace(ctx.routine_name(0), "EXCEPTION CUSTOM_EXCEPTION");
@@ -1686,7 +1685,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
         StringBuilder temp_tables_ddl = new StringBuilder();
 
-        if (current_plsql_block.commentBlock){
+        if (current_plsql_block.commentBlock) {
             commentBlock(ctx.seq_of_declare_specs().start.getTokenIndex(), ctx.seq_of_declare_specs().stop.getTokenIndex());
             commentBlock(ctx.body().seq_of_statements().start.getTokenIndex(), ctx.body().seq_of_statements().stop.getTokenIndex());
         }
@@ -1876,14 +1875,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
             if (current_plsql_block != null) {
                 if (current_plsql_block.associative_array_types.containsKey(type)) {
-                        current_plsql_block.declareAssociativeArray(name, type);
-                        commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+                    current_plsql_block.declareAssociativeArray(name, type);
+                    commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
                     return;
                 }
-                if(current_plsql_block.nested_array_types.containsKey(type)){
+                if (current_plsql_block.nested_array_types.containsKey(type)) {
                     return;
                 }
-                if(current_plsql_block.varray_types.containsKey(type)){
+                if (current_plsql_block.varray_types.containsKey(type)) {
                     return;
                 }
 
@@ -1920,14 +1919,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
                             getRewriterText(ctx.table_type_def().type_spec()),
                             getRewriterText(ctx.table_type_def().table_indexed_by_part().type_spec()));
                 }
-            }
-            else if(ctx.nested_table_type_def() != null){
-                if(current_plsql_block != null)
-                    current_plsql_block.declareTypeOfNestedTableArray( Ora2rdb.getRealName(getRuleText(ctx.identifier())),
+            } else if (ctx.nested_table_type_def() != null) {
+                if (current_plsql_block != null)
+                    current_plsql_block.declareTypeOfNestedTableArray(Ora2rdb.getRealName(getRuleText(ctx.identifier())),
                             getRewriterText(ctx.nested_table_type_def().type_spec()));
-            }
-            else if(ctx.varray_type_def() != null){
-                if(current_plsql_block != null)
+            } else if (ctx.varray_type_def() != null) {
+                if (current_plsql_block != null)
                     current_plsql_block.declareTypeOfVarray(Ora2rdb.getRealName(getRuleText(ctx.identifier())),
                             getRewriterText(ctx.varray_type_def().type_spec()));
             }
@@ -1940,7 +1937,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx.IS(), "CURSOR FOR");
         insertBefore(ctx.select_statement(), "(");
         insertAfter(ctx.select_statement(), ")");
-        if (!ctx.parameter_spec().isEmpty()){
+        if (!ctx.parameter_spec().isEmpty()) {
             current_plsql_block.commentBlock = true;
             replace(ctx, "[-unconvertible RS-233573 " + getRewriterText(ctx) + "]");
         }
@@ -1977,8 +1974,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitBind_variable(Bind_variableContext ctx) {
 
-        for(General_element_partContext elementPart : ctx.general_element_part())
-            if(getRewriterText(elementPart).startsWith(":"))
+        for (General_element_partContext elementPart : ctx.general_element_part())
+            if (getRewriterText(elementPart).startsWith(":"))
                 replace(elementPart, getRewriterText(elementPart).substring(1));
 
         if (current_plsql_block != null) {
@@ -2983,13 +2980,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     private void convertCaseExpressionInsideSimpleCaseStatement(Case_when_part_statementContext caseWhenPartStatement, String expression) {
-        for (int i = 0; i < caseWhenPartStatement.expression().size(); i++){
+        for (int i = 0; i < caseWhenPartStatement.expression().size(); i++) {
             ExpressionContext expressionContext = caseWhenPartStatement.expression(i);
             Relational_operatorContext operator;
             try {
                 operator = expressionContext.logical_expression().unary_logical_expression().
                         multiset_expression().relational_expression().relational_operator();
-            } catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 operator = null;
             }
             if (operator == null) {
@@ -2997,8 +2994,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     insertBefore(expressionContext, expression + " IS ");
                 else
                     insertBefore(expressionContext, expression + "= ");
-            }
-            else
+            } else
                 insertBefore(expressionContext, expression);
             if (i == 0)
                 insertBefore(expressionContext, "(");
@@ -3042,7 +3038,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitIf_statement(If_statementContext ctx) {
-        if(ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
+        if (ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
             insertBefore(ctx.condition(), "(");
             insertAfter(ctx.condition(), ")");
         }
@@ -3060,7 +3056,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitElsif_part(Elsif_partContext ctx) {
         replace(ctx.ELSIF(), "ELSE IF");
-        if(ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
+        if (ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
             insertBefore(ctx.condition(), "(");
             insertAfter(ctx.condition(), ")");
         }
@@ -3304,8 +3300,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
     private void convertLoopForInRange(Loop_statementContext ctx) {
 
         Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
-        if(cursorLoopParam != null){
-            if(Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+        if (cursorLoopParam != null) {
+            if (Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
                     || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                 return;
         }
@@ -3350,8 +3346,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
     private void convertLoopForInRangeReverse(Loop_statementContext ctx) {
 
         Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
-        if(cursorLoopParam != null){
-            if(Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+        if (cursorLoopParam != null) {
+            if (Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
                     || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                 return;
         }
@@ -3418,11 +3414,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     public void convertLoopWhile(Loop_statementContext ctx) {
-        if(ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
+        if (ctx.condition().LEFT_PAREN() == null && ctx.condition().RIGHT_PAREN() == null) {
             insertBefore(ctx.condition(), "(");
             insertAfter(ctx.condition(), ") DO");
-        }
-        else
+        } else
             insertAfter(ctx.condition(), " DO");
 
 

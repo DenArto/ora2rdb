@@ -56,7 +56,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     private void commentUnconvertibleBlock(CommentedBlock commentedBlock) {
         for (UnconvertableBlock unconvertableBlock : commentedBlock.getUnconvertableBlockList()) {
-            if(!unconvertableBlock.blockIsReady())
+            if (!unconvertableBlock.blockIsReady())
                 continue;
             StringBuilder ticketNumbers = new StringBuilder();
             for (int ticket : unconvertableBlock.getTicketNumbersList())
@@ -66,14 +66,14 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
         if (commentedBlock.isConvertAllBlock()) {
             commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
-                    ,commentedBlock.getParentContext().stop.getTokenIndex());
+                    , commentedBlock.getParentContext().stop.getTokenIndex());
 
         } else if (commentedBlock.getStartDeclareBlock() == null
                 || commentedBlock.getStartBodyBlock() == null
                 || commentedBlock.getStopBodyBlock() == null) {
 
             commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
-                    ,commentedBlock.getParentContext().stop.getTokenIndex());
+                    , commentedBlock.getParentContext().stop.getTokenIndex());
         } else {
             insertAfter(commentedBlock.getStartDeclareBlock(), "\n/*");
             insertBefore(commentedBlock.getStartBodyBlock(), "*/\n");
@@ -267,6 +267,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterAnonymous_block(Anonymous_blockContext ctx) {
         currentBlock.push(new CommentedBlock(ctx, ctx.DECLARE(), ctx.body().BEGIN(), ctx.body().END()));
     }
+
     @Override
     public void exitAnonymous_block(Anonymous_blockContext ctx) {
         if (!currentBlock.peek().unconvertableBlocksIsEmpty())
@@ -304,8 +305,9 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     //The markup of PL SQL constructions begins
 
-    @Override public void enterMultiset_expression(PlSqlParser.Multiset_expressionContext ctx) {
-        if(ctx.MULTISET() != null && ctx.UNION() != null)
+    @Override
+    public void enterMultiset_expression(Multiset_expressionContext ctx) {
+        if (ctx.MULTISET() != null && ctx.UNION() != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_MULTISET_UNION);
     }
 
@@ -317,18 +319,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterType_declaration(Type_declarationContext ctx) {
         Table_type_defContext tableType = (Table_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Table_type_defContext.class);
-        if(tableType != null)
+        if (tableType != null)
             associative_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
 
 
         Nested_table_type_defContext nestedTableType = (Nested_table_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Nested_table_type_defContext.class);
-        if(nestedTableType != null) {
+        if (nestedTableType != null) {
             nested_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
         }
 
         Varray_type_defContext varrayType = (Varray_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Varray_type_defContext.class);
-        if(varrayType != null){
+        if (varrayType != null) {
             varray_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
         }
@@ -338,23 +340,20 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterVariable_declaration(Variable_declarationContext ctx) {
 
-        if(nested_array_types.contains(Ora2rdb.getRealName(ctx.type_spec().getText()))) {
+        if (nested_array_types.contains(Ora2rdb.getRealName(ctx.type_spec().getText()))) {
             currentBlock.peek().addUnconvertableBlock(ctx.start, ctx.type_spec().stop, Ticket.NESTED_TABLE_TYPE_VARIABLE);
-        }
-        else if(varray_types.contains(Ora2rdb.getRealName(ctx.type_spec().getText()))) {
+        } else if (varray_types.contains(Ora2rdb.getRealName(ctx.type_spec().getText()))) {
             currentBlock.peek().addUnconvertableBlock(ctx.start, ctx.type_spec().stop, Ticket.VARRAY_TYPE_VARIABLE);
         }
 
-        if(ctx.default_value_part() != null){
+        if (ctx.default_value_part() != null) {
             General_element_partContext generalElementPart = (General_element_partContext) Ora2rdb.getFirstRuleContext(ctx.default_value_part(), General_element_partContext.class);
-            if(generalElementPart != null && generalElementPart.function_argument() != null) {
-                if(associative_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+            if (generalElementPart != null && generalElementPart.function_argument() != null) {
+                if (associative_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))) {
                     currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.ASSOCIATIVE_ARRAY_CONSTRUCTOR);
-                }
-                else if(nested_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+                } else if (nested_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))) {
                     currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.NESTED_TABLE_CONSTRUCTOR);
-                }
-                else if(varray_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+                } else if (varray_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))) {
                     currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.VARRAY_CONSTRUCTOR);
                 }
             }
@@ -368,6 +367,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     private Stack<String> labelLoopArea = new Stack<>();
+
     @Override
     public void enterLoop_statement(Loop_statementContext ctx) {
 
@@ -445,18 +445,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
-    public void exitLoop_statement(Loop_statementContext ctx){
-        if(ctx.label_declaration()!= null) {
+    public void exitLoop_statement(Loop_statementContext ctx) {
+        if (ctx.label_declaration() != null) {
             labelLoopArea.pop();
         }
     }
 
     @Override
     public void enterGeneral_element_part(General_element_partContext ctx) {
-        if(labelLoopArea.empty())
+        if (labelLoopArea.empty())
             return;
-        for( Id_expressionContext id : ctx.id_expression()){
-            if(Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
+        for (Id_expressionContext id : ctx.id_expression()) {
+            if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.test);
         }
     }
