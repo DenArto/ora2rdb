@@ -1956,6 +1956,28 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitClose_statement(Close_statementContext ctx){
+        if (current_plsql_block != null){
+            String cursor_name = getRuleText(ctx.cursor_name());
+            Token t = getNextToken(ctx.stop);
+            while (!t.getText().contains(";"))
+                t = getNextToken(t);
+            current_plsql_block.close_statement.put(cursor_name, getNextToken(t));
+        }
+    }
+
+    @Override
+    public void exitOpen_statement(Open_statementContext ctx){
+        if (current_plsql_block != null){
+            String cursor_name = getRuleText(ctx.cursor_name());
+            Token t = getNextToken(ctx.stop);
+            while (!t.getText().contains(";"))
+                t = getNextToken(t);
+            current_plsql_block.open_statement.put(cursor_name, getNextToken(t));
+        }
+    }
+
+    @Override
     public void exitOther_function(Other_functionContext ctx) {
         if (ctx.cursor_name() != null) {
             if (ctx.PERCENT_FOUND() != null) {
@@ -1963,10 +1985,26 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 String variable_name = cursor_name + "_found";
                 if (current_plsql_block != null){
                     current_plsql_block.cursor_found_attr.add(variable_name);
-                    if (current_plsql_block.fetch_statement.containsKey(cursor_name))
+                    if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
-                                "\n" + variable_name + " = DECODE(ROW_COUNT, 0, FALSE, TRUE);\n");
-                replace(ctx, variable_name);
+                                variable_name + " = DECODE(ROW_COUNT, 0, FALSE, TRUE);\n");
+                    }
+                    replace(ctx, variable_name);
+                }
+            }
+            if (ctx.PERCENT_ISOPEN() != null){
+                String cursor_name = getRuleText(ctx.cursor_name());
+                String variable_name = cursor_name + "_isopen";
+                if (current_plsql_block != null){
+                    current_plsql_block.cursor_open_attr.add(variable_name);
+                    if (current_plsql_block.open_statement.containsKey(cursor_name)) {
+                        insertAfter(current_plsql_block.open_statement.get(cursor_name),
+                                variable_name + " = TRUE;\n");
+                        if (current_plsql_block.close_statement.containsKey(cursor_name))
+                            insertAfter(current_plsql_block.close_statement.get(cursor_name),
+                                    variable_name + " = FALSE;\n");
+                    }
+                    replace(ctx, variable_name);
                 }
             }
             if (ctx.PERCENT_NOTFOUND() != null) {
@@ -2813,12 +2851,21 @@ public class RewritingListener extends PlSqlParserBaseListener {
             insertAfter(ctx.BEGIN(), execute_condition);
             insertBefore(ctx.END(), "\nEND\n");
         }
-        // declare variable that stores ROW_COUNT value
+
+        // declare variable that stores cursor%FOUND value
         if (current_plsql_block != null  && current_plsql_block.cursor_found_attr != null){
             ListIterator<String> li = new ArrayList<>(current_plsql_block.cursor_found_attr).
                     listIterator(current_plsql_block.cursor_found_attr.size());
             while (li.hasPrevious()) {
-                insertBefore(ctx, "\nDECLARE " + li.previous() + " BOOLEAN = NULL; \n");
+                insertBefore(ctx, "\tDECLARE " + li.previous() + " BOOLEAN = NULL; \n");
+            }
+        }
+        // declare variable that stores cursor%OPEN value
+        if (current_plsql_block != null  && current_plsql_block.cursor_open_attr != null){
+            ListIterator<String> li = new ArrayList<>(current_plsql_block.cursor_open_attr).
+                    listIterator(current_plsql_block.cursor_open_attr.size());
+            while (li.hasPrevious()) {
+                insertBefore(ctx, "\tDECLARE " + li.previous() + " BOOLEAN = FALSE; \n");
             }
         }
     }
@@ -3594,6 +3641,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 return "GDSCODE SING_SELECT_ERR";
             case "ZERO_DIVIDE":
                 return "GDSCODE EXCEPTION_INTEGER_DIVIDE_BY_ZERO, GDSCODE EXCEPTION_FLOAT_DIVIDE_BY_ZERO";
+            case "OTHERS":
+               return "ANY";
         }
         return exceptionName;
     }

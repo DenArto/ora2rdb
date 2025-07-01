@@ -25,7 +25,10 @@ public class PLSQLBlock {
     String current_cursor_name;
     private TreeSet<String> used_temporary_table_names = new TreeSet<String>();
     Set<String> cursor_found_attr = new TreeSet<>();
+    Set<String> cursor_open_attr = new TreeSet<>();
     Map<String, Token> fetch_statement = new TreeMap<>();
+    Map<String, Token> close_statement = new TreeMap<>();
+    Map<String, Token> open_statement = new TreeMap<>();
     public void setStatement(PlSqlParser.StatementContext ctx) {
         this.statement = ctx;
     }
