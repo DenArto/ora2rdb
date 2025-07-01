@@ -248,6 +248,35 @@ public class Ora2rdb {
         return lastFound;
     }
 
+    public static <T extends ParseTree> List<T> getAllRuleContexts(ParseTree ctx, Class<T> ruleContext) {
+        List<T> result = new ArrayList<>();
+        getAllRuleContexts(ctx, ruleContext, ctx, result);
+        return result;
+    }
+
+    private static <T extends ParseTree> void getAllRuleContexts(ParseTree ctx, Class<T> ruleContext, ParseTree startContext, List<T> result) {
+        if (ctx instanceof ErrorNode)
+            return;
+
+        if (ruleContext.isInstance(ctx))
+            result.add(ruleContext.cast(ctx));
+
+        if (ctx instanceof TerminalNode)
+            return;
+
+        if (ctx.getClass().equals(startContext.getClass()) && ctx != startContext)
+            return;
+
+        if (ctx instanceof RuleNode) {
+            RuleNode r = (RuleNode) ctx;
+            int n = r.getChildCount();
+            for (int i = 0; i < n; i++) {
+                getAllRuleContexts(r.getChild(i), ruleContext, startContext, result);
+            }
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
         if (parsingArgs(args) == 1)
             return;
