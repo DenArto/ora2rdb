@@ -6,7 +6,7 @@ AS
      WHERE salary > 10000 
      ORDER BY last_name);
 
-  DECLARE recs TYPE OF TABLE c1;
+  DECLARE VARIABLE recs TYPE OF TABLE c1;
   DECLARE c1_found BOOLEAN = NULL;
 BEGIN
   OPEN c1;
