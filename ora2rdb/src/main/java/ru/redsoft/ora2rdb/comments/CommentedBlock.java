@@ -19,27 +19,28 @@ public class CommentedBlock {
     private boolean convertAllBlock;
 
 
-
-    public CommentedBlock(ParserRuleContext parentContext, boolean convertAllBlock){
+    public CommentedBlock(ParserRuleContext parentContext, boolean convertAllBlock) {
         this.parentContext = parentContext;
         this.convertAllBlock = convertAllBlock;
     }
-    public CommentedBlock(ParserRuleContext parentContext){
+
+    public CommentedBlock(ParserRuleContext parentContext) {
         this(parentContext, false);
     }
 
-    public CommentedBlock(ParserRuleContext parentContext, TerminalNode startDeclareBlock, TerminalNode startBodyBlock, TerminalNode stopBodyBlock, boolean convertAllBlock){
+    public CommentedBlock(ParserRuleContext parentContext, TerminalNode startDeclareBlock, TerminalNode startBodyBlock, TerminalNode stopBodyBlock, boolean convertAllBlock) {
         this.parentContext = parentContext;
         this.startDeclareBlock = startDeclareBlock;
         this.startBodyBlock = startBodyBlock;
         this.stopBodyBlock = stopBodyBlock;
         this.convertAllBlock = convertAllBlock;
     }
-    public CommentedBlock(ParserRuleContext parentContext, TerminalNode startDeclareBlock, TerminalNode startBodyBlock, TerminalNode stopBodyBlock){
-        this(parentContext,  startDeclareBlock,  startBodyBlock,  stopBodyBlock,  false);
+
+    public CommentedBlock(ParserRuleContext parentContext, TerminalNode startDeclareBlock, TerminalNode startBodyBlock, TerminalNode stopBodyBlock) {
+        this(parentContext, startDeclareBlock, startBodyBlock, stopBodyBlock, false);
     }
 
-    public boolean unconvertableBlocksIsEmpty(){
+    public boolean unconvertableBlocksIsEmpty() {
         return unconvertableBlockList.isEmpty();
     }
 
@@ -57,28 +58,26 @@ public class CommentedBlock {
     }
 
     public void addUnconvertableBlock(UnconvertableBlock unconvertableBlock) {
-        if(unconvertableBlock.blockIsReady())
+        if (unconvertableBlock.blockIsReady())
             this.unconvertableBlockList.add(unconvertableBlock);
     }
 
 
-
     public void addUnconvertableBlock(ParserRuleContext ctx, Ticket ticket) {
-        if(ctx != null) {
-            this.unconvertableBlockList.add(new UnconvertableBlock(ctx,ticket.getTicketCode()));
+        if (ctx != null) {
+            this.unconvertableBlockList.add(new UnconvertableBlock(ctx, ticket.getTicketCode()));
         }
     }
 
 
-
     public void addUnconvertableBlock(Token start, Token stop, Ticket ticket) {
-        if(start != null && stop != null) {
+        if (start != null && stop != null) {
             this.unconvertableBlockList.add(new UnconvertableBlock(start, stop, ticket.getTicketCode()));
         }
     }
 
     public void addUnconvertableBlock(TerminalNode term, Ticket ticket) {
-        if(term != null) {
+        if (term != null) {
             this.unconvertableBlockList.add(new UnconvertableBlock(term, ticket.getTicketCode()));
         }
     }

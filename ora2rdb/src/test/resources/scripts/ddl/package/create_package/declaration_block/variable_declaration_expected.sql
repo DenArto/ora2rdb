@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible global_variable NUMBER];
 */
-END /*PACKAGE_NAME*/;
+END;

@@ -25,6 +25,11 @@ public enum Ticket {
 
     ,test                               (1)
     ,SYS_REFCURSOR_REF_CURSOR_TYPE_DEF  (239691)
+    ,ACCESSIBLE_BY_CLAUSE               (239382)
+    ,RESULT_CACHE_CLAUSE                (239599)
+    ,PARALLEL_ENABLE_CLAUSE             (239601)
+    ,EXTERNAL_FUNCTION                  (239602)
+    ,PIPELINED_FUNCTION                 (239607)
     ;
 
 

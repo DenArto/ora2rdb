@@ -1,3 +1,3 @@
 CREATE TABLE employees (
-    hidden_column NUMBER INVISIBLE
+    hidden_column NUMERIC(34, 8) INVISIBLE
 );

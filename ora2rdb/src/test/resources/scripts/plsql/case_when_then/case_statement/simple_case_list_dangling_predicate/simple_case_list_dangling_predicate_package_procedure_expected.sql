@@ -5,7 +5,7 @@ CREATE PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
     PROCEDURE simple_case_procedure;
-END /*PACKAGE_NAME*/;
+END;
 
 CREATE PACKAGE BODY package_name
 AS BEGIN
@@ -22,4 +22,4 @@ AS BEGIN
             EXCEPTION CASE_NOT_FOUND;
         END
     END
-END /*PACKAGE_NAME*/;
+END;

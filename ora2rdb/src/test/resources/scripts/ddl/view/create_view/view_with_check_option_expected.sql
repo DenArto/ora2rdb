@@ -1,3 +1,3 @@
-CREATE VIEW STAFF  AS
+CREATE OR ALTER VIEW STAFF  AS
 SELECT employee_id, last_name, job_id, manager_id, department_id
    FROM employees WHERE last_name = 'Mike' WITH CHECK OPTION ;

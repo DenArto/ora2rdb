@@ -13,11 +13,12 @@ public class UnconvertableBlock {
     private Token stop;
     private HashSet<Integer> ticketNumbers = new HashSet<Integer>();
 
-    public boolean blockIsReady(){
-        return start != null && stop!= null && !ticketNumbers.isEmpty();
+    public boolean blockIsReady() {
+        return start != null && stop != null && !ticketNumbers.isEmpty();
     }
 
-    public UnconvertableBlock(){}
+    public UnconvertableBlock() {
+    }
 
     public UnconvertableBlock(ParserRuleContext ctx, Integer ticketNumber) {
         this.start = ctx.getStart();
@@ -39,7 +40,7 @@ public class UnconvertableBlock {
         this(start, stop, null);
     }
 
-    public UnconvertableBlock(TerminalNode term, Integer ticketNumber){
+    public UnconvertableBlock(TerminalNode term, Integer ticketNumber) {
         this.start = term.getSymbol();
         this.stop = term.getSymbol();
         this.ticketNumbers.add(ticketNumber);
@@ -49,7 +50,7 @@ public class UnconvertableBlock {
         return start;
     }
 
-    public void setBlockStart(Token start){
+    public void setBlockStart(Token start) {
         this.start = start;
     }
 
@@ -57,7 +58,7 @@ public class UnconvertableBlock {
         return stop;
     }
 
-    public void setBlockStop(Token stop){
+    public void setBlockStop(Token stop) {
         this.stop = stop;
     }
 
@@ -71,11 +72,11 @@ public class UnconvertableBlock {
         this.stop = ctx.getStop();
     }
 
-    public List<Integer> getTicketNumbersList(){
+    public List<Integer> getTicketNumbersList() {
         return new ArrayList<>(this.ticketNumbers);
     }
 
-    public void addTicketNumber(Ticket ticket){
+    public void addTicketNumber(Ticket ticket) {
         this.ticketNumbers.add(ticket.getTicketCode());
     }
 }

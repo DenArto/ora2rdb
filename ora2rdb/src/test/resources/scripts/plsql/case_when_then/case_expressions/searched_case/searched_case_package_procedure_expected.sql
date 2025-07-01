@@ -2,7 +2,7 @@ CREATE OR ALTER PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
    PROCEDURE searched_case_procedure;
-END /*PACKAGE_NAME*/;
+END;
 
 RECREATE PACKAGE BODY package_name
 AS BEGIN
@@ -17,4 +17,4 @@ AS BEGIN
           WHEN :grade = 'B' THEN 'Very Good'
         END;
    END
-END /*PACKAGE_NAME*/;
+END;

@@ -7,4 +7,4 @@ AS BEGIN
     [-unconvertible SUBTYPE subtype_emp_name IS VARCHAR2(100)];
 
 */
-END /*PACKAGE_NAME*/;
+END;

@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible TYPE type_varray IS VARRAY(5) OF NUMBER];
 */
-END /*PACKAGE_NAME*/;
+END;

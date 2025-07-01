@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.tree.*;
 import ru.redsoft.ora2rdb.comments.*;
 
 public class Ora2rdb {
-    public  static boolean reorder = false;
+    public static boolean reorder = false;
     private static StringBuilder errors = new StringBuilder();
     private static InputStream inputStream;
     private static PrintStream printStream;
@@ -44,7 +44,7 @@ public class Ora2rdb {
     }
 
     static void clear() {
-       reorder = false;
+        reorder = false;
         errors = new StringBuilder();
         inputStream = null;
         printStream.close();
@@ -172,12 +172,9 @@ public class Ora2rdb {
         return 0;
     }
 
-
-
-    public static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext){
+    public static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext) {
         return getFirstRuleContext(ctx, ruleContext, ctx);
     }
-
 
     private static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree StartContext) {
 
@@ -193,7 +190,7 @@ public class Ora2rdb {
         RuleNode r = (RuleNode) ctx;
         int n = r.getChildCount();
         for (int i = 0; i < n; i++) {
-            if(r.getChild(i).getClass().equals(StartContext.getClass()))
+            if (r.getChild(i).getClass().equals(StartContext.getClass()))
                 break;
             ParseTree find = getFirstRuleContext(r.getChild(i), ruleContext, StartContext);
             if (find != null)
@@ -202,8 +199,7 @@ public class Ora2rdb {
         return null;
     }
 
-
-    public static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext){
+    public static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext) {
         return getLastRuleContext(ctx, ruleContext, ctx);
     }
 
@@ -253,7 +249,7 @@ public class Ora2rdb {
     }
 
     public static void main(String[] args) throws Exception {
-        if(parsingArgs(args) == 1)
+        if (parsingArgs(args) == 1)
             return;
 
         SqlCodeParser sqlCodeParser = new SqlCodeParser();

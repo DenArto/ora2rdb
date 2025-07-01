@@ -4,8 +4,8 @@ AS
 BEGIN 
    FUNCTION PF_While_Label
    RETURNS VARCHAR(32765);  
-   PROCEDURE PP_While_Label;  
-END /*PACK_WHILE_LABEL*/;
+   PROCEDURE PP_While_Label;
+END;
 
 RECREATE PACKAGE BODY Pack_While_Label
 AS 
@@ -36,5 +36,5 @@ BEGIN
        done = TRUE;
        res = 'Hello, world!';
      END
-   END  
-END /*PACK_WHILE_LABEL*/;
+   END
+END;

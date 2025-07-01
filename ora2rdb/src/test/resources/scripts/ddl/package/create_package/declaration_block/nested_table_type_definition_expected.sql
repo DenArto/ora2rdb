@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible TYPE type_nested_table IS TABLE OF VARCHAR2(100)];
 */
-END /*PACKAGE_NAME*/;
+END;
