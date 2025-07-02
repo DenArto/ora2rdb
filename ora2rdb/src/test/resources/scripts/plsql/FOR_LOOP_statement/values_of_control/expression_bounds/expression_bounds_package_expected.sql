@@ -20,8 +20,8 @@ AS BEGIN
 /*
       DECLARE reslt VARCHAR(100); 
      [-unconvertible RS-239346 TYPE nested_typ IS TABLE OF VARCHAR(20);] 
-     [-unconvertible RS-239346 nt1 nested_typ] = [-unconvertible RS-239380 nested_typ('альфа','бета','гамма')]; 
-     [-unconvertible RS-239346 nt2 nested_typ] = [-unconvertible RS-239380 nested_typ('бета','гамма','альфа')];  
+     [-unconvertible RS-239346 nt1 nested_typ] = [-unconvertible RS-239380 nested_typ('alpha','beta','gamma')];
+     [-unconvertible RS-239346 nt2 nested_typ] = [-unconvertible RS-239380 nested_typ('beta','gamma','alpha')];
    */
 BEGIN
 /* 
@@ -38,8 +38,8 @@ END
 /*
       DECLARE reslt VARCHAR(100); 
      [-unconvertible RS-239346 TYPE nested_typ IS TABLE OF VARCHAR(20);] 
-     [-unconvertible RS-239346 nt1 nested_typ] = [-unconvertible RS-239380 nested_typ('альфа','бета','гамма')]; 
-     [-unconvertible RS-239346 nt2 nested_typ] = [-unconvertible RS-239380 nested_typ('бета','гамма','альфа')];  
+     [-unconvertible RS-239346 nt1 nested_typ] = [-unconvertible RS-239380 nested_typ('alpha','beta','gamma')];
+     [-unconvertible RS-239346 nt2 nested_typ] = [-unconvertible RS-239380 nested_typ('beta','gamma','alpha')];
    */
 BEGIN
 /* 
