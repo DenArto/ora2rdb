@@ -1,19 +1,16 @@
+
 CREATE PROCEDURE P_For_With_While_and_When
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE power_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN 
-    power_FOR1 = 2;
-    summa = :summa + :power_FOR1;
-    LEAVE;
-  END
-  WHILE (1=1) DO
-  BEGIN 
-    power_FOR1 = power_FOR1*2;
-    IF (NOT (power_FOR1 <= 64)) THEN LEAVE;
-    IF (NOT (MOD(power_FOR1, 32) = 0)) THEN CONTINUE;
-    summa = :summa + :power_FOR1;
-  END
+/*
+  [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHILE power <= 64 WHEN MOD(power, 32)= 0] 
+  LOOP
+      summa = :summa + power;
+  END LOOP
+*/
 END; 

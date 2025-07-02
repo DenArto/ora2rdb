@@ -1,37 +1,17 @@
 CREATE OR ALTER TRIGGER T_For_With_While_and_When
   AFTER INSERT 
   ON students
+SQL SECURITY DEFINER
 AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
-  DECLARE bound_i_FOR1 INTEGER;
+
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  i_FOR1 = 1;
-  bound_i_FOR1 = 10;
-  WHILE (i_FOR1 <= bound_i_FOR1) DO
-  BEGIN 
-    IF (NOT(i_FOR1 < 5)) THEN LEAVE;
-    IF (NOT (i_FOR1 != 3)) THEN                       
-    BEGIN 
-      i_FOR1 = i_FOR1 + 1; 
-      CONTINUE;
-    END
-    summa = :summa + :i_FOR1;
-    i_FOR1 = i_FOR1 + 1;
-  END
-  i_FOR1 = bound_i_FOR1;
-  i_FOR1 = 10;
-  bound_i_FOR1 = 1;
-  WHILE (i_FOR1 >= bound_i_FOR1) DO
-  BEGIN 
-    IF (NOT(i_FOR1 > 5)) THEN LEAVE;
-    IF (NOT (i_FOR1 != 8)) THEN                       
-    BEGIN 
-      i_FOR1 = i_FOR1 - 1; 
-      CONTINUE;
-    END
-    summa = :summa + :i_FOR1;
-    i_FOR1 = i_FOR1 - 1;
-  END
-  i_FOR1 = bound_i_FOR1;
+/*
+  [-unconvertible RS-239328 RS-238758 FOR i IN 1..10 WHILE i < 5 WHEN i != 3, REVERSE 1..10 WHILE i > 5 WHEN i != 8] 
+  LOOP
+      summa = :summa + i;
+  END LOOP
+*/
 END;

@@ -1,51 +1,52 @@
-CREATE OR ALTER PACKAGE Pack_For_With_When
-AS BEGIN
-   FUNCTION PF_For_With_When
-   RETURNS INTEGER;
-   PROCEDURE PP_For_With_When; 
-END; 
 
-RECREATE PACKAGE BODY Pack_For_With_When
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_For_With_When
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_For_With_When
+   RETURNS INTEGER;  
+   PROCEDURE PP_For_With_When;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_For_With_When
+AS BEGIN  
    FUNCTION PF_For_With_When
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power_FOR1 INTEGER;
-   BEGIN
-     WHILE (1=1) DO
-     BEGIN 
-       power_FOR1 = 2;
-       summa = :summa + :power_FOR1;
-       LEAVE;
-     END
-     WHILE (1=1) DO
-     BEGIN 
-       power_FOR1 = power_FOR1*2;
-       IF (NOT (MOD(power_FOR1, 32) = 0)) THEN CONTINUE;
-       if (power_FOR1 > 64) then LEAVE; 
-       summa = :summa + :power_FOR1;
-     END
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHEN MOD(power, 32)= 0] 
+     LOOP
+       if (power > 64) then
+       BEGIN ;
+       END
+       summa = :summa + power;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_For_With_When
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power_FOR1 INTEGER;
-   BEGIN
-     WHILE (1=1) DO
-     BEGIN 
-       power_FOR1 = 2;
-       summa = :summa + :power_FOR1;
-       LEAVE;
-     END
-     WHILE (1=1) DO
-     BEGIN 
-       power_FOR1 = power_FOR1*2;
-       IF (NOT (MOD(power_FOR1, 32) = 0)) THEN CONTINUE;
-       if (power_FOR1 > 64) then LEAVE; 
-       summa = :summa + :power_FOR1;
-     END
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHEN MOD(power, 32)= 0] 
+     LOOP
+       if (power > 64) then
+       BEGIN ;
+       END
+       summa = :summa + power;
+     END LOOP
+   */
+END   
+  END; 

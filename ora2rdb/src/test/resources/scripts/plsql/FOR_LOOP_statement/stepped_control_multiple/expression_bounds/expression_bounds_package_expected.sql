@@ -1,67 +1,52 @@
-CREATE OR ALTER PACKAGE Pack_Expr_Bounds
-AS BEGIN
-   FUNCTION PF_Expr_Bounds
-   RETURNS INTEGER;
-   PROCEDURE PP_Expr_Bounds; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Expr_Bounds
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Expr_Bounds
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Expr_Bounds
+   RETURNS INTEGER;  
+   PROCEDURE PP_Expr_Bounds;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Expr_Bounds
+AS BEGIN  
    FUNCTION PF_Expr_Bounds
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power INTEGER;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;  
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE power INTEGER;
+   */
+BEGIN
+/*
      power = 7;
-     i_FOR1 = power+3;
-     bound_i_FOR1 = power+5;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        power = 10;
-        i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     bound_i_FOR1 = i_FOR1+1;
-     i_FOR1 = i_FOR1+10;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        power = 10;
-        i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
+     [-unconvertible RS-239328 RS-238758 FOR i IN :power+3..:power+5, REVERSE i+1..i+10]
+     LOOP
+       summa = :summa + i;
+       power = 10;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Expr_Bounds
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power INTEGER;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;  
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE power INTEGER;
+   */
+BEGIN
+/*
      power = 7;
-     i_FOR1 = power+3;
-     bound_i_FOR1 = power+5;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        power = 10;
-        i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     bound_i_FOR1 = i_FOR1+1;
-     i_FOR1 = i_FOR1+10;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        power = 10;
-        i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-   END 
-END; 
+     [-unconvertible RS-239328 RS-238758 FOR i IN :power+3..:power+5, REVERSE i+1..i+10]
+     LOOP
+      summa = :summa + i;
+      power = 10;
+     END LOOP
+   */
+END   
+  END; 

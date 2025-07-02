@@ -1,1 +1,1 @@
-/*CREATE [-unconvertible BITMAP] INDEX idx_product_status ON products(status);*/
+CREATE INDEX idx_product_status ON products(status) IN TABLESPACE PRIMARY;

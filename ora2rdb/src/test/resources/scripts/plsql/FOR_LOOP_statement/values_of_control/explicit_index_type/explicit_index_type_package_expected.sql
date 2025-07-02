@@ -1,61 +1,64 @@
-CREATE GLOBAL TEMPORARY TABLE VEC_Pack_Explicit_Index_PF_Explicit_Index (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_Pack_Explicit_Index_PF_Explicit_Index PRIMARY KEY (K)
-);
 
-CREATE GLOBAL TEMPORARY TABLE VEC_Pack_Explicit_Index_PP_Explicit_Index (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_Pack_Explicit_Index_PP_Explicit_Index PRIMARY KEY (K)
-);
+
 
 CREATE OR ALTER PACKAGE Pack_Explicit_Index
-AS BEGIN
-   FUNCTION PF_Explicit_Index
-   RETURNS INTEGER;
-   PROCEDURE PP_Explicit_Index; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Explicit_Index
-AS BEGIN
+SQL SECURITY DEFINER
+AS BEGIN  
    FUNCTION PF_Explicit_Index
-   RETURNS INTEGER
+   RETURNS NUMERIC(34, 8);  
+   PROCEDURE PP_Explicit_Index;   
+  END;
+
+
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC PRIMARY KEY (K)
+);
+
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC1 (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC1 PRIMARY KEY (K)
+);
+
+
+RECREATE   PACKAGE BODY Pack_Explicit_Index
+AS BEGIN  
+   FUNCTION PF_Explicit_Index
+   RETURNS NUMERIC(34, 8)
    AS
-     /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-     /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-     DECLARE summa NUMERIC(5,1) = 0;
-     DECLARE n_FOR1 NUMERIC(5,1);
-   BEGIN
-     UPDATE OR INSERT INTO VEC_Pack_Explicit_Index_PF_Explicit_Index VALUES (3, 10);
-     UPDATE OR INSERT INTO VEC_Pack_Explicit_Index_PF_Explicit_Index VALUES (1, 11);
-     UPDATE OR INSERT INTO VEC_Pack_Explicit_Index_PF_Explicit_Index VALUES (100, 34);
-     FOR SELECT VAL FROM VEC_Pack_Explicit_Index_PF_Explicit_Index
-     ORDER BY K ASC
-     INTO :n_FOR1
-     DO
-     BEGIN
-       summa = summa + n_FOR1; 
-     END
-     RETURN summa; -- 55
-   END
+/*
+     --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+     --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+      DECLARE summa NUMERIC(5,1) = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238760 FOR n NUMERIC(5,1) IN VALUES OF vec]
+     LOOP
+       summa = :summa + n; 
+     END LOOP
+     RETURN summa;
+   */
+END  
 
    PROCEDURE PP_Explicit_Index
    AS
-     /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-     /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-     DECLARE summa NUMERIC(5,1) = 0;
-     DECLARE n_FOR1 NUMERIC(5,1);
-   BEGIN
-     UPDATE OR INSERT INTO VEC_Pack_Explicit_Index_PP_Explicit_Index VALUES (3, 10);
-     UPDATE OR INSERT INTO VEC_Pack_Explicit_Index_PP_Explicit_Index VALUES (1, 11);
-     UPDATE OR INSERT INTO VEC_Pack_Explicit_Index_PP_Explicit_Index VALUES (100, 34);
-     FOR SELECT VAL FROM VEC_Pack_Explicit_Index_PP_Explicit_Index
-     ORDER BY K ASC
-     INTO :n_FOR1
-     DO
-     BEGIN
-       summa = summa + n_FOR1; -- 55
-     END
-   END
-END; 
+/*
+     --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+     --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+      DECLARE summa NUMERIC(5,1)  = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238760 FOR n NUMERIC(5,1) IN VALUES OF vec]
+     LOOP
+       summa = :summa + n; 
+     END LOOP
+   */
+END   
+  END; 

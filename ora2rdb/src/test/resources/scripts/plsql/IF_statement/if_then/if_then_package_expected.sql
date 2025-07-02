@@ -7,7 +7,7 @@ BEGIN
 
    PROCEDURE PP_Grade_meaning1 (degree INTEGER);
 
-END /*PACK_GRADE_MEANING1*/;
+END;
 
 
 RECREATE PACKAGE BODY Pack_Grade_meaning1
@@ -56,5 +56,5 @@ BEGIN
        BEGIN
          res = 'Too low';
        END
-   END  
-END /*PACK_GRADE_MEANING1*/;
+   END
+END;

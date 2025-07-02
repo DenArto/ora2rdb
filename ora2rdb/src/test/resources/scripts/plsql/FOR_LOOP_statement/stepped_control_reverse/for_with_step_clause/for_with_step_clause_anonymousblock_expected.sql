@@ -1,15 +1,16 @@
+
 EXECUTE BLOCK 
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
-  DECLARE bound_i_FOR1 INTEGER;
+ AS 
+
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  i_FOR1 = 15;
-  bound_i_FOR1 = 5;
-  WHILE (i_FOR1 >= bound_i_FOR1) DO
-  BEGIN 
-      summa = :summa + :i_FOR1;
-      i_FOR1 = i_FOR1 - 5;
-  END
-  i_FOR1 = bound_i_FOR1;
-END; 
+/*
+  [-unconvertible RS-238758 FOR i IN REVERSE 5..15 BY 5] 
+  LOOP
+      summa = :summa + i; -- 30
+  END LOOP
+*/
+END;
+ 

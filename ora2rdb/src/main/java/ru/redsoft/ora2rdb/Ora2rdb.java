@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.tree.*;
 import ru.redsoft.ora2rdb.comments.*;
 
 public class Ora2rdb {
-    public  static boolean reorder = false;
+    public static boolean reorder = false;
     private static StringBuilder errors = new StringBuilder();
     private static InputStream inputStream;
     private static PrintStream printStream;
@@ -44,7 +44,7 @@ public class Ora2rdb {
     }
 
     static void clear() {
-       reorder = false;
+        reorder = false;
         errors = new StringBuilder();
         inputStream = null;
         printStream.close();
@@ -172,8 +172,113 @@ public class Ora2rdb {
         return 0;
     }
 
+    public static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext) {
+        return getFirstRuleContext(ctx, ruleContext, ctx);
+    }
+
+    private static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree StartContext) {
+
+        if (ctx instanceof ErrorNode)
+            return null;
+
+        if (ctx.getClass().equals(ruleContext))
+            return ctx;
+
+        if (ctx instanceof TerminalNode)
+            return null;
+
+        RuleNode r = (RuleNode) ctx;
+        int n = r.getChildCount();
+        for (int i = 0; i < n; i++) {
+            if (r.getChild(i).getClass().equals(StartContext.getClass()))
+                break;
+            ParseTree find = getFirstRuleContext(r.getChild(i), ruleContext, StartContext);
+            if (find != null)
+                return find;
+        }
+        return null;
+    }
+
+    public static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext) {
+        return getLastRuleContext(ctx, ruleContext, ctx);
+    }
+
+    private static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree startContext) {
+        if (ctx instanceof ErrorNode) {
+            return null;
+        }
+
+        if (ctx.getClass().equals(ruleContext)) {
+            ParseTree lastFound = null;
+            if (!(ctx instanceof TerminalNode)) {
+                RuleNode r = (RuleNode) ctx;
+                int n = r.getChildCount();
+                for (int i = n - 1; i >= 0; i--) {
+                    if (r.getChild(i).getClass().equals(startContext.getClass())) {
+                        break;
+                    }
+                    ParseTree find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
+                    if (find != null) {
+                        lastFound = find;
+                        break;
+                    }
+                }
+            }
+            return lastFound != null ? lastFound : ctx;
+        }
+
+        if (ctx instanceof TerminalNode) {
+            return null;
+        }
+
+        RuleNode r = (RuleNode) ctx;
+        int n = r.getChildCount();
+        ParseTree lastFound = null;
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (r.getChild(i).getClass().equals(startContext.getClass())) {
+                break;
+            }
+            ParseTree find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
+            if (find != null) {
+                lastFound = find;
+                break;
+            }
+        }
+        return lastFound;
+    }
+
+    public static <T extends ParseTree> List<T> getAllRuleContexts(ParseTree ctx, Class<T> ruleContext) {
+        List<T> result = new ArrayList<>();
+        getAllRuleContexts(ctx, ruleContext, ctx, result);
+        return result;
+    }
+
+    private static <T extends ParseTree> void getAllRuleContexts(ParseTree ctx, Class<T> ruleContext, ParseTree startContext, List<T> result) {
+        if (ctx instanceof ErrorNode)
+            return;
+
+        if (ruleContext.isInstance(ctx))
+            result.add(ruleContext.cast(ctx));
+
+        if (ctx instanceof TerminalNode)
+            return;
+
+        if (ctx.getClass().equals(startContext.getClass()) && ctx != startContext)
+            return;
+
+        if (ctx instanceof RuleNode) {
+            RuleNode r = (RuleNode) ctx;
+            int n = r.getChildCount();
+            for (int i = 0; i < n; i++) {
+                getAllRuleContexts(r.getChild(i), ruleContext, startContext, result);
+            }
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
-        if(parsingArgs(args) == 1)
+        if (parsingArgs(args) == 1)
             return;
 
         SqlCodeParser sqlCodeParser = new SqlCodeParser();

@@ -1,27 +1,27 @@
-CREATE GLOBAL TEMPORARY TABLE VEC_F_For_With_While (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_F_For_With_While PRIMARY KEY (K)
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC PRIMARY KEY (K)
 );
+
 
 CREATE FUNCTION F_For_With_While
 RETURNS INTEGER
-AS
-  /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-  /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+   --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+    DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  UPDATE OR INSERT INTO VEC_F_For_With_While VALUES (3, 10);
-  UPDATE OR INSERT INTO VEC_F_For_With_While VALUES (1, 11);
-  UPDATE OR INSERT INTO VEC_F_For_With_While VALUES (100, 34);
-  FOR SELECT K FROM VEC_F_For_With_While
-  ORDER BY K ASC
-  INTO :i_FOR1
-  DO
-  BEGIN
-    IF (NOT(i_FOR1 < 20)) THEN LEAVE;
-    summa = summa + i_FOR1; 
-  END
-  RETURN summa; -- 21
+/*
+   [-unconvertible RS-238745 FOR i IN INDICES OF vec WHILE i < 20]
+   LOOP
+      summa = :summa + i;
+   END LOOP
+  RETURN summa;  -- 1
+*/
 END; 

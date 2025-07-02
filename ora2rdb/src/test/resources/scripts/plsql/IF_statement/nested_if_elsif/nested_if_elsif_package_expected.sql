@@ -4,8 +4,8 @@ AS
 BEGIN 
    FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR(32765))
    RETURNS VARCHAR(32765);  
-   PROCEDURE PP_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR(32765));  
-  END /*PACK_GRADE_MEANING7*/;
+   PROCEDURE PP_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR(32765));
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning7
 AS 
@@ -89,4 +89,4 @@ BEGIN
              pass = FALSE;
            END
    END
-END /*PACK_GRADE_MEANING7*/;
+END;

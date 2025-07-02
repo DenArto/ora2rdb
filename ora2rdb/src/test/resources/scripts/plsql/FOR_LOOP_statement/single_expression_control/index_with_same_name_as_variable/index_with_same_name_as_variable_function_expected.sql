@@ -1,17 +1,20 @@
+
 CREATE FUNCTION F_Same_Name_Var
 RETURNS INTEGER
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i INTEGER;
-  DECLARE i_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE summa INTEGER = 0;
+   DECLARE i INTEGER;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN
-    i_FOR1 = 1;
-    summa = :summa + i_FOR1;
-    LEAVE;
-  END
+/*
+  [-unconvertible RS-238757 FOR :i IN 1] LOOP
+      summa = :summa + :i;
+  END LOOP
   i = 10;
-  summa = :summa + i;
-  RETURN summa;  -- 11
+  summa = :summa + :i;
+  RETURN summa;  -- 16
+*/
 END; 

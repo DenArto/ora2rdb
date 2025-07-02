@@ -4,4 +4,4 @@ AS BEGIN
 /*
     [-unconvertible e_not_found EXCEPTION];
 */
-END /*PACKAGE_NAME*/;
+END;

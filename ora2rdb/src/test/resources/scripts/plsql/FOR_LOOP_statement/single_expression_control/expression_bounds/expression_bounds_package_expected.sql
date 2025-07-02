@@ -1,43 +1,52 @@
-CREATE OR ALTER PACKAGE Pack_Expr_Bounds
-AS BEGIN
-   FUNCTION PF_Expr_Bounds
-   RETURNS INTEGER;
-   PROCEDURE PP_Expr_Bounds; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Expr_Bounds
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Expr_Bounds
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Expr_Bounds
+   RETURNS INTEGER;  
+   PROCEDURE PP_Expr_Bounds;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Expr_Bounds
+AS BEGIN  
    FUNCTION PF_Expr_Bounds
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power INTEGER;
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE power INTEGER;
+   */
+BEGIN
+/*
      power = 7;
-     WHILE (1=1) DO
-     BEGIN 
-       i_FOR1 = power+1;
-       IF (NOT (power < 20)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       power = power+1;
-     END
+     [-unconvertible RS-238757 FOR i IN REPEAT :power+1 while :power < 20]
+     LOOP
+       summa = :summa + i;
+       power = :power + 1;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Expr_Bounds
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power INTEGER;
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE power INTEGER;
+   */
+BEGIN
+/*
      power = 7;
-     WHILE (1=1) DO
-     BEGIN 
-       i_FOR1 = power+1;
-       IF (NOT (power < 20)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       power = power+1;
-     END
-   END 
-END; 
+     [-unconvertible RS-238757 FOR i IN REPEAT :power+1 while :power < 20]
+     LOOP
+       summa = :summa + i;
+       power = :power + 1;
+     END LOOP
+   */
+END   
+  END; 

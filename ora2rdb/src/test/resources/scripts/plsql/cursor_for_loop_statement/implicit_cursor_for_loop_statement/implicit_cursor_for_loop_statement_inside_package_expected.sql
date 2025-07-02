@@ -3,7 +3,7 @@ AS BEGIN
    FUNCTION PF_Grade_meaning1 (degree INTEGER)
    RETURN BOOLEAN;
    PROCEDURE PP_Grade_meaning1;
-END /*PACK_GRADE_MEANING1*/;
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning1
 AS BEGIN
@@ -42,4 +42,4 @@ AS BEGIN
 
         END
     END
-END /*PACK_GRADE_MEANING1*/;
+END;

@@ -4,16 +4,26 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class UnconvertableBlock {
     private Token start;
     private Token stop;
-    private Integer ticketNumber;
+    private HashSet<Integer> ticketNumbers = new HashSet<Integer>();
 
+    public boolean blockIsReady() {
+        return start != null && stop != null && !ticketNumbers.isEmpty();
+    }
+
+    public UnconvertableBlock() {
+    }
 
     public UnconvertableBlock(ParserRuleContext ctx, Integer ticketNumber) {
         this.start = ctx.getStart();
         this.stop = ctx.getStop();
-        this.ticketNumber = ticketNumber;
+        this.ticketNumbers.add(ticketNumber);
     }
 
     public UnconvertableBlock(ParserRuleContext ctx) {
@@ -23,26 +33,33 @@ public class UnconvertableBlock {
     public UnconvertableBlock(Token start, Token stop, Integer ticketNumber) {
         this.start = start;
         this.stop = stop;
-        this.ticketNumber = ticketNumber;
+        this.ticketNumbers.add(ticketNumber);
     }
 
     public UnconvertableBlock(Token start, Token stop) {
         this(start, stop, null);
     }
 
-    public UnconvertableBlock(TerminalNode term, Integer ticketNumber){
+    public UnconvertableBlock(TerminalNode term, Integer ticketNumber) {
         this.start = term.getSymbol();
         this.stop = term.getSymbol();
-        this.ticketNumber = ticketNumber;
+        this.ticketNumbers.add(ticketNumber);
     }
-
 
     public Token getBlockStart() {
         return start;
     }
 
+    public void setBlockStart(Token start) {
+        this.start = start;
+    }
+
     public Token getBlockStop() {
         return stop;
+    }
+
+    public void setBlockStop(Token stop) {
+        this.stop = stop;
     }
 
     public void setContext(Token start, Token stop) {
@@ -55,11 +72,11 @@ public class UnconvertableBlock {
         this.stop = ctx.getStop();
     }
 
-    public Integer getTicketNumber() {
-        return ticketNumber;
+    public List<Integer> getTicketNumbersList() {
+        return new ArrayList<>(this.ticketNumbers);
     }
 
-    public void setTicketNumber(Integer ticketNumber) {
-        this.ticketNumber = ticketNumber;
+    public void addTicketNumber(Ticket ticket) {
+        this.ticketNumbers.add(ticket.getTicketCode());
     }
 }
