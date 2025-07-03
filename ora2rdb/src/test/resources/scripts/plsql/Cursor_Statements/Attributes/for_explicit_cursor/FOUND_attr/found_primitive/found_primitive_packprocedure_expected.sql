@@ -20,8 +20,8 @@ AS BEGIN
         WHERE salary > 50000
         ORDER BY last_name);
 
-       DECLARE VARIABLE с1_recs TYPE OF TABLE c1;
-       DECLARE VARIABLE с2_recs TYPE OF TABLE c2;
+       DECLARE VARIABLE c1_recs TYPE OF TABLE c1;
+       DECLARE VARIABLE c2_recs TYPE OF TABLE c2;
        DECLARE res INTEGER = 0;
 
     DECLARE c1_found BOOLEAN = NULL;
