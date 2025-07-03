@@ -3299,10 +3299,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     private void convertLoopForInRange(Loop_statementContext ctx) {
 
-        Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
+        Cursor_loop_paramContext cursorLoopParam = Finder.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
         if (cursorLoopParam != null) {
-            if (Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
-                    || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
+            if (Finder.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+                    || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                 return;
         }
 
@@ -3345,10 +3345,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     private void convertLoopForInRangeReverse(Loop_statementContext ctx) {
 
-        Cursor_loop_paramContext cursorLoopParam = (Cursor_loop_paramContext) Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
+        Cursor_loop_paramContext cursorLoopParam = Finder.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
         if (cursorLoopParam != null) {
-            if (Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
-                    || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
+            if (Finder.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+                    || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                 return;
         }
 

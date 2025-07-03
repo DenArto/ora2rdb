@@ -319,18 +319,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterType_declaration(Type_declarationContext ctx) {
-        Table_type_defContext tableType = Ora2rdb.getFirstRuleContext(ctx, Table_type_defContext.class);
+        Table_type_defContext tableType = Finder.getFirstRuleContext(ctx, Table_type_defContext.class);
         if (tableType != null)
             associative_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
 
 
-        Nested_table_type_defContext nestedTableType = (Nested_table_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Nested_table_type_defContext.class);
+        Nested_table_type_defContext nestedTableType = (Nested_table_type_defContext) Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class);
         if (nestedTableType != null) {
             nested_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
         }
 
-        Varray_type_defContext varrayType = (Varray_type_defContext) Ora2rdb.getFirstRuleContext(ctx, Varray_type_defContext.class);
+        Varray_type_defContext varrayType = (Varray_type_defContext) Finder.getFirstRuleContext(ctx, Varray_type_defContext.class);
         if (varrayType != null) {
             varray_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
@@ -348,7 +348,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
 
         if (ctx.default_value_part() != null) {
-            General_element_partContext generalElementPart = Ora2rdb.getFirstRuleContext(ctx.default_value_part(), General_element_partContext.class);
+            General_element_partContext generalElementPart = Finder.getFirstRuleContext(ctx.default_value_part(), General_element_partContext.class);
             if (generalElementPart != null && generalElementPart.function_argument() != null) {
                 if (associative_array_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))) {
                     currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.ASSOCIATIVE_ARRAY_CONSTRUCTOR);
@@ -378,7 +378,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
         if (ctx.FOR() != null) {
             UnconvertableBlock unconvertableBlock = new UnconvertableBlock();
             unconvertableBlock.setBlockStart(ctx.FOR().getSymbol());
-            IteratorContext iterator = Ora2rdb.getFirstRuleContext(ctx, IteratorContext.class);
+            IteratorContext iterator = Finder.getFirstRuleContext(ctx, IteratorContext.class);
             if (iterator != null) {
                 unconvertableBlock.setBlockStop(iterator.stop);
                 if (iterator.iteration_control().size() >= 2)
@@ -389,52 +389,52 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 }
 
 
-                Values_indices_pairs_of_controlContext values_indices_pairs_of_control = Ora2rdb.getLastRuleContext(ctx, Values_indices_pairs_of_controlContext.class);
+                Values_indices_pairs_of_controlContext values_indices_pairs_of_control = Finder.getLastRuleContext(ctx, Values_indices_pairs_of_controlContext.class);
                 if (values_indices_pairs_of_control != null) {
                     if (values_indices_pairs_of_control.VALUES() != null) {
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
-                        if (Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
+                        if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
                             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                     } else if (values_indices_pairs_of_control.INDICES() != null) {
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
-                        if (Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
+                        if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
                             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                     } else if (values_indices_pairs_of_control.PAIRS() != null) {
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
-                        if (Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
+                        if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
                             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                             unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                     }
                 }
-                Single_expression_controlContext single_expression_control = Ora2rdb.getLastRuleContext(ctx, Single_expression_controlContext.class);
+                Single_expression_controlContext single_expression_control = Finder.getLastRuleContext(ctx, Single_expression_controlContext.class);
                 if (single_expression_control != null) {
                     unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
                     if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
                 }
 
-                Stepped_controlContext steppedControl = Ora2rdb.getFirstRuleContext(ctx, Stepped_controlContext.class);
+                Stepped_controlContext steppedControl = Finder.getFirstRuleContext(ctx, Stepped_controlContext.class);
                 if (steppedControl != null) {
-                    if (Ora2rdb.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null
-                            || Ora2rdb.getFirstRuleContext(steppedControl.lower_bound(), General_element_partContext.class) != null
-                            || Ora2rdb.getFirstRuleContext(steppedControl.upper_bound(), General_element_partContext.class) != null) {
+                    if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null
+                            || Finder.getFirstRuleContext(steppedControl.lower_bound(), General_element_partContext.class) != null
+                            || Finder.getFirstRuleContext(steppedControl.upper_bound(), General_element_partContext.class) != null) {
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                     }
                     if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
             }
-            Cursor_loop_paramContext cursorLoopParam = Ora2rdb.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
+            Cursor_loop_paramContext cursorLoopParam = Finder.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
             if (cursorLoopParam != null) {
                 unconvertableBlock.setBlockStop(cursorLoopParam.stop);
                 if (cursorLoopParam.DOUBLE_PERIOD() != null) {
-                    if (Ora2rdb.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
-                            || Ora2rdb.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
+                    if (Finder.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
+                            || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
             }
