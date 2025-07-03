@@ -25,7 +25,7 @@ BEGIN
   IF (:tmp is NULL)
       THEN
       BEGIN
-        EXCEPTION CUSTOM_EXCEPTION( 'Неправильное целочисленное значение');
+        EXCEPTION CUSTOM_EXCEPTION( 'text');
       END
       CLOSE c1;
       c1_isopen = FALSE;

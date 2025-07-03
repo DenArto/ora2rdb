@@ -11,7 +11,7 @@ BEGIN
   OPEN c1;
   IF tmp is NULL 
   THEN 
-    raise_application_error(-20134, 'Неправильное целочисленное значение');
+    raise_application_error(-20134, 'text');
   END IF; 
   CLOSE c1;
   EXCEPTION
