@@ -14,6 +14,6 @@ BEGIN
       summa = :summa + i*n; 
     END LOOP
   END LOOP
-  RETURN summa;   -- 144 на версии 23
+  RETURN summa;   -- 144 oracle version 23
 */
 END; 

@@ -172,17 +172,17 @@ public class Ora2rdb {
         return 0;
     }
 
-    public static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext) {
+    public static <T extends ParseTree> T getFirstRuleContext(ParseTree ctx, Class<T> ruleContext) {
         return getFirstRuleContext(ctx, ruleContext, ctx);
     }
 
-    private static ParseTree getFirstRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree StartContext) {
+    private static <T extends ParseTree> T getFirstRuleContext(ParseTree ctx, Class<T> ruleContext, ParseTree StartContext) {
 
         if (ctx instanceof ErrorNode)
             return null;
 
         if (ctx.getClass().equals(ruleContext))
-            return ctx;
+            return ruleContext.cast(ctx);
 
         if (ctx instanceof TerminalNode)
             return null;
@@ -192,24 +192,24 @@ public class Ora2rdb {
         for (int i = 0; i < n; i++) {
             if (r.getChild(i).getClass().equals(StartContext.getClass()))
                 break;
-            ParseTree find = getFirstRuleContext(r.getChild(i), ruleContext, StartContext);
+            T find = getFirstRuleContext(r.getChild(i), ruleContext, StartContext);
             if (find != null)
                 return find;
         }
         return null;
     }
 
-    public static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext) {
+    public static <T extends ParseTree> T getLastRuleContext(ParseTree ctx, Class<T> ruleContext) {
         return getLastRuleContext(ctx, ruleContext, ctx);
     }
 
-    private static ParseTree getLastRuleContext(ParseTree ctx, Class<?> ruleContext, ParseTree startContext) {
+    private static <T extends ParseTree> T getLastRuleContext(ParseTree ctx, Class<T> ruleContext, ParseTree startContext) {
         if (ctx instanceof ErrorNode) {
             return null;
         }
 
         if (ctx.getClass().equals(ruleContext)) {
-            ParseTree lastFound = null;
+            T lastFound = null;
             if (!(ctx instanceof TerminalNode)) {
                 RuleNode r = (RuleNode) ctx;
                 int n = r.getChildCount();
@@ -217,14 +217,14 @@ public class Ora2rdb {
                     if (r.getChild(i).getClass().equals(startContext.getClass())) {
                         break;
                     }
-                    ParseTree find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
+                    T find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
                     if (find != null) {
                         lastFound = find;
                         break;
                     }
                 }
             }
-            return lastFound != null ? lastFound : ctx;
+            return lastFound != null ? lastFound : ruleContext.cast(ctx);
         }
 
         if (ctx instanceof TerminalNode) {
@@ -233,19 +233,60 @@ public class Ora2rdb {
 
         RuleNode r = (RuleNode) ctx;
         int n = r.getChildCount();
-        ParseTree lastFound = null;
+        T lastFound = null;
 
         for (int i = n - 1; i >= 0; i--) {
             if (r.getChild(i).getClass().equals(startContext.getClass())) {
                 break;
             }
-            ParseTree find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
+            T find = getLastRuleContext(r.getChild(i), ruleContext, startContext);
             if (find != null) {
                 lastFound = find;
                 break;
             }
         }
         return lastFound;
+    }
+
+    public static <T extends ParseTree> List<T> getAllRuleContexts(ParseTree ctx, Class<T> ruleContext) {
+        List<T> result = new ArrayList<>();
+        getAllRuleContexts(ctx, ruleContext, ctx, result);
+        return result;
+    }
+
+    private static <T extends ParseTree> void getAllRuleContexts(ParseTree ctx, Class<T> ruleContext, ParseTree startContext, List<T> result) {
+        if (ctx instanceof ErrorNode)
+            return;
+
+        if (ruleContext.isInstance(ctx))
+            result.add(ruleContext.cast(ctx));
+
+        if (ctx instanceof TerminalNode)
+            return;
+
+        if (ctx.getClass().equals(startContext.getClass()) && ctx != startContext)
+            return;
+
+        if (ctx instanceof RuleNode) {
+            RuleNode r = (RuleNode) ctx;
+            int n = r.getChildCount();
+            for (int i = 0; i < n; i++) {
+                getAllRuleContexts(r.getChild(i), ruleContext, startContext, result);
+            }
+        }
+    }
+
+    public static <T extends ParseTree> T getParentRuleContext(ParseTree ctx, Class<T> ruleContext){
+        if (ctx instanceof ErrorNode)
+            return null;
+
+        if(ctx.getParent() == null)
+            return null;
+
+        if(ctx.getParent().getClass().equals(ruleContext))
+            return ruleContext.cast(ctx.getParent());
+
+        return getParentRuleContext(ctx.getParent(), ruleContext);
     }
 
     public static void main(String[] args) throws Exception {
