@@ -21,8 +21,9 @@ AS BEGIN
 */
 BEGIN
 /*
-    OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER';
-    OPEN :c2 FOR SELECT * FROM test_table;
+  [-unconvertible RS-240783 OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER'];
+  [-unconvertible RS-240783 OPEN :c2 FOR SELECT * FROM test_table];
+
 
     CLOSE :c1;
     CLOSE :c2;

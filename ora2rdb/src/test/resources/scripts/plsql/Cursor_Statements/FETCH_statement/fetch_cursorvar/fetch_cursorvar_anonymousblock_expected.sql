@@ -9,11 +9,11 @@ EXECUTE BLOCK
 */
 BEGIN
 /*
-  OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER';
-  FETCH :c1 INTO :v1;
-  CLOSE :c1;
-  OPEN :c2 FOR SELECT * FROM test_table;
-  FETCH :c2 INTO :v2;
-  CLOSE :c2;
+    [-unconvertible RS-240783 OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER'];
+      FETCH :c1 INTO :v1;
+      CLOSE :c1;
+      [-unconvertible RS-240783 OPEN :c2 FOR SELECT * FROM test_table];
+      FETCH :c2 INTO :v2;
+      CLOSE :c2;
 */
 END;

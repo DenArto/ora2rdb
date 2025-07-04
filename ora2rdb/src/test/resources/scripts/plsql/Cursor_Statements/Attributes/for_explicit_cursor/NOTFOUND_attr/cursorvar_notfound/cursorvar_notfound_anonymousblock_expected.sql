@@ -12,10 +12,10 @@ EXECUTE BLOCK
 */
 BEGIN
 /*
-  OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER';
-  FETCH :c1 INTO :v1;
-  c1_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
-OPEN :c2 FOR SELECT * FROM test_table;
+    [-unconvertible RS-240783 OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER'];
+    FETCH :c1 INTO :v1;
+    c1_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
+    [-unconvertible RS-240783 OPEN :c2 FOR SELECT * FROM test_table];
   FETCH :c2 INTO :v2;
   c2_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
 IF ((NOT c1_found)) THEN
