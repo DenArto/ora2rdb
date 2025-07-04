@@ -30,6 +30,7 @@ public enum Ticket {
     ,PARALLEL_ENABLE_CLAUSE             (239601)
     ,EXTERNAL_FUNCTION                  (239602)
     ,PIPELINED_FUNCTION                 (239607)
+    ,FORALL_LOOP                        (240654)
     ;
 
 

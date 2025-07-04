@@ -318,7 +318,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterForall_statement(Forall_statementContext ctx) {
-
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.FORALL_LOOP);
     }
 
     @Override
