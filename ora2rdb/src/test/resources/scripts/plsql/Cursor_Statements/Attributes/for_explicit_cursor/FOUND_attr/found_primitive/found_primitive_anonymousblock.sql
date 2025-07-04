@@ -11,8 +11,8 @@ DECLARE
     WHERE salary > 50000
     ORDER BY last_name;
 
-  с1_recs c1%ROWTYPE;
-  с2_recs c2%ROWTYPE;
+  c1_recs c1%ROWTYPE;
+  c2_recs c2%ROWTYPE;
   res PLS_INTEGER := 0;
 BEGIN
   OPEN c1;
