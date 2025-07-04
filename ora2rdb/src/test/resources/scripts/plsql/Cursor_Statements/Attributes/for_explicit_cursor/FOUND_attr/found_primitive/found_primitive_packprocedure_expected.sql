@@ -34,9 +34,9 @@ OPEN c2;
       THEN
     BEGIN res = :res + 1;
     END
-FETCH c1 INTO :с1_recs;
+FETCH c1 INTO :c1_recs;
 c1_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
-FETCH c2 INTO :с2_recs;
+FETCH c2 INTO :c2_recs;
 c2_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
 IF (c1_found AND c2_found) THEN
     BEGIN res = :res + 10;
