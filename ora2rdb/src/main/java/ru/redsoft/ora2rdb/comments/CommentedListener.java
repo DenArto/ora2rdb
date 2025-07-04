@@ -339,6 +339,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void enterOpen_for_statement(Open_for_statementContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_FOR_STATEMENT);
+    }
+
+    @Override
     public void enterType_declaration(Type_declarationContext ctx) {
         Table_type_defContext tableType = Ora2rdb.getFirstRuleContext(ctx, Table_type_defContext.class);
         if (tableType != null)

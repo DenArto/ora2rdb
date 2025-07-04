@@ -33,6 +33,7 @@ public enum Ticket {
     ,FORALL_LOOP                        (240654)
     ,FETCH_BULK_COLLECT                 (240714)
     ,OPEN_WITH_PARAM                    (240722)
+    ,OPEN_FOR_STATEMENT                (240783)
     ;
 
 
