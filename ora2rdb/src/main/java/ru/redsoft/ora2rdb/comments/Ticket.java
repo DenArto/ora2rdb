@@ -31,6 +31,8 @@ public enum Ticket {
     ,EXTERNAL_FUNCTION                  (239602)
     ,PIPELINED_FUNCTION                 (239607)
     ,FORALL_LOOP                        (240654)
+    ,FETCH_BULK_COLLECT                 (240714)
+    ,OPEN_WITH_PARAM                    (240722)
     ;
 
 

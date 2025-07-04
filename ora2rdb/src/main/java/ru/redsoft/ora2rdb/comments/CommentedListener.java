@@ -322,6 +322,23 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void enterFetch_statement(Fetch_statementContext ctx) {
+        if (ctx.BULK() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx.BULK().getSymbol(), ctx.stop, Ticket.FETCH_BULK_COLLECT);
+        }
+    }
+
+    @Override
+    public void enterOpen_statement(Open_statementContext ctx) {
+        General_element_partContext gp_ctx = Ora2rdb.getLastRuleContext(ctx, General_element_partContext.class);
+        if (gp_ctx != null){
+            if (gp_ctx.function_argument() != null){
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_WITH_PARAM);
+            }
+        }
+    }
+
+    @Override
     public void enterType_declaration(Type_declarationContext ctx) {
         Table_type_defContext tableType = Ora2rdb.getFirstRuleContext(ctx, Table_type_defContext.class);
         if (tableType != null)
