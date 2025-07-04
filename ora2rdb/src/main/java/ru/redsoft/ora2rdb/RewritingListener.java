@@ -1983,7 +1983,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             if (ctx.PERCENT_FOUND() != null || ctx.PERCENT_NOTFOUND() != null) {
                 String cursor_name = getRuleText(ctx.cursor_name());
                 String variable_name = cursor_name + "_found";
-                if (current_plsql_block != null) {
+                // for explicit cursor (<cursor_name>%FOUND or <cursor_name>%NOTFOUND)
+                if (current_plsql_block != null && !cursor_name.equalsIgnoreCase("SQL")) {
                     current_plsql_block.cursor_found_notfound_attr.add(variable_name);
                     if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
@@ -1991,8 +1992,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     }
                     if (ctx.PERCENT_FOUND() != null)
                         replace(ctx, variable_name);
-                    else
+                    else if (ctx.PERCENT_NOTFOUND() != null)
                         replace(ctx, "(NOT " + variable_name + ")");
+                } // for implicit cursor (SQL%FOUND or SQL%NOTFOUND)
+                else if (current_plsql_block != null && cursor_name.equalsIgnoreCase("SQL")) {
+                    if (ctx.PERCENT_FOUND() != null)
+                        replace(ctx, " DECODE(ROW_COUNT, 0, FALSE, TRUE)");
+                    else if (ctx.PERCENT_NOTFOUND() != null)
+                        replace(ctx, " DECODE(ROW_COUNT, 0, TRUE, FALSE)");
                 }
             }
             if (ctx.PERCENT_ISOPEN() != null) {
@@ -2013,12 +2020,14 @@ public class RewritingListener extends PlSqlParserBaseListener {
             if (ctx.PERCENT_ROWCOUNT() != null) {
                 String cursor_name = getRuleText(ctx.cursor_name());
                 String variable_name = cursor_name + "_counter";
-                if (current_plsql_block != null) {
+                // for explicit cursor (<cursor_name>%FOUND or <cursor_name>%NOTFOUND)
+                if (current_plsql_block != null && !cursor_name.equalsIgnoreCase("SQL")) {
                     current_plsql_block.cursor_rowcount_attr.add(variable_name);
                     if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
                                 variable_name + " = " + variable_name + " + ROW_COUNT;\n");
                     }
+                    // %ROWCOUNT inside for in <cursor_name>
                     Loop_statementContext loop_ctx = Ora2rdb.getParentRuleContext(ctx, Loop_statementContext.class);
                     if (loop_ctx != null && Ora2rdb.getFirstRuleContext(loop_ctx, Cursor_loop_paramContext.class) != null) {
                         insertBefore(loop_ctx, "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
@@ -2026,6 +2035,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
                                 "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
                     }
                     replace(ctx, variable_name);
+                } // for implicit cursor (SQL%FOUND or SQL%NOTFOUND)
+                 else if (current_plsql_block != null && cursor_name.equalsIgnoreCase("SQL")) {
+                    replace(ctx, "ROW_COUNT");
                 }
             }
         }
