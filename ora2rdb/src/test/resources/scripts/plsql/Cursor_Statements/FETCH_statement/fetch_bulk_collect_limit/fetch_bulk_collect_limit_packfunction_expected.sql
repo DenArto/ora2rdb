@@ -1,43 +1,40 @@
-CREATE GLOBAL TEMPORARY TABLE sals_PF_Fetch_Bulk_Collect_Limit (
-    K INTEGER,
-    VAL NUMERIC(10,2),
-    CONSTRAINT PK_sals PRIMARY KEY (K)
-) ON COMMIT PRESERVE ROWS;
-
 CREATE PACKAGE PackF_Fetch_Bulk_Collect_Limit
 SQL SECURITY DEFINER
 AS BEGIN
-   FUNCTION PF_Fetch_Bulk_Collect_Limit 
+   FUNCTION PF_Fetch_Bulk_Collect_Limit
    RETURNS VARCHAR(32765);
 END;
+
+--SALS NUMTAB
+CREATE GLOBAL TEMPORARY TABLE SALS (
+                                       K INTEGER,
+                                       VAL TYPE OF COLUMN employees.salary,
+                                       CONSTRAINT PK_SALS PRIMARY KEY (K)
+);
+
 
 CREATE PACKAGE BODY PackF_Fetch_Bulk_Collect_Limit
 AS BEGIN
    FUNCTION PF_Fetch_Bulk_Collect_Limit
    RETURNS VARCHAR(32765)
    AS
-     /* TYPE numtab IS TABLE OF employees.salary%TYPE INDEX BY PLS_INTEGER; */
+    /*
+     --TYPE numtab IS TABLE OF TYPE OF COLUMN employees.salary INDEX BY INTEGER;
 
-     DECLARE c1 CURSOR FOR (SELECT salary FROM employees WHERE salary > 10000 ORDER BY last_name);
-    
-     /* sals numtab; */
-     DECLARE sals_var TYPE OF COLUMN employees.salary;
-     DECLARE seq_fetch integer;
-     DECLARE limit_fetch integer;
-   BEGIN
-     DELETE FROM sals_PF_Fetch_Bulk_Collect_Limit WHERE K <> 0;  
-     OPEN c1;
-     FETCH c1 INTO sals_var;  
-     seq_fetch = 1;
-     limit_fetch = 4;
-     WHILE ( ROW_COUNT != 0 ) DO 
-     BEGIN
-       INSERT INTO sals_PF_Fetch_Bulk_Collect_Limit(K, VAL) VALUES (seq_fetch, sals_var);
-       seq_fetch = seq_fetch + 1;
-       if (seq_fetch > limit_fetch) then leave;
-       FETCH c1 INTO sals_var;
-     END
-     CLOSE c1;
-     RETURN '';
-   END
+     DECLARE c1 CURSOR FOR
+       (SELECT salary
+       FROM employees
+       WHERE salary > 10000
+       ORDER BY last_name);
+
+     --sals numtab;
+   */
+    BEGIN
+    /*
+         OPEN c1;
+         FETCH c1 [-unconvertible RS-240714 BULK COLLECT INTO sals LIMIT 4];
+         CLOSE c1;
+         RETURN '';
+       */
+    END
 END;
