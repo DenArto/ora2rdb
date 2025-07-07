@@ -34,6 +34,15 @@ public enum Ticket {
     ,FETCH_BULK_COLLECT                 (240714)
     ,OPEN_WITH_PARAM                    (240722)
     ,OPEN_FOR_STATEMENT                (240783)
+
+    , SELECT_FOR_UPDATE                 (1)
+    , SELECT_CROSS_APPLY                (1)
+    , SELECT_QUERY_PARTITION            (1)
+    , SELECT_ANALYTIC_VIEW              (1)
+    , SELECT_FLASHBACK_QUERY            (1)
+    , SELECT_HIERARCHIES                (1)
+    , SELECT_LATERAL_ATTRIBUTE          (1)
+
     ;
 
 
