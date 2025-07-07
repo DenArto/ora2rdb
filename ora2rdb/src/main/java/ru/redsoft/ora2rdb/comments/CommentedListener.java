@@ -460,4 +460,97 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
     }
 
+
+    //The markup of DML constructions begins
+
+    @Override
+    public void enterData_manipulation_language_statements(Data_manipulation_language_statementsContext ctx) {
+        if(Finder.getParentRuleContext(ctx, Sql_statementContext.class) == null){
+            currentBlock.push(new CommentedBlock(ctx, true));
+        }
+    }
+
+
+
+    @Override
+    public void exitData_manipulation_language_statements(Data_manipulation_language_statementsContext ctx) {
+        if(Finder.getParentRuleContext(ctx, Sql_statementContext.class) == null){
+            if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+                StorageInfo.commentedBlockList.add(currentBlock.pop());
+            else
+                currentBlock.pop();
+        }
+    }
+
+    @Override
+    public void enterMerge_statement(PlSqlParser.Merge_statementContext ctx) { }
+
+    @Override
+    public void enterSelect_statement(Select_statementContext ctx) {
+        //markup select_for_update
+        For_update_clauseContext forUpdateClause = Finder.getFirstRuleContext(ctx, For_update_clauseContext.class);
+        if(forUpdateClause != null)
+            currentBlock.peek().addUnconvertableBlock(forUpdateClause, Ticket.SELECT_FOR_UPDATE);
+
+
+        //markup cross apply, SELECT_QUERY_PARTITION
+        Join_clauseContext joinClause = Finder.getFirstRuleContext(ctx, Join_clauseContext.class);
+        if(joinClause != null) {
+            //markup cross apply
+            if (joinClause.APPLY() != null)
+                currentBlock.peek().addUnconvertableBlock(joinClause, Ticket.SELECT_CROSS_APPLY);
+
+            //markup SELECT_QUERY_PARTITION
+            for (Query_partition_clauseContext queryPartitionClause : joinClause.query_partition_clause()) {
+                currentBlock.peek().addUnconvertableBlock(queryPartitionClause, Ticket.SELECT_QUERY_PARTITION);
+            }
+        }
+
+        //markup SELECT_ANALYTIC_VIEW
+        Subav_factoring_clauseContext subavFactoringClause = Finder.getFirstRuleContext(ctx, Subav_factoring_clauseContext.class);
+        if(subavFactoringClause != null){
+            currentBlock.peek().addUnconvertableBlock(subavFactoringClause, Ticket.SELECT_ANALYTIC_VIEW);
+        }
+
+        //markup SELECT_FLASHBACK_QUERY
+        Flashback_query_clauseContext flashbackQueryClause = Finder.getFirstRuleContext(ctx, Flashback_query_clauseContext.class);
+        if(flashbackQueryClause != null && flashbackQueryClause.VERSIONS() == null){
+            currentBlock.peek().addUnconvertableBlock(flashbackQueryClause, Ticket.SELECT_FLASHBACK_QUERY);
+        }
+
+        //markup SELECT_HIERARCHIES
+        Hierarchies_clauseContext hierarchiesClause = Finder.getFirstRuleContext(ctx, Hierarchies_clauseContext.class);
+        if(hierarchiesClause != null){
+            currentBlock.peek().addUnconvertableBlock(hierarchiesClause, Ticket.SELECT_HIERARCHIES);
+        }
+
+        //markup SELECT_HIERARCHIES
+        List<Dml_table_expression_clauseContext> dmlTableExpressionClauseList = Finder.getAllRuleContexts(ctx, Dml_table_expression_clauseContext.class);
+        for(Dml_table_expression_clauseContext dmlTableExpressionClause : dmlTableExpressionClauseList) {
+            if (dmlTableExpressionClause.LATERAL() != null)
+                currentBlock.peek().addUnconvertableBlock(dmlTableExpressionClause, Ticket.SELECT_LATERAL_ATTRIBUTE);
+        }
+
+
+
+
+
+
+    }
+
+    @Override
+    public void enterInsert_statement(Insert_statementContext ctx) { }
+
+    @Override
+    public void enterUpdate_statement(Update_statementContext ctx) { }
+
+    @Override
+    public void enterDelete_statement(Delete_statementContext ctx) { }
+
+    @Override
+    public void enterExplain_statement(Explain_statementContext ctx) { }
+
+    @Override
+    public void enterLock_table_statement(Lock_table_statementContext ctx) { }
+
 }

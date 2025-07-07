@@ -29,6 +29,15 @@ public enum Ticket {
     ,PARALLEL_ENABLE_CLAUSE             (239601)
     ,EXTERNAL_FUNCTION                  (239602)
     ,PIPELINED_FUNCTION                 (239607)
+
+    , SELECT_FOR_UPDATE                 (1)
+    , SELECT_CROSS_APPLY                (1)
+    , SELECT_QUERY_PARTITION            (1)
+    , SELECT_ANALYTIC_VIEW              (1)
+    , SELECT_FLASHBACK_QUERY            (1)
+    , SELECT_HIERARCHIES                (1)
+    , SELECT_LATERAL_ATTRIBUTE          (1)
+
     ;
 
 
