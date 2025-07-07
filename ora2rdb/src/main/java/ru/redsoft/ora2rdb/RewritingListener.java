@@ -2036,7 +2036,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     }
                     replace(ctx, variable_name);
                 } // for implicit cursor (SQL%FOUND or SQL%NOTFOUND)
-                 else if (current_plsql_block != null && cursor_name.equalsIgnoreCase("SQL")) {
+                else if (current_plsql_block != null && cursor_name.equalsIgnoreCase("SQL")) {
                     replace(ctx, "ROW_COUNT");
                 }
             }
@@ -2537,11 +2537,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitAnonymous_block(PlSqlParser.Anonymous_blockContext ctx) {
         if (!currentAnonymousBlock.getIsNested()) {
-            if (ctx.DECLARE() != null)
-                replace(ctx.DECLARE(), "EXECUTE BLOCK \n AS \n");
-            else
-                insertBefore(ctx, "EXECUTE BLOCK \n AS \n");
-
             if (ctx.body().EXCEPTION() != null)
                 replace(ctx.body().EXCEPTION(), "/*EXCEPTION*/");
 
@@ -2550,7 +2545,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 for (String index_name : loop_index_names) {
                     declare_loop_index_names.append("\n  DECLARE VARIABLE ").append(index_name).append(" INTEGER;\n");
                 }
-                insertBefore(ctx.seq_of_declare_specs(), declare_loop_index_names.toString());
+                insertBefore(ctx.body(), declare_loop_index_names.toString());
             }
             loop_index_names.clear();
 
@@ -2574,6 +2569,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             StringBuilder temp_tables_ddl = new StringBuilder();
             for (String table_ddl : current_plsql_block.temporary_tables_ddl)
                 temp_tables_ddl.append(table_ddl).append("\n\n");
+
+            if (ctx.DECLARE() != null)
+                replace(ctx.DECLARE(), "EXECUTE BLOCK \n AS \n");
+            else
+                insertBefore(ctx.body(), "EXECUTE BLOCK \n AS \n");
 
             if (!Ora2rdb.reorder)
                 insertBefore(ctx, temp_tables_ddl + "\n");
@@ -2642,6 +2642,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (current_trigger.getPosition() != -1) {
             position = "\nPOSITION " + current_trigger.getPosition();
         }
+
+        StringBuilder declare_loop_index_names = new StringBuilder();
+        if (!loop_index_names.isEmpty()) {
+            for (String index_name : loop_index_names) {
+                declare_loop_index_names.append("\n  DECLARE VARIABLE ").append(index_name).append(" INTEGER;\n");
+            }
+            insertBefore(ctx.trigger_body(), declare_loop_index_names.toString());
+        }
+        loop_index_names.clear();
 
         insertBefore(ctx.trigger_body(), indentation + position + "\nSQL SECURITY DEFINER\nAS\n");
 
@@ -2943,7 +2952,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitLabel_name(Label_nameContext ctx) {
-        delete(ctx);
+        if (Finder.getParentRuleContext(ctx, Continue_statementContext.class) == null)
+            delete(ctx);
 //        replace(ctx, "/*" + getRewriterText(ctx) + "*/");
     }
 
@@ -3245,6 +3255,33 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx.condition(), "IF( " + getRewriterText(ctx.condition()) + " ) THEN LEAVE");
         }
 
+    }
+
+    @Override
+    public void exitContinue_statement(Continue_statementContext ctx) {
+        String indendation = getIndentation(ctx);
+        if (Finder.getFirstRuleContext(ctx, Label_nameContext.class) == null){
+            Loop_statementContext lctx = Finder.getParentRuleContext(ctx, Loop_statementContext.class);
+            if (lctx != null) {
+                if (lctx.FOR() != null && lctx.cursor_loop_param() != null) {
+                    if (lctx.cursor_loop_param().DOUBLE_PERIOD() != null && lctx.cursor_loop_param().REVERSE() != null) {
+                        String index_name = lctx.cursor_loop_param().index_name().getText();
+                        insertBefore(ctx, index_name + " = " + index_name + " - 1;\n" + indendation);
+                    } else if (lctx.cursor_loop_param().DOUBLE_PERIOD() != null) {
+                        String index_name = lctx.cursor_loop_param().index_name().getText();
+                        insertBefore(ctx, index_name + " = " + index_name + " + 1;\n" + indendation);
+                    }
+                }
+            }
+        }
+        if (ctx.WHEN() != null) {
+            insertBefore(ctx, "IF (" + getRewriterText(ctx.condition()) + ") THEN BEGIN \n" + indendation + "\t");
+            insertAfter(ctx, "\n" + indendation + "END\n");
+            deleteSemicolonRight(ctx);
+            insertAfter(ctx, ';');
+            delete(ctx.WHEN());
+            delete(ctx.condition());
+        }
     }
 
     private boolean cursorNameIsFunction(Loop_statementContext ctx) {
