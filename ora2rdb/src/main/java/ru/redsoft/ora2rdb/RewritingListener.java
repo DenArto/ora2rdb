@@ -1600,7 +1600,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
                 replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
             }
-            if (ctx.invoker_rights_clause().get(0).DEFINER() != null){
+            if (ctx.invoker_rights_clause().get(0).DEFINER() != null) {
                 replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
                 replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
             }
@@ -1694,7 +1694,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
         if (!Ora2rdb.reorder)
-            insertBefore(ctx,  temp_tables_ddl + "\n");
+            insertBefore(ctx, temp_tables_ddl + "\n");
 //            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
         else
             create_temporary_tables.add(temp_tables_ddl.toString());
@@ -1945,13 +1945,100 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitFetch_statement(Fetch_statementContext ctx) {
+        if (current_plsql_block != null) {
+            String cursor_name = getRuleText(ctx.cursor_name());
+            Token t = getNextToken(ctx.stop);
+            while (!t.getText().contains(";"))
+                t = getNextToken(t);
+            current_plsql_block.fetch_statement.put(cursor_name, getNextToken(t));
+        }
+    }
+
+    @Override
+    public void exitClose_statement(Close_statementContext ctx) {
+        if (current_plsql_block != null) {
+            String cursor_name = getRuleText(ctx.cursor_name());
+            Token t = getNextToken(ctx.stop);
+            while (!t.getText().contains(";"))
+                t = getNextToken(t);
+            current_plsql_block.close_statement.put(cursor_name, getNextToken(t));
+        }
+    }
+
+    @Override
+    public void exitOpen_statement(Open_statementContext ctx) {
+        if (current_plsql_block != null) {
+            String cursor_name = getRuleText(ctx.cursor_name());
+            Token t = getNextToken(ctx.stop);
+            while (!t.getText().contains(";"))
+                t = getNextToken(t);
+            current_plsql_block.open_statement.put(cursor_name, getNextToken(t));
+        }
+    }
+
+    @Override
     public void exitOther_function(Other_functionContext ctx) {
         if (ctx.cursor_name() != null) {
-            if (ctx.PERCENT_FOUND() != null) {
-                replace(ctx, "ROW_COUNT != 0");
+            if (ctx.PERCENT_FOUND() != null || ctx.PERCENT_NOTFOUND() != null) {
+                String cursor_name = getRuleText(ctx.cursor_name());
+                String variable_name = cursor_name + "_found";
+                // for explicit cursor (<cursor_name>%FOUND or <cursor_name>%NOTFOUND)
+                if (current_plsql_block != null && !cursor_name.equalsIgnoreCase("SQL")) {
+                    current_plsql_block.cursor_found_notfound_attr.add(variable_name);
+                    if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
+                        insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
+                                variable_name + " = DECODE(ROW_COUNT, 0, FALSE, TRUE);\n");
+                    }
+                    if (ctx.PERCENT_FOUND() != null)
+                        replace(ctx, variable_name);
+                    else if (ctx.PERCENT_NOTFOUND() != null)
+                        replace(ctx, "(NOT " + variable_name + ")");
+                } // for implicit cursor (SQL%FOUND or SQL%NOTFOUND)
+                else if (current_plsql_block != null && cursor_name.equalsIgnoreCase("SQL")) {
+                    if (ctx.PERCENT_FOUND() != null)
+                        replace(ctx, " DECODE(ROW_COUNT, 0, FALSE, TRUE)");
+                    else if (ctx.PERCENT_NOTFOUND() != null)
+                        replace(ctx, " DECODE(ROW_COUNT, 0, TRUE, FALSE)");
+                }
             }
-            if (ctx.PERCENT_NOTFOUND() != null) {
-                replace(ctx, "ROW_COUNT != 1");
+            if (ctx.PERCENT_ISOPEN() != null) {
+                String cursor_name = getRuleText(ctx.cursor_name());
+                String variable_name = cursor_name + "_isopen";
+                if (current_plsql_block != null) {
+                    current_plsql_block.cursor_open_attr.add(variable_name);
+                    if (current_plsql_block.open_statement.containsKey(cursor_name)) {
+                        insertAfter(current_plsql_block.open_statement.get(cursor_name),
+                                variable_name + " = TRUE;\n");
+                        if (current_plsql_block.close_statement.containsKey(cursor_name))
+                            insertAfter(current_plsql_block.close_statement.get(cursor_name),
+                                    variable_name + " = FALSE;\n");
+                    }
+                    replace(ctx, variable_name);
+                }
+            }
+            if (ctx.PERCENT_ROWCOUNT() != null) {
+                String cursor_name = getRuleText(ctx.cursor_name());
+                String variable_name = cursor_name + "_counter";
+                // for explicit cursor (<cursor_name>%FOUND or <cursor_name>%NOTFOUND)
+                if (current_plsql_block != null && !cursor_name.equalsIgnoreCase("SQL")) {
+                    current_plsql_block.cursor_rowcount_attr.add(variable_name);
+                    if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
+                        insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
+                                variable_name + " = " + variable_name + " + ROW_COUNT;\n");
+                    }
+                    // %ROWCOUNT inside for in <cursor_name>
+                    Loop_statementContext loop_ctx = Finder.getParentRuleContext(ctx, Loop_statementContext.class);
+                    if (loop_ctx != null && Finder.getFirstRuleContext(loop_ctx, Cursor_loop_paramContext.class) != null) {
+                        insertBefore(loop_ctx, "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
+                        insertAfter(loop_ctx.seq_of_statements(),
+                                "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
+                    }
+                    replace(ctx, variable_name);
+                } // for implicit cursor (SQL%FOUND or SQL%NOTFOUND)
+                 else if (current_plsql_block != null && cursor_name.equalsIgnoreCase("SQL")) {
+                    replace(ctx, "ROW_COUNT");
+                }
             }
         }
     }
@@ -2118,7 +2205,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
         if (!Ora2rdb.reorder)
-            insertBefore(ctx,  temp_tables_ddl + "\n");
+            insertBefore(ctx, temp_tables_ddl + "\n");
 //            replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
         else
             create_temporary_tables.add(temp_tables_ddl.toString());
@@ -2174,7 +2261,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
                 replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
             }
-            if (ctx.invoker_rights_clause().get(0).DEFINER() != null){
+            if (ctx.invoker_rights_clause().get(0).DEFINER() != null) {
                 replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
                 replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
             }
@@ -2183,7 +2270,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         //delete sharing clause
-        if (ctx.ddl_sharing_clause() != null){
+        if (ctx.ddl_sharing_clause() != null) {
             delete(ctx.ddl_sharing_clause());
             deleteSPACESLeft(ctx.ddl_sharing_clause());
         }
@@ -2270,9 +2357,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
             temp_tables_ddl.append(table_ddl).append("\n\n");
 
         if (!Ora2rdb.reorder)
-            insertBefore(ctx,  temp_tables_ddl + "\n");
+            insertBefore(ctx, temp_tables_ddl + "\n");
 //        replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx));
-         else
+        else
             create_temporary_tables.add(temp_tables_ddl.toString());
 
         popScope();
@@ -2490,7 +2577,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 temp_tables_ddl.append(table_ddl).append("\n\n");
 
             if (!Ora2rdb.reorder)
-                insertBefore(ctx,  temp_tables_ddl + "\n");
+                insertBefore(ctx, temp_tables_ddl + "\n");
 //                replace(ctx, temp_tables_ddl + "\n" + getRewriterText(ctx) + "\n");
             else
                 create_temporary_tables.add(temp_tables_ddl.toString());
@@ -2631,7 +2718,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         if (!Ora2rdb.reorder)
-            insertBefore(ctx,  temp_tables_ddl + "\n");
+            insertBefore(ctx, temp_tables_ddl + "\n");
 //            replace(ctx, temp_tables_ddl + getRewriterText(ctx));
         else
             create_temporary_tables.add(temp_tables_ddl.toString());
@@ -2793,6 +2880,31 @@ public class RewritingListener extends PlSqlParserBaseListener {
             execute_condition.append(update_condition).append(") THEN").append("\nBEGIN");
             insertAfter(ctx.BEGIN(), execute_condition);
             insertBefore(ctx.END(), "\nEND\n");
+        }
+
+        // declare variable that stores cursor%FOUND value
+        if (current_plsql_block != null && current_plsql_block.cursor_found_notfound_attr != null) {
+            ListIterator<String> li = new ArrayList<>(current_plsql_block.cursor_found_notfound_attr).
+                    listIterator(current_plsql_block.cursor_found_notfound_attr.size());
+            while (li.hasPrevious()) {
+                insertBefore(ctx, "\tDECLARE " + li.previous() + " BOOLEAN = NULL; \n");
+            }
+        }
+        // declare variable that stores cursor%OPEN value
+        if (current_plsql_block != null && current_plsql_block.cursor_open_attr != null) {
+            ListIterator<String> li = new ArrayList<>(current_plsql_block.cursor_open_attr).
+                    listIterator(current_plsql_block.cursor_open_attr.size());
+            while (li.hasPrevious()) {
+                insertBefore(ctx, "\tDECLARE " + li.previous() + " BOOLEAN = FALSE; \n");
+            }
+        }
+        // declare variable that stores cursor%ROWCOUNT value
+        if (current_plsql_block != null && current_plsql_block.cursor_rowcount_attr != null) {
+            ListIterator<String> li = new ArrayList<>(current_plsql_block.cursor_rowcount_attr).
+                    listIterator(current_plsql_block.cursor_rowcount_attr.size());
+            while (li.hasPrevious()) {
+                insertBefore(ctx, "\tDECLARE " + li.previous() + " INT = 0; \n");
+            }
         }
     }
 
@@ -3165,8 +3277,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx.FOR(), indentation + "WHILE ( ROW_COUNT != 0 ) DO");
         delete(ctx.cursor_loop_param());
         deleteSPACESAbut(ctx.cursor_loop_param());
+
+        // two insertAfter to convert cursor%ROWCOUNT in for in <cursor>
         insertAfter(ctx.seq_of_statements(), "\n" + indentation + "\tFETCH " + cursorName + " INTO " + recName + ";\n"
-                + indentation + "END");
+                + indentation /*+ "END"*/);
+        insertAfter(getNextToken(ctx.seq_of_statements().stop), "END");
+
         insertAfter(ctx, "\n" + indentation + "CLOSE " + cursorName + ";\n");
 
 
@@ -3567,6 +3683,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 return "GDSCODE SING_SELECT_ERR";
             case "ZERO_DIVIDE":
                 return "GDSCODE EXCEPTION_INTEGER_DIVIDE_BY_ZERO, GDSCODE EXCEPTION_FLOAT_DIVIDE_BY_ZERO";
+            case "OTHERS":
+                return "ANY";
         }
         return exceptionName;
     }

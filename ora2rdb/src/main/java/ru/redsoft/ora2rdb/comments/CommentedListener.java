@@ -44,6 +44,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
             rewriter.insertAfter(term.getSymbol(), text);
     }
 
+    String getRuleText(RuleContext ctx) {
+        return tokens.getText(ctx);
+    }
+
     void commentBlock(int start_tok_idx, int stop_tok_idx) {
         rewriter.insertBefore(start_tok_idx, "/*");
         rewriter.insertAfter(stop_tok_idx, "*/");
@@ -314,7 +318,29 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterForall_statement(Forall_statementContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.FORALL_LOOP);
+    }
 
+    @Override
+    public void enterFetch_statement(Fetch_statementContext ctx) {
+        if (ctx.BULK() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx.BULK().getSymbol(), ctx.stop, Ticket.FETCH_BULK_COLLECT);
+        }
+    }
+
+    @Override
+    public void enterOpen_statement(Open_statementContext ctx) {
+        General_element_partContext gp_ctx = Finder.getLastRuleContext(ctx, General_element_partContext.class);
+        if (gp_ctx != null){
+            if (gp_ctx.function_argument() != null){
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_WITH_PARAM);
+            }
+        }
+    }
+
+    @Override
+    public void enterOpen_for_statement(Open_for_statementContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_FOR_STATEMENT);
     }
 
     @Override
@@ -336,6 +362,9 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
         }
 
+        // convert TYPE <name> IS REF CURSOR
+        if (ctx.ref_cursor_type_def() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.SYS_REFCURSOR_REF_CURSOR_TYPE_DEF);
     }
 
     @Override
@@ -357,6 +386,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 } else if (varray_types.contains(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))) {
                     currentBlock.peek().addUnconvertableBlock(generalElementPart, Ticket.VARRAY_CONSTRUCTOR);
                 }
+            }
+        }
+
+        // convert SYS_REFCURSOR type
+        if (ctx.type_spec().type_name() != null) {
+            if (Ora2rdb.getRealName(getRuleText(ctx.type_spec().type_name())).equals("SYS_REFCURSOR")){
+                currentBlock.peek().addUnconvertableBlock(ctx.type_spec().type_name(), Ticket.SYS_REFCURSOR_REF_CURSOR_TYPE_DEF);
             }
         }
 

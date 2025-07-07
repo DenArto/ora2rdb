@@ -6,5 +6,5 @@ AS
 BEGIN
   OPEN c1;
   CLOSE c1;
-  RETURNS '';
+  RETURN '';
 END;

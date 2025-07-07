@@ -1,25 +1,33 @@
 CREATE PROCEDURE P_Cursorvar_Found
-SQL SECURITY DEFINER
-AS
+    SQL SECURITY DEFINER
+ AS
 /*
-  [-unconvertible c1 SYS_REFCURSOR];
-  DECLARE v1 TYPE OF TABLE employees;
-  [-unconvertible TYPE t_c2 IS REF CURSOR];
-  c2 [-unconvertible t_c2];
-  DECLARE v2 TYPE OF TABLE test_table;
-  DECLARE res INTEGER = 0;
+    DECLARE c1 [-unconvertible RS-239691 SYS_REFCURSOR];
+    DECLARE VARIABLE v1 TYPE OF TABLE employees;
+    [-unconvertible RS-239691 TYPE t_c2 IS REF CURSOR;]
+    DECLARE c2 t_c2;
+    DECLARE VARIABLE v2 TYPE OF TABLE test_table;
+    DECLARE res INTEGER = 0;
+    DECLARE c1_found BOOLEAN = NULL;
+    DECLARE c2_found BOOLEAN = NULL;
 */
 BEGIN
 /*
-   OPEN [-unconvertible c1] FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER';
-   FETCH [-unconvertible c1] INTO v1;
-   OPEN [-unconvertible c2] FOR SELECT * FROM test_table;
-   FETCH [-unconvertible c2] INTO v2;
-   IF [-unconvertible c1]%FOUND THEN res := res + 1;
-   END IF;
-   IF [-unconvertible c2]%FOUND THEN res := res + 10;
-   END IF;
-   CLOSE [-unconvertible c1];
-   CLOSE [-unconvertible c2];
+      [-unconvertible RS-240783 OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER'];
+      FETCH :c1 INTO :v1;
+      c1_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
+    [-unconvertible RS-240783 OPEN :c2 FOR SELECT * FROM test_table];
+    FETCH :c2 INTO :v2;
+    c2_found = DECODE(ROW_COUNT, 0, FALSE, TRUE);
+    IF (c1_found) THEN
+    BEGIN
+     res = :res + 1;
+    END
+  IF (c2_found) THEN
+  BEGIN
+    res = :res + 10;
+  END
+  CLOSE :c1;
+  CLOSE :c2;
 */
 END;

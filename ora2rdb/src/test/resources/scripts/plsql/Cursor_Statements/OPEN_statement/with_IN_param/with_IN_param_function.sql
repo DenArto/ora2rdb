@@ -13,5 +13,5 @@ BEGIN
   CLOSE c1;
   OPEN c1(3);
   CLOSE c1;
-  RETURNS '';
+  RETURN '';
 END;
