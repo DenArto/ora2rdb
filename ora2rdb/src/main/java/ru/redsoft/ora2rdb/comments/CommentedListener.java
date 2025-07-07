@@ -330,7 +330,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterOpen_statement(Open_statementContext ctx) {
-        General_element_partContext gp_ctx = Ora2rdb.getLastRuleContext(ctx, General_element_partContext.class);
+        General_element_partContext gp_ctx = Finder.getLastRuleContext(ctx, General_element_partContext.class);
         if (gp_ctx != null){
             if (gp_ctx.function_argument() != null){
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_WITH_PARAM);

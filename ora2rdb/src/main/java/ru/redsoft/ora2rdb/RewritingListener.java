@@ -2028,8 +2028,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                                 variable_name + " = " + variable_name + " + ROW_COUNT;\n");
                     }
                     // %ROWCOUNT inside for in <cursor_name>
-                    Loop_statementContext loop_ctx = Ora2rdb.getParentRuleContext(ctx, Loop_statementContext.class);
-                    if (loop_ctx != null && Ora2rdb.getFirstRuleContext(loop_ctx, Cursor_loop_paramContext.class) != null) {
+                    Loop_statementContext loop_ctx = Finder.getParentRuleContext(ctx, Loop_statementContext.class);
+                    if (loop_ctx != null && Finder.getFirstRuleContext(loop_ctx, Cursor_loop_paramContext.class) != null) {
                         insertBefore(loop_ctx, "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
                         insertAfter(loop_ctx.seq_of_statements(),
                                 "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
