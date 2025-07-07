@@ -1949,7 +1949,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (current_plsql_block != null) {
             String cursor_name = getRuleText(ctx.cursor_name());
             Token t = getNextToken(ctx.stop);
-            while (!t.getText().contains(";"))
+            while (t.getType() != PlSqlLexer.SEMICOLON)
                 t = getNextToken(t);
             current_plsql_block.fetch_statement.put(cursor_name, getNextToken(t));
         }
@@ -1960,7 +1960,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (current_plsql_block != null) {
             String cursor_name = getRuleText(ctx.cursor_name());
             Token t = getNextToken(ctx.stop);
-            while (!t.getText().contains(";"))
+            while (t.getType() != PlSqlLexer.SEMICOLON)
                 t = getNextToken(t);
             current_plsql_block.close_statement.put(cursor_name, getNextToken(t));
         }
@@ -1971,7 +1971,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (current_plsql_block != null) {
             String cursor_name = getRuleText(ctx.cursor_name());
             Token t = getNextToken(ctx.stop);
-            while (!t.getText().contains(";"))
+            while (t.getType() != PlSqlLexer.SEMICOLON)
                 t = getNextToken(t);
             current_plsql_block.open_statement.put(cursor_name, getNextToken(t));
         }
@@ -2101,7 +2101,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         } catch (Exception e) {
             System.err.println(e.fillInStackTrace() + rewriter.getText());
         }
-
     }
 
     @Override
