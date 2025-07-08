@@ -1951,7 +1951,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             Token t = getNextToken(ctx.stop);
             while (t.getType() != PlSqlLexer.SEMICOLON)
                 t = getNextToken(t);
-            current_plsql_block.fetch_statement.put(cursor_name, getNextToken(t));
+            current_plsql_block.fetch_statement.put(cursor_name, t);
         }
     }
 
@@ -1962,7 +1962,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             Token t = getNextToken(ctx.stop);
             while (t.getType() != PlSqlLexer.SEMICOLON)
                 t = getNextToken(t);
-            current_plsql_block.close_statement.put(cursor_name, getNextToken(t));
+            current_plsql_block.close_statement.put(cursor_name, t);
         }
     }
 
@@ -1973,7 +1973,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             Token t = getNextToken(ctx.stop);
             while (t.getType() != PlSqlLexer.SEMICOLON)
                 t = getNextToken(t);
-            current_plsql_block.open_statement.put(cursor_name, getNextToken(t));
+            current_plsql_block.open_statement.put(cursor_name, t);
         }
     }
 
@@ -1988,7 +1988,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     current_plsql_block.cursor_found_notfound_attr.add(variable_name);
                     if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
-                                variable_name + " = DECODE(ROW_COUNT, 0, FALSE, TRUE);\n");
+                                "\n\t" + variable_name + " = DECODE(ROW_COUNT, 0, FALSE, TRUE);\n");
                     }
                     if (ctx.PERCENT_FOUND() != null)
                         replace(ctx, variable_name);
@@ -2009,10 +2009,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     current_plsql_block.cursor_open_attr.add(variable_name);
                     if (current_plsql_block.open_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.open_statement.get(cursor_name),
-                                variable_name + " = TRUE;\n");
+                                "\n\t" + variable_name + " = TRUE;\n");
                         if (current_plsql_block.close_statement.containsKey(cursor_name))
                             insertAfter(current_plsql_block.close_statement.get(cursor_name),
-                                    variable_name + " = FALSE;\n");
+                                    "\n\t" + variable_name + " = FALSE;\n");
                     }
                     replace(ctx, variable_name);
                 }
@@ -2025,7 +2025,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     current_plsql_block.cursor_rowcount_attr.add(variable_name);
                     if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
-                                variable_name + " = " + variable_name + " + ROW_COUNT;\n");
+                                "\n\t"	+ variable_name + " = " + variable_name + " + ROW_COUNT;\n");
                     }
                     // %ROWCOUNT inside for in <cursor_name>
                     Loop_statementContext loop_ctx = Finder.getParentRuleContext(ctx, Loop_statementContext.class);
@@ -2648,7 +2648,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             for (String index_name : loop_index_names) {
                 declare_loop_index_names.append("\n  DECLARE VARIABLE ").append(index_name).append(" INTEGER;\n");
             }
-            insertBefore(ctx.trigger_body(), declare_loop_index_names.toString());
+            insertBefore(ctx.trigger_body().trigger_block().body(), declare_loop_index_names.toString());
         }
         loop_index_names.clear();
 

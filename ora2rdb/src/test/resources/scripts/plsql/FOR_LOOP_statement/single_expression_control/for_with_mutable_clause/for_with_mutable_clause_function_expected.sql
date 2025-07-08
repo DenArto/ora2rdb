@@ -13,7 +13,7 @@ BEGIN
       i = i+1;
       summa = :summa + i;   
       if (:summa > 10) then
-      BEGIN ;
+      BEGIN LEAVE;
       END
   END LOOP
   RETURN summa;  
