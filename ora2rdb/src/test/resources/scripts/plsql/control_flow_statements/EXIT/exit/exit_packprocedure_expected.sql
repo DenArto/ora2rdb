@@ -5,21 +5,19 @@ AS BEGIN
 END;
 
 CREATE PACKAGE BODY PackP_Exit
-AS
-BEGIN
+AS BEGIN
     PROCEDURE PP_Exit
     AS
-      DECLARE i_FOR1 INTEGER;
-      DECLARE bound_i_FOR1 INTEGER;
+    DECLARE VARIABLE i INTEGER;
     BEGIN
-      i_FOR1 = 1;
-      bound_i_FOR1 = 3;
-      WHILE (i_FOR1 <= bound_i_FOR1) DO
-      BEGIN 
-        if (i_FOR1 = 3) then 
-          LEAVE;
-        i_FOR1 = i_FOR1 + 1;
-      END
-      i_FOR1 = bound_i_FOR1;
+    i = 1;
+    WHILE ( i <= 3) DO
+        BEGIN
+            if (:i = 3) then
+            BEGIN
+                LEAVE;
+            END
+        i = i + 1;
+        END
     END
 END;

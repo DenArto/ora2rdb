@@ -15,8 +15,9 @@ BEGIN
       WHILE (TRUE) DO 
       BEGIN
         x = :x + 1;
-        IF (x > 4) THEN
+        IF (:x > 4) THEN BEGIN
           LEAVE loop1;
+        END
       END 
     END
 END;

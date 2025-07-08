@@ -1,7 +1,7 @@
 CREATE PACKAGE PackF_Exit
 SQL SECURITY DEFINER
 AS BEGIN
-   FUNCTION PF_Exit 
+   FUNCTION PF_Exit
    RETURNS VARCHAR(32765);
 END;
 
@@ -10,18 +10,17 @@ AS BEGIN
    FUNCTION PF_Exit
    RETURNS VARCHAR(32765)
    AS
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       if (i_FOR1 = 3) then 
-         LEAVE;
-       i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     RETURN '';
-   END
+  DECLARE VARIABLE i INTEGER;
+  BEGIN
+     i = 1;
+     WHILE ( i <= 3) DO
+        BEGIN
+       if (:i = 3) then
+            BEGIN
+             LEAVE;
+            END
+     i = i + 1;
+    END
+  RETURN '';
+  END
 END;
