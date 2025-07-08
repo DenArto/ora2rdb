@@ -2952,7 +2952,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitLabel_name(Label_nameContext ctx) {
-        if (Finder.getParentRuleContext(ctx, Continue_statementContext.class) == null)
+        if (Finder.getParentRuleContext(ctx, Continue_statementContext.class) != null
+            || Finder.getParentRuleContext(ctx, Exit_statementContext.class) != null)
+            return;
+        else
             delete(ctx);
 //        replace(ctx, "/*" + getRewriterText(ctx) + "*/");
     }
@@ -3249,12 +3252,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitExit_statement(Exit_statementContext ctx) {
-        delete(ctx.EXIT());
+        String indentation = getIndentation(ctx);
+        replace(ctx.EXIT(), "LEAVE");
         if (ctx.WHEN() != null) {
             delete(ctx.WHEN());
-            replace(ctx.condition(), "IF( " + getRewriterText(ctx.condition()) + " ) THEN LEAVE");
+            insertBefore(ctx, "IF( " + getRewriterText(ctx.condition()) + " ) THEN \n" + indentation + "\t");
+            delete(ctx.condition());
         }
-
     }
 
     @Override
