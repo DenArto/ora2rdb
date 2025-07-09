@@ -9,6 +9,8 @@ AS
   [-unconvertible RS-239346 enames_with_errors namelist_t] = [-unconvertible RS-239380 namelist_t ('ABC', 'DEF', NULL,
                                                'LITTLE', RPAD ('BIGBIGGERBIGGEST', 250, 'ABC'),
                                                'SMITHIE')];
+
+    DECLARE VARIABLE indx INTEGER;
 */
 BEGIN
 /*

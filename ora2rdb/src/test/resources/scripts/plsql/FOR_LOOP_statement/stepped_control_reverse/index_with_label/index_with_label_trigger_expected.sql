@@ -6,6 +6,8 @@ AS
 
 /*
    DECLARE summa INTEGER = 0;
+
+  DECLARE VARIABLE i INTEGER;
 */
 BEGIN
 /*

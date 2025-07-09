@@ -2,13 +2,14 @@ EXECUTE BLOCK
     AS
 /*
 
-  DECLARE VARIABLE indx INTEGER;
-bulk_errors EXCEPTION;
+    bulk_errors EXCEPTION;
   [-unconvertible RS-239346 TYPE namelist_t IS TABLE OF VARCHAR(32767);]
 
   [-unconvertible RS-239346 enames_with_errors namelist_t] = [-unconvertible RS-239380 namelist_t ('ABC', 'DEF', NULL,
                                                'LITTLE', RPAD ('BIGBIGGERBIGGEST', 250, 'ABC'),
                                                'SMITHIE')];
+
+    DECLARE VARIABLE indx INTEGER;
 */
 BEGIN
 /*

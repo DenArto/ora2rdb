@@ -22,6 +22,7 @@ BEGIN
     EXCEPTION CUSTOM_EXCEPTION( 'text');
   END
   CLOSE c1;
+  c1_isopen = FALSE;
   /*EXCEPTION*/
     WHEN ANY DO
       BEGIN

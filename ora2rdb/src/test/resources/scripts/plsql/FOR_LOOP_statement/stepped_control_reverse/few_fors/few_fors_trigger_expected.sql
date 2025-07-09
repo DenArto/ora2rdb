@@ -3,8 +3,9 @@ CREATE OR ALTER TRIGGER T_Few_Fors
   ON students
 SQL SECURITY DEFINER
 AS
-
    DECLARE summa INTEGER = 0;
+
+  DECLARE VARIABLE i INTEGER;
 BEGIN
   i = 3;
   WHILE ( i  >=   1) DO

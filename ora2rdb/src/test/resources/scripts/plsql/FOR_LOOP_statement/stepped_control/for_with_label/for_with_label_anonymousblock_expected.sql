@@ -2,9 +2,9 @@
 EXECUTE BLOCK 
  AS 
 
-  
+   DECLARE summa INTEGER = 0;
+
   DECLARE VARIABLE i INTEGER;
- DECLARE summa INTEGER = 0;
 BEGIN
   i = 1;
 forlabel:
