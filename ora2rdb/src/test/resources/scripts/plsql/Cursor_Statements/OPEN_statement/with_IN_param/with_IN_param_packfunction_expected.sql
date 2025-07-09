@@ -11,7 +11,7 @@ AS BEGIN
    RETURNS VARCHAR(32765)
    AS
     /*
-     [-unconvertible RS-233573 DECLARE c1 (n NUMERIC(34, 8) DEFAULT 10, m VARCHAR(32765) DEFAULT 'OK')
+     [-unconvertible RS-241342 DECLARE c1 (n NUMERIC(34, 8) DEFAULT 10, m VARCHAR(32765) DEFAULT 'OK')
        CURSOR FOR (SELECT id FROM test_table
          WHERE num < n AND res = m);]
    */
