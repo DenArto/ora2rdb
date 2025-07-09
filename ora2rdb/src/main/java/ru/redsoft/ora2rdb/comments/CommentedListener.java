@@ -343,6 +343,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void enterCursor_declaration(Cursor_declarationContext ctx) {
+        if (!ctx.parameter_spec().isEmpty()) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CURSOR_WITH_PARAMETER);
+        }
+    }
+
+    @Override
     public void enterGoto_statement(Goto_statementContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx.GOTO(), Ticket.GOTO_OPERATOR);
     }

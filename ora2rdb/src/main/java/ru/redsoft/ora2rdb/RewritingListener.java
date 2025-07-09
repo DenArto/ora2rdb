@@ -1937,10 +1937,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx.IS(), "CURSOR FOR");
         insertBefore(ctx.select_statement(), "(");
         insertAfter(ctx.select_statement(), ")");
-        if (!ctx.parameter_spec().isEmpty()) {
-            current_plsql_block.commentBlock = true;
-            replace(ctx, "[-unconvertible RS-233573 " + getRewriterText(ctx) + "]");
-        }
         current_plsql_block.current_cursor_name = null;
     }
 
