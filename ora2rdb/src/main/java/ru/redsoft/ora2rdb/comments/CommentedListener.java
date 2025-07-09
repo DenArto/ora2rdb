@@ -208,7 +208,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.pop();
     }
 
-
     @Override
     public void enterProcedure_spec(Procedure_specContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
@@ -341,6 +340,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterOpen_for_statement(Open_for_statementContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_FOR_STATEMENT);
+    }
+
+    @Override
+    public void enterGoto_statement(Goto_statementContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx.GOTO(), Ticket.GOTO_OPERATOR);
     }
 
     @Override

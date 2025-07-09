@@ -43,6 +43,7 @@ public enum Ticket {
     , SELECT_HIERARCHIES                (1)
     , SELECT_LATERAL_ATTRIBUTE          (1)
 
+    ,GOTO_OPERATOR                      (241308)
     ;
 
 
