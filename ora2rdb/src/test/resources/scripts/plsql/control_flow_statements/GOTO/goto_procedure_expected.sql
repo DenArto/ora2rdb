@@ -1,14 +1,14 @@
 CREATE PROCEDURE P_Goto
-SQL SECURITY DEFINER
-AS
+ SQL SECURITY DEFINER
+ AS
 /*
-  i PLS_INTEGER;
+   DECLARE i INTEGER;
 */
 BEGIN
 /*
-  [-unconvertible GOTO] first_label;
-  i := 10; 
-  <<first_label>>
-  i := 1;
+  [-unconvertible RS-241308 GOTO] ;
+  i = 10;
+  first_label:
+  i = 1;
 */
 END;

@@ -2,22 +2,21 @@ CREATE PACKAGE PackP_Goto
 SQL SECURITY DEFINER
 AS BEGIN
     PROCEDURE PP_Goto;
-END;
+  END;
 
 CREATE PACKAGE BODY PackP_Goto
-AS
-BEGIN
+AS BEGIN
     PROCEDURE PP_Goto
     AS
     /*
-      i PLS_INTEGER;
+       DECLARE i INTEGER;
     */
     BEGIN
     /*
-      [-unconvertible GOTO] first_label;
-      i := 10; 
-      <<first_label>>
-      i := 1;
+      [-unconvertible RS-241308 GOTO] ;
+      i = 10;
+      first_label:
+      i = 1;
     */
     END
 END;
