@@ -3617,7 +3617,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     } else
                         replace(ctx, "EXIT");
                 }
-            }
+            } else
+                replace(ctx, "EXIT");
         }
     }
 
