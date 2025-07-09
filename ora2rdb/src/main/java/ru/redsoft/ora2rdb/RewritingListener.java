@@ -3167,7 +3167,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             insertAfter(ctx.condition(), ")");
         }
 
-        if (ctx.seq_of_statements().statement().size() >= 1) {
+        if (!ctx.seq_of_statements().statement().isEmpty()) {
             String indentation = getIndentation(ctx);
             insertAfter(ctx.THEN(), "\n" + indentation + "BEGIN");
             insertAfter(ctx.seq_of_statements(), "\n" + indentation + "END");
@@ -3184,7 +3184,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             insertBefore(ctx.condition(), "(");
             insertAfter(ctx.condition(), ")");
         }
-        if (ctx.seq_of_statements().statement().size() > 1) {
+        if (!ctx.seq_of_statements().statement().isEmpty()) {
             String indentation = getIndentation(ctx);
             insertAfter(ctx.THEN(), "\n" + indentation + "BEGIN");
             insertAfter(ctx.seq_of_statements(), "\n" + indentation + "END");
@@ -3193,7 +3193,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitElse_part(Else_partContext ctx) {
-        if (ctx.seq_of_statements().statement().size() > 1) {
+        if (!ctx.seq_of_statements().statement().isEmpty()) {
             String indentation = getIndentation(ctx);
             insertAfter(ctx.ELSE(), "\n" + indentation + "BEGIN");
             insertAfter(ctx.seq_of_statements(), "\n" + indentation + "END");

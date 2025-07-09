@@ -11,9 +11,9 @@ BEGIN
     AS
       DECLARE i INTEGER = 1;
     BEGIN
-      WHILE (i < 10) DO 
+      WHILE (:i < 10) DO
       BEGIN
-        i = i + 1;
+        i = :i + 1;
       END
     END
 END;

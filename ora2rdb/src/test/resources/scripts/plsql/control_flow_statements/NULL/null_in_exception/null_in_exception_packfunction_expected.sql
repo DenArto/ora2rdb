@@ -14,9 +14,9 @@ AS BEGIN
    AS
    BEGIN
      EXCEPTION CUSTOM_EXCEPTION( 'Неправильный номер');
+     RETURN '';
      /*EXCEPTION*/
      WHEN ANY DO BEGIN
      END
-     RETURN '';
    END
 END;

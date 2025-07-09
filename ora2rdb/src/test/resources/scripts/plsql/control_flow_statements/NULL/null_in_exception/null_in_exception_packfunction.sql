@@ -11,8 +11,8 @@ AS
    IS
    BEGIN
      raise_application_error(-20134, 'Неправильный номер');
+     RETURN '';
      EXCEPTION
        WHEN OTHERS THEN NULL;
-     RETURN '';
    END;
 END;
