@@ -6,14 +6,15 @@ CREATE EXCEPTION CUSTOM_EXCEPTION
 CREATE PACKAGE PackF_Isopen
 
 SQL SECURITY DEFINER
-AS BEGIN
-   FUNCTION PF_Isopen
-   RETURNS VARCHAR(32765);
+AS BEGIN 
+   FUNCTION PF_Isopen 
+   RETURNS VARCHAR(32765);  
   END;
 
 
+
 CREATE PACKAGE BODY PackF_Isopen
-AS BEGIN
+AS BEGIN 
   FUNCTION PF_Isopen
   RETURNS VARCHAR(32765)
   AS
@@ -21,29 +22,28 @@ AS BEGIN
       (SELECT last_name, salary
       FROM employees
       WHERE salary > 10000
-      ORDER BY last_name);
-
+      ORDER BY last_name ASC NULLS LAST);
+    
      DECLARE tmp INTEGER;
-
-    DECLARE c1_isopen BOOLEAN = FALSE;
+  	DECLARE c1_isopen BOOLEAN = FALSE; 
 BEGIN
     OPEN c1;
     c1_isopen = TRUE;
-  IF (:tmp is NULL)
+IF (:tmp is NULL) 
     THEN
-    BEGIN
+    BEGIN 
       EXCEPTION CUSTOM_EXCEPTION( 'text');
-    END
+    END 
     CLOSE c1;
     c1_isopen = FALSE;
 /*EXCEPTION*/
       WHEN ANY DO
         BEGIN
-	    IF (c1_isopen)
+	        IF (c1_isopen) 
         THEN
-          BEGIN CLOSE c1;
+        BEGIN CLOSE c1;
         END
     RETURN '';
         END
-END
+END  
   END;

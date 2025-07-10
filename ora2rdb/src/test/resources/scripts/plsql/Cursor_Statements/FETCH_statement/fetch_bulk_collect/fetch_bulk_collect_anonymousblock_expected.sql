@@ -1,5 +1,7 @@
-EXECUTE BLOCK
-    AS
+
+EXECUTE BLOCK 
+ AS 
+
 /*
   [-unconvertible RS-239346 TYPE NameList IS TABLE OF TYPE OF COLUMN employees.last_name;]
   [-unconvertible RS-239346 TYPE SalList IS TABLE OF TYPE OF COLUMN employees.salary;]
@@ -8,7 +10,7 @@ EXECUTE BLOCK
     (SELECT last_name, salary
     FROM employees
     WHERE salary > 10000
-    ORDER BY last_name);
+    ORDER BY last_name ASC NULLS LAST);
 
   [-unconvertible RS-239346 names  NameList];
   [-unconvertible RS-239346 sals   SalList];

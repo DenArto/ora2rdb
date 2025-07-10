@@ -1,12 +1,14 @@
 --SALS NUMTAB
 CREATE GLOBAL TEMPORARY TABLE SALS (
-                                       K INTEGER,
-                                       VAL TYPE OF COLUMN employees.salary,
-                                       CONSTRAINT PK_SALS PRIMARY KEY (K)
+	K INTEGER,
+	VAL TYPE OF COLUMN employees.salary,
+	CONSTRAINT PK_SALS PRIMARY KEY (K)
 );
 
-EXECUTE BLOCK
-    AS
+
+EXECUTE BLOCK 
+ AS 
+
 /*
   --TYPE numtab IS TABLE OF TYPE OF COLUMN employees.salary INDEX BY INTEGER;
 
@@ -14,14 +16,14 @@ EXECUTE BLOCK
     (SELECT salary
     FROM employees
     WHERE salary > 10000
-    ORDER BY last_name);
+    ORDER BY last_name ASC NULLS LAST);
 
   --sals numtab;
 */
 BEGIN
 /*
   OPEN c1;
-  FETCH c1 [-unconvertible RS-240714 BULK COLLECT INTO sals LIMIT 4];
+  FETCH c1 [-unconvertible RS-240714 BULK COLLECT INTO sals LIMIT 4]; 
   CLOSE c1;
 */
 END;
