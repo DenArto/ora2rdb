@@ -93,6 +93,19 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void enterCreate_table(Create_tableContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+    }
+
+    @Override
+    public void exitCreate_table(Create_tableContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
     public void enterCreate_function_body(Create_function_bodyContext ctx) {
         if (ctx.call_spec() != null)
             currentBlock.push(new CommentedBlock(ctx));
@@ -519,10 +532,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
 
         //markup SELECT_HIERARCHIES
-        Hierarchies_clauseContext hierarchiesClause = Finder.getFirstRuleContext(ctx, Hierarchies_clauseContext.class);
-        if(hierarchiesClause != null){
-            currentBlock.peek().addUnconvertableBlock(hierarchiesClause, Ticket.SELECT_HIERARCHIES);
-        }
+        Finder.getAllRuleContexts(ctx, Hierarchies_clauseContext.class).forEach(hierarchiesClause ->
+                currentBlock.peek().addUnconvertableBlock(hierarchiesClause, Ticket.SELECT_HIERARCHIES));
 
         //markup SELECT_HIERARCHIES
         List<Dml_table_expression_clauseContext> dmlTableExpressionClauseList = Finder.getAllRuleContexts(ctx, Dml_table_expression_clauseContext.class);
@@ -531,11 +542,69 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 currentBlock.peek().addUnconvertableBlock(dmlTableExpressionClause, Ticket.SELECT_LATERAL_ATTRIBUTE);
         }
 
+        //markup SELECT_TABLE_COLLECTION
+        Table_collection_expressionContext tableCollectionExpression = Finder.getFirstRuleContext(ctx, Table_collection_expressionContext.class);
+        if(tableCollectionExpression != null){
+            currentBlock.peek().addUnconvertableBlock(tableCollectionExpression, Ticket.SELECT_TABLE_COLLECTION);
+        }
+
+        //markup SELECT_PIVOT_CLAUSE
+        Pivot_clauseContext pivotClause = Finder.getFirstRuleContext(ctx, Pivot_clauseContext.class);
+        if(pivotClause != null){
+            currentBlock.peek().addUnconvertableBlock(pivotClause, Ticket.SELECT_PIVOT_CLAUSE);
+        }
+
+        //markup SELECT_UNPIVOT_CLAUSE
+        Unpivot_clauseContext unpivotClause = Finder.getFirstRuleContext(ctx, Unpivot_clauseContext.class);
+        if(unpivotClause != null){
+            currentBlock.peek().addUnconvertableBlock(unpivotClause, Ticket.SELECT_UNPIVOT_CLAUSE);
+        }
+
+        Rollup_cube_clauseContext rollupCubeClause = Finder.getFirstRuleContext(ctx, Rollup_cube_clauseContext.class);
+        if(rollupCubeClause != null){
+            //markup SELECT_GROUP_BY_CUBE
+            if(rollupCubeClause.CUBE() != null)
+                currentBlock.peek().addUnconvertableBlock(rollupCubeClause, Ticket.SELECT_GROUP_BY_CUBE);
+            //markup SELECT_GROUP_BY_ROLLUP
+            if(rollupCubeClause.ROLLUP() != null)
+                currentBlock.peek().addUnconvertableBlock(rollupCubeClause, Ticket.SELECT_GROUP_BY_ROLLUP);
+        }
+        //markup SELECT_ROW_PATTERN
+        Row_pattern_clauseContext rowPatternClause = Finder.getFirstRuleContext(ctx, Row_pattern_clauseContext.class);
+        if(rowPatternClause != null){
+            currentBlock.peek().addUnconvertableBlock(rowPatternClause, Ticket.SELECT_ROW_PATTERN);
+        }
+
+        Finder.getAllRuleContexts(ctx, Fetch_clauseContext.class).stream()
+                .filter(fetchClause -> fetchClause.PERCENT_KEYWORD() != null)
+                .forEach(fetchClause -> currentBlock.peek().addUnconvertableBlock(fetchClause.PERCENT_KEYWORD(), Ticket.SELECT_PERCENT_KEYWORD));
+
+        List<Subquery_operation_partContext> subqueryOperationPartList = Finder.getAllRuleContexts(ctx, Subquery_operation_partContext.class);
+        for(Subquery_operation_partContext subqueryOperationPart : subqueryOperationPartList){
+            if(subqueryOperationPart.EXCEPT() != null)
+                currentBlock.peek().addUnconvertableBlock(subqueryOperationPart.EXCEPT(), Ticket.SELECT_SET_OPERATOR_EXCEPT);
+            else if(subqueryOperationPart.MINUS() != null)
+                currentBlock.peek().addUnconvertableBlock(subqueryOperationPart.MINUS(), Ticket.SELECT_SET_OPERATOR_MINUS);
+            else if(subqueryOperationPart.INTERSECT() != null)
+                currentBlock.peek().addUnconvertableBlock(subqueryOperationPart.INTERSECT(), Ticket.SELECT_SET_OPERATOR_INTERSECT);
+        }
+
+        Finder.getAllRuleContexts(ctx, Search_clauseContext.class)
+                .forEach(searchClauseList -> currentBlock.peek().addUnconvertableBlock(searchClauseList, Ticket.SELECT_WITH_CLAUSE_SEARCH));
 
 
 
 
+    }
 
+    @Override
+    public void enterSelect_only_statement(Select_only_statementContext ctx) {
+
+        //markup SELECT_PIVOT_CLAUSE
+        Pivot_clauseContext pivotClause = Finder.getFirstRuleContext(ctx, Pivot_clauseContext.class);
+        if(pivotClause != null){
+            currentBlock.peek().addUnconvertableBlock(pivotClause, Ticket.SELECT_PIVOT_CLAUSE);
+        }
     }
 
     @Override

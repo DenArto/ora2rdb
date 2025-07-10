@@ -1,4 +1,4 @@
-WITH RECURSIVE
+WITH
     reports_to_101 (eid, emp_last, mgr_id, reportLevel) AS
         (
             SELECT employee_id, last_name, manager_id, 0 reportLevel
@@ -11,4 +11,4 @@ WITH RECURSIVE
         )
 SELECT eid, emp_last, mgr_id, reportLevel
 FROM reports_to_101
-ORDER BY reportLevel, eid;
+ORDER BY reportLevel ASC NULLS LAST, eid ASC NULLS LAST;

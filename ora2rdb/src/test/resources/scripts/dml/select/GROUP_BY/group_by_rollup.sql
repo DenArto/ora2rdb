@@ -1,5 +1,5 @@
 SELECT
     owner,
-    COUNT(*) ownerobj#    -- сколько объектов у каждого владельца
+    COUNT(*) ownerobj#
 FROM the_objects
 GROUP BY ROLLUP(owner);

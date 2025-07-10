@@ -3526,6 +3526,28 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitSelect_statement(Select_statementContext ctx) {
+       List<Order_by_elementsContext> orderByElementList = Finder.getAllRuleContexts(ctx, Order_by_elementsContext.class);
+       for( Order_by_elementsContext orderByElement : orderByElementList){
+           if(orderByElement.NULLS()==null){
+               if(orderByElement.ASC() != null){
+                   insertAfter(orderByElement.ASC(), " NULLS LAST");
+               }
+               else if(orderByElement.DESC() != null){
+                   insertAfter(orderByElement.DESC(), " NULLS FIRST");
+               }
+               else if(orderByElement.ASC() == null && orderByElement.DESC() == null){
+                   insertAfter(orderByElement, " ASC NULLS LAST");
+               }
+           }
+       }
+
+       Finder.getAllRuleContexts(ctx, Query_blockContext.class).stream()
+               .filter(queryBlock ->  queryBlock.UNIQUE() != null)
+               .forEach(queryBlock -> replace(queryBlock.UNIQUE(), "DISTINCT"));
+    }
+
+    @Override
     public void exitSelect_list_elements(Select_list_elementsContext ctx) {
         if (Ora2rdb.getRealName(ctx.getText()).equals("ROWID"))
             replace(ctx, "RDB$DB_KEY");

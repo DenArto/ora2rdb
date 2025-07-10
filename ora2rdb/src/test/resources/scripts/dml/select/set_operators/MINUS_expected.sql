@@ -1,8 +1,8 @@
-SELECT department_id, department_name
+/*SELECT department_id, department_name
 FROM   departments
 WHERE  department_id <= 30
-[-unconvertible MINUS]
+[-unconvertible RS-241407 MINUS]
 SELECT department_id, department_name
 FROM   departments
 WHERE  department_id >= 20
-ORDER BY 1;
+ORDER BY 1 ASC NULLS LAST;*/
