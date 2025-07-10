@@ -1,19 +1,20 @@
-/*ERROR: RED DATABASE SUPPORT ONE LEVEL OF NESTING*/
 CREATE PROCEDURE PR
-SQL SECURITY DEFINER
-AS
-/*
-    PROCEDURE NESTED_PR IS
-        [-unconvertible PROCEDURE NESTED_PR_2 IS
-            BEGIN
-                NULL;
-            END];
-    BEGIN
-        NULL;
-    END;
-*/
-BEGIN
-/*
+ SQL SECURITY DEFINER
+ AS
+    DECLARE PROCEDURE NESTED_PR AS
+        /*[-unconvertible RS-241716 DECLARE PROCEDURE NESTED_PR_2 AS
+        BEGIN
 
-*/
+        END]*/
+
+        /*[-unconvertible RS-241716 DECLARE FUNCTION NESTED_F_2
+        RETURNS VARCHAR(32765) AS
+        BEGIN
+
+        END]*/
+    BEGIN
+
+    END
+BEGIN
+
 END;
