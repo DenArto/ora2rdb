@@ -1713,6 +1713,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitFunction_body(Function_bodyContext ctx) {
+        replace(ctx.FUNCTION(), "DECLARE FUNCTION");
         replace(ctx.IS(), "AS");
 //      replace(ctx.SEMICOLON(), "^");
         String getWhiteSpace = getIndentation(ctx) + "  ";
@@ -1720,7 +1721,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             StoredFunction currentFunction = (StoredFunction) storedBlocksStack.peek();
 
             if (currentFunction.containOutParameters()) {
-                replace(ctx.FUNCTION(), "PROCEDURE");
+                replace(ctx.FUNCTION(), "DECLARE PROCEDURE");
                 replace(ctx.RETURN(), "\nRETURNS ( RET_VAL");
 
                 ArrayList<Parameter> out_parameters = (ArrayList<Parameter>) currentFunction.getParameters().values().stream()
@@ -1795,6 +1796,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitFunction_spec(Function_specContext ctx) {
+        replace(ctx.FUNCTION(), "DECLARE FUNCTION");
         replace(ctx.RETURN(), "RETURNS");
         deleteSPACESLeft(ctx.SEMICOLON());
         StringBuilder return_parameters = new StringBuilder();
@@ -1802,7 +1804,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 .filter(e -> !e.OUT().isEmpty())
                 .collect(Collectors.toList());
         if (!parameters.isEmpty()) {
-            replace(ctx.FUNCTION(), "PROCEDURE");
+            replace(ctx.FUNCTION(), "DECLARE PROCEDURE");
             replace(ctx.RETURN(), "\nRETURNS ( RET_VAL");
             return_parameters.append(",\n");
             for (ParameterContext parameter : parameters) {
@@ -1937,6 +1939,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx.IS(), "CURSOR FOR");
         insertBefore(ctx.select_statement(), "(");
         insertAfter(ctx.select_statement(), ")");
+        // delete return statement inside cursor declaration
+        delete(ctx.RETURN());
+        delete(ctx.type_spec());
         current_plsql_block.current_cursor_name = null;
     }
 
@@ -2021,7 +2026,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     current_plsql_block.cursor_rowcount_attr.add(variable_name);
                     if (current_plsql_block.fetch_statement.containsKey(cursor_name)) {
                         insertAfter(current_plsql_block.fetch_statement.get(cursor_name),
-                                "\n\t"	+ variable_name + " = " + variable_name + " + ROW_COUNT;\n");
+                                "\n\t" + variable_name + " = " + variable_name + " + ROW_COUNT;\n");
                     }
                     // %ROWCOUNT inside for in <cursor_name>
                     Loop_statementContext loop_ctx = Finder.getParentRuleContext(ctx, Loop_statementContext.class);
@@ -2214,6 +2219,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitProcedure_spec(Procedure_specContext ctx) {
+        replace(ctx.PROCEDURE(), "DECLARE PROCEDURE");
         StringBuilder return_parameters = new StringBuilder();
         return_parameters.append("RETURNS ( ");
 
@@ -2372,6 +2378,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitProcedure_body(Procedure_bodyContext ctx) {
+        replace(ctx.PROCEDURE(), "DECLARE PROCEDURE");
         replace(ctx.IS(), "AS");
         delete(ctx.SEMICOLON());
         StoredProcedure currentProcedure = (StoredProcedure) storedBlocksStack.peek();
@@ -2949,7 +2956,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitLabel_name(Label_nameContext ctx) {
         if (Finder.getParentRuleContext(ctx, Continue_statementContext.class) != null
-            || Finder.getParentRuleContext(ctx, Exit_statementContext.class) != null)
+                || Finder.getParentRuleContext(ctx, Exit_statementContext.class) != null)
             return;
         else
             delete(ctx);
@@ -3260,7 +3267,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitContinue_statement(Continue_statementContext ctx) {
         String indendation = getIndentation(ctx);
-        if (Finder.getFirstRuleContext(ctx, Label_nameContext.class) == null){
+        if (Finder.getFirstRuleContext(ctx, Label_nameContext.class) == null) {
             Loop_statementContext lctx = Finder.getParentRuleContext(ctx, Loop_statementContext.class);
             if (lctx != null) {
                 if (lctx.FOR() != null && lctx.cursor_loop_param() != null) {

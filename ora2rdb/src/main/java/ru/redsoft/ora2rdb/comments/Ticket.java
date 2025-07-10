@@ -45,6 +45,8 @@ public enum Ticket {
     , SELECT_LATERAL_ATTRIBUTE          (1)
 
     ,GOTO_OPERATOR                      (241308)
+
+    ,NESTED_PROCEDURE_FUNCTION          (241716)
     ;
 
 

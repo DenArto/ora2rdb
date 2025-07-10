@@ -227,6 +227,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+
+        if (Finder.getParentRuleContext(ctx, Procedure_bodyContext.class) != null ||
+                Finder.getParentRuleContext(ctx, Function_bodyContext.class) != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_PROCEDURE_FUNCTION);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
     }
 
     @Override
@@ -241,6 +247,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterFunction_spec(Function_specContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
+        if (!ctx.parallel_enable_clause().isEmpty()) {
+            currentBlock.peek().addUnconvertableBlock(ctx.parallel_enable_clause(0), Ticket.PARALLEL_ENABLE_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (!ctx.RESULT_CACHE().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.RESULT_CACHE(0), Ticket.RESULT_CACHE_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (!ctx.PIPELINED().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
     }
 
     @Override
@@ -257,6 +275,23 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.body().BEGIN(), ctx.body().END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
+        if (!ctx.parallel_enable_clause().isEmpty()) {
+            currentBlock.peek().addUnconvertableBlock(ctx.parallel_enable_clause(0), Ticket.PARALLEL_ENABLE_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (!ctx.result_cache_clause().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.result_cache_clause(0), Ticket.RESULT_CACHE_CLAUSE);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (!ctx.PIPELINED().isEmpty()){
+            currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        if (Finder.getParentRuleContext(ctx, Procedure_bodyContext.class) != null ||
+                Finder.getParentRuleContext(ctx, Function_bodyContext.class) != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_PROCEDURE_FUNCTION);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
     }
 
     @Override
