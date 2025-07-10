@@ -1,38 +1,43 @@
 CREATE PACKAGE PackP_Cursorvar_Isopen
 SQL SECURITY DEFINER
-AS  /* BEGIN */
+AS BEGIN
     PROCEDURE PP_Cursorvar_Isopen;
-END;
+  END;
+
 
 CREATE PACKAGE BODY PackP_Cursorvar_Isopen
-AS  /* BEGIN */
-   PROCEDURE PP_Cursorvar_Isopen
-   AS
-    /*
-       [-unconvertible c1 SYS_REFCURSOR];
-       [-unconvertible TYPE t_c2 IS REF CURSOR];
-       c2 [-unconvertible t_c2];
-       DECLARE tmp INTEGER;
-    */
-    BEGIN
-    /*
-       OPEN [-unconvertible c1] FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER';
-       OPEN [-unconvertible c2] FOR SELECT * FROM test_table;
-       IF (:tmp is NULL)
-       THEN
-          EXCEPTION CUSTOM_EXCEPTION( 'Неправильное целочисленное значение');
-       CLOSE [-unconvertible c1];
-       CLOSE [-unconvertible c2];
-      EXCEPTION
+AS BEGIN
+    PROCEDURE PP_Cursorvar_Isopen
+    AS
+/*
+    DECLARE c1 [-unconvertible RS-239691 SYS_REFCURSOR];
+    [-unconvertible RS-239691 TYPE t_c2 IS REF CURSOR;]
+    DECLARE c2 t_c2;
+
+    DECLARE tmp INTEGER;
+    DECLARE c1_isopen BOOLEAN = FALSE;
+    DECLARE c2_isopen BOOLEAN = FALSE;
+*/
+BEGIN
+/*
+  [-unconvertible RS-240783 OPEN :c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER'];
+  [-unconvertible RS-240783 OPEN :c2 FOR SELECT * FROM test_table];
+
+
+      CLOSE :c1;
+      CLOSE :c2;
+      /*EXCEPTION*/
         WHEN ANY DO
-        BEGIN
-         IF [-unconvertible c1]%ISOPEN
-         THEN CLOSE [-unconvertible c1];
-         END IF;
-         IF [-unconvertible c2]%ISOPEN
-         THEN CLOSE [-unconvertible c2];
-         END IF;
-       END
-    */
-   END
-END;
+          BEGIN
+	          IF (c1_isopen)
+          THEN
+          BEGIN CLOSE :c1;
+          END
+          IF (c2_isopen)
+          THEN
+          BEGIN CLOSE :c2;
+          END
+          END
+*/
+END
+  END;

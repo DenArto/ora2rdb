@@ -1,7 +1,7 @@
 CREATE PACKAGE PackF_Open_With_Param
 SQL SECURITY DEFINER
 AS BEGIN
-   FUNCTION PF_Open_With_Param 
+   FUNCTION PF_Open_With_Param
    RETURNS VARCHAR(32765);
 END;
 
@@ -10,19 +10,22 @@ AS BEGIN
    FUNCTION PF_Open_With_Param
    RETURNS VARCHAR(32765)
    AS
-     DECLARE c1_v1 CURSOR FOR (SELECT id FROM test_table WHERE num < 10 AND res = 'OK');
-     DECLARE c1_v2 CURSOR FOR (SELECT id FROM test_table WHERE num < 5 AND res = 'POOR');
-     DECLARE c1_v3 CURSOR FOR (SELECT id FROM test_table WHERE num < 2 AND res = 'POOR');
-     DECLARE c1_v4 CURSOR FOR (SELECT id FROM test_table WHERE num < 3 AND res = 'OK');
-   BEGIN
-     OPEN c1_v1;
-     CLOSE c1_v1;
-     OPEN c1_v2;
-     CLOSE c1_v2;
-     OPEN c1_v3;
-     CLOSE c1_v3;
-     OPEN c1_v4;
-     CLOSE c1_v4;
-     RETURNS '';
-   END
+    /*
+     [-unconvertible RS-233573 DECLARE c1 (n NUMERIC(34, 8) DEFAULT 10, m VARCHAR(32765) DEFAULT 'OK')
+       CURSOR FOR (SELECT id FROM test_table
+         WHERE num < n AND res = m);]
+   */
+    BEGIN
+    /*
+         OPEN c1;
+         CLOSE c1;
+         [-unconvertible RS-240722 OPEN c1(m=>'POOR', n=>5)];
+         CLOSE c1;
+         [-unconvertible RS-240722 OPEN c1(2, 'POOR')];
+         CLOSE c1;
+         [-unconvertible RS-240722 OPEN c1(3)];
+         CLOSE c1;
+         RETURN '';
+       */
+    END
 END;

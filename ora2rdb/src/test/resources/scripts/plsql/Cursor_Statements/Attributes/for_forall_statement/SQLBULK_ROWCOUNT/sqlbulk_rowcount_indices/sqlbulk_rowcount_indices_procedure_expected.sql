@@ -1,15 +1,22 @@
+--DEPTS INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE DEPTS (
+                                        K INTEGER,
+                                        VAL INTEGER,
+                                        CONSTRAINT PK_DEPTS PRIMARY KEY (K)
+);
+
 CREATE PROCEDURE P_Sqlbulk_Rowcount_Indices
-SQL SECURITY DEFINER
-AS
+    SQL SECURITY DEFINER
+ AS
 /*
-  TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER;
-  depts intvec_t := intvec_t(3 => 10, 22 => 20, 55 => 30);
-  DECLARE tmp INTEGER;
+  --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+  --depts intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 22 => 20, 55 => 30)];
+   DECLARE tmp INTEGER;
 */
 BEGIN
 /*
-  FORALL i IN INDICES OF depts  
-    UPDATE employees SET SALARY = SALARY * 1.1 WHERE department_id = depts(i);
-  tmp := SQL%BULK_ROWCOUNT(55);
+  [-unconvertible RS-240654 FORALL i IN INDICES OF depts
+    UPDATE employees SET SALARY = SALARY * 1.1 WHERE department_id = (SELECT VAL FROM DEPTS WHERE K = i)];
+  tmp = SQL%BULK_ROWCOUNT(55);
 */
 END;

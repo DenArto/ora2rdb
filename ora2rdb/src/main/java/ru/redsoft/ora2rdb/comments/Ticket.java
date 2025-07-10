@@ -24,11 +24,16 @@ public enum Ticket {
     , VARRAY_CONSTRUCTOR                (239379)
 
     ,test                               (1)
+    ,SYS_REFCURSOR_REF_CURSOR_TYPE_DEF  (239691)
     ,ACCESSIBLE_BY_CLAUSE               (239382)
     ,RESULT_CACHE_CLAUSE                (239599)
     ,PARALLEL_ENABLE_CLAUSE             (239601)
     ,EXTERNAL_FUNCTION                  (239602)
     ,PIPELINED_FUNCTION                 (239607)
+    ,FORALL_LOOP                        (240654)
+    ,FETCH_BULK_COLLECT                 (240714)
+    ,OPEN_WITH_PARAM                    (240722)
+    ,OPEN_FOR_STATEMENT                (240783)
 
     , SELECT_FOR_UPDATE                 (241264)
     , SELECT_CROSS_APPLY                (241266)
