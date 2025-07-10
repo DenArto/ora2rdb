@@ -1,9 +1,11 @@
+
 CREATE PROCEDURE calc_annual_sales
-    SQL SECURITY DEFINER
-    AS
+
+ SQL SECURITY DEFINER
+ AS
     DECLARE cur CURSOR FOR
         (SELECT * FROM employees);
-	 DECLARE VARIABLE cur_rec TYPE OF TABLE cur;
+     DECLARE VARIABLE cur_rec TYPE OF TABLE cur;
 BEGIN
 
 END;
