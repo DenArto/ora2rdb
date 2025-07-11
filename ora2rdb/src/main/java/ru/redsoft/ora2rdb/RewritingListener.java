@@ -1431,7 +1431,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             if (ctx.view_options().view_alias_constraint() != null) {
                 if (!ctx.view_options().view_alias_constraint().inline_constraint().isEmpty())
                     for (Inline_constraintContext constraint : ctx.view_options().view_alias_constraint().inline_constraint())
-                        commentBlock(constraint.start.getTokenIndex(), constraint.stop.getTokenIndex());
+                        delete(constraint);
 //                if (!ctx.view_options().view_alias_constraint().out_of_line_constraint().isEmpty())
 //                    for (Out_of_line_constraintContext constraint : ctx.view_options().view_alias_constraint().out_of_line_constraint())
 //                        commentBlock(constraint.start.getTokenIndex(), constraint.stop.getTokenIndex());
@@ -1444,7 +1444,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 }
                 newView.append(getRewriterText(ctx.view_options().view_alias_constraint()));
             } else {
-                commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+//                commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
                 insertBefore(ctx, "/* This type of view is not supported */\n");
                 current_view = null;
                 return;

@@ -47,6 +47,10 @@ public enum Ticket {
     ,GOTO_OPERATOR                      (241308)
 
     ,NESTED_PROCEDURE_FUNCTION          (241716)
+
+    ,OBJECT_VIEW                        (241921)
+    ,XML_TYPE_VIEW                      (241929)
+    ,MATERIALIZED_VIEW                  (241931)
     ;
 
 

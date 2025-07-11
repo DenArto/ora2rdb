@@ -105,23 +105,23 @@ public class CommentedListener extends PlSqlParserBaseListener {
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
 
-        if (!ctx.accessible_by_clause().isEmpty()){
+        if (!ctx.accessible_by_clause().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(0), Ticket.ACCESSIBLE_BY_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.result_cache_clause().isEmpty()){
+        if (!ctx.result_cache_clause().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.result_cache_clause(0), Ticket.RESULT_CACHE_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.parallel_enable_clause().isEmpty()){
+        if (!ctx.parallel_enable_clause().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.parallel_enable_clause(0), Ticket.PARALLEL_ENABLE_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (ctx.call_spec() != null){
+        if (ctx.call_spec() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx.call_spec(), Ticket.EXTERNAL_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.PIPELINED().isEmpty()){
+        if (!ctx.PIPELINED().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -178,6 +178,44 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.pop();
     }
 
+    @Override
+    public void enterCreate_view(Create_viewContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+        if (ctx.view_options() != null) {
+            if (ctx.view_options().object_view_clause() != null) {
+                currentBlock.peek().addUnconvertableBlock(ctx.view_options().object_view_clause(), Ticket.OBJECT_VIEW);
+                currentBlock.peek().setConvertAllBlock(true);
+            }
+            if (ctx.view_options().xmltype_view_clause() != null) {
+                currentBlock.peek().addUnconvertableBlock(ctx.view_options().xmltype_view_clause(), Ticket.XML_TYPE_VIEW);
+                currentBlock.peek().setConvertAllBlock(true);
+            }
+        }
+    }
+
+    @Override
+    public void exitCreate_view(Create_viewContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
+    public void enterCreate_materialized_view(Create_materialized_viewContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.MATERIALIZED_VIEW);
+        currentBlock.peek().setConvertAllBlock(true);
+    }
+
+    @Override
+    public void exitCreate_materialized_view(Create_materialized_viewContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
 
     @Override
     public void enterCreate_package(Create_packageContext ctx) {
@@ -229,7 +267,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.body().BEGIN(), ctx.body().END()));
 
         if (Finder.getParentRuleContext(ctx, Procedure_bodyContext.class) != null ||
-                Finder.getParentRuleContext(ctx, Function_bodyContext.class) != null){
+                Finder.getParentRuleContext(ctx, Function_bodyContext.class) != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_PROCEDURE_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -251,11 +289,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx.parallel_enable_clause(0), Ticket.PARALLEL_ENABLE_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.RESULT_CACHE().isEmpty()){
+        if (!ctx.RESULT_CACHE().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.RESULT_CACHE(0), Ticket.RESULT_CACHE_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.PIPELINED().isEmpty()){
+        if (!ctx.PIPELINED().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -279,16 +317,16 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx.parallel_enable_clause(0), Ticket.PARALLEL_ENABLE_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.result_cache_clause().isEmpty()){
+        if (!ctx.result_cache_clause().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.result_cache_clause(0), Ticket.RESULT_CACHE_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
-        if (!ctx.PIPELINED().isEmpty()){
+        if (!ctx.PIPELINED().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
         if (Finder.getParentRuleContext(ctx, Procedure_bodyContext.class) != null ||
-                Finder.getParentRuleContext(ctx, Function_bodyContext.class) != null){
+                Finder.getParentRuleContext(ctx, Function_bodyContext.class) != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_PROCEDURE_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -357,7 +395,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterFetch_statement(Fetch_statementContext ctx) {
-        if (ctx.BULK() != null){
+        if (ctx.BULK() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx.BULK().getSymbol(), ctx.stop, Ticket.FETCH_BULK_COLLECT);
         }
     }
@@ -365,8 +403,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterOpen_statement(Open_statementContext ctx) {
         General_element_partContext gp_ctx = Finder.getLastRuleContext(ctx, General_element_partContext.class);
-        if (gp_ctx != null){
-            if (gp_ctx.function_argument() != null){
+        if (gp_ctx != null) {
+            if (gp_ctx.function_argument() != null) {
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OPEN_WITH_PARAM);
             }
         }
@@ -437,7 +475,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
         // convert SYS_REFCURSOR type
         if (ctx.type_spec().type_name() != null) {
-            if (Ora2rdb.getRealName(getRuleText(ctx.type_spec().type_name())).equals("SYS_REFCURSOR")){
+            if (Ora2rdb.getRealName(getRuleText(ctx.type_spec().type_name())).equals("SYS_REFCURSOR")) {
                 currentBlock.peek().addUnconvertableBlock(ctx.type_spec().type_name(), Ticket.SYS_REFCURSOR_REF_CURSOR_TYPE_DEF);
             }
         }
@@ -547,16 +585,15 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterData_manipulation_language_statements(Data_manipulation_language_statementsContext ctx) {
-        if(Finder.getParentRuleContext(ctx, Sql_statementContext.class) == null){
+        if (Finder.getParentRuleContext(ctx, Sql_statementContext.class) == null) {
             currentBlock.push(new CommentedBlock(ctx, true));
         }
     }
 
 
-
     @Override
     public void exitData_manipulation_language_statements(Data_manipulation_language_statementsContext ctx) {
-        if(Finder.getParentRuleContext(ctx, Sql_statementContext.class) == null){
+        if (Finder.getParentRuleContext(ctx, Sql_statementContext.class) == null) {
             if (!currentBlock.peek().unconvertableBlocksIsEmpty())
                 StorageInfo.commentedBlockList.add(currentBlock.pop());
             else
@@ -565,19 +602,20 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
-    public void enterMerge_statement(PlSqlParser.Merge_statementContext ctx) { }
+    public void enterMerge_statement(PlSqlParser.Merge_statementContext ctx) {
+    }
 
     @Override
     public void enterSelect_statement(Select_statementContext ctx) {
         //markup select_for_update
         For_update_clauseContext forUpdateClause = Finder.getFirstRuleContext(ctx, For_update_clauseContext.class);
-        if(forUpdateClause != null)
+        if (forUpdateClause != null)
             currentBlock.peek().addUnconvertableBlock(forUpdateClause, Ticket.SELECT_FOR_UPDATE);
 
 
         //markup cross apply, SELECT_QUERY_PARTITION
         Join_clauseContext joinClause = Finder.getFirstRuleContext(ctx, Join_clauseContext.class);
-        if(joinClause != null) {
+        if (joinClause != null) {
             //markup cross apply
             if (joinClause.APPLY() != null)
                 currentBlock.peek().addUnconvertableBlock(joinClause, Ticket.SELECT_CROSS_APPLY);
@@ -590,49 +628,50 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
         //markup SELECT_ANALYTIC_VIEW
         Subav_factoring_clauseContext subavFactoringClause = Finder.getFirstRuleContext(ctx, Subav_factoring_clauseContext.class);
-        if(subavFactoringClause != null){
+        if (subavFactoringClause != null) {
             currentBlock.peek().addUnconvertableBlock(subavFactoringClause, Ticket.SELECT_ANALYTIC_VIEW);
         }
 
         //markup SELECT_FLASHBACK_QUERY
         Flashback_query_clauseContext flashbackQueryClause = Finder.getFirstRuleContext(ctx, Flashback_query_clauseContext.class);
-        if(flashbackQueryClause != null && flashbackQueryClause.VERSIONS() == null){
+        if (flashbackQueryClause != null && flashbackQueryClause.VERSIONS() == null) {
             currentBlock.peek().addUnconvertableBlock(flashbackQueryClause, Ticket.SELECT_FLASHBACK_QUERY);
         }
 
         //markup SELECT_HIERARCHIES
         Hierarchies_clauseContext hierarchiesClause = Finder.getFirstRuleContext(ctx, Hierarchies_clauseContext.class);
-        if(hierarchiesClause != null){
+        if (hierarchiesClause != null) {
             currentBlock.peek().addUnconvertableBlock(hierarchiesClause, Ticket.SELECT_HIERARCHIES);
         }
 
         //markup SELECT_HIERARCHIES
         List<Dml_table_expression_clauseContext> dmlTableExpressionClauseList = Finder.getAllRuleContexts(ctx, Dml_table_expression_clauseContext.class);
-        for(Dml_table_expression_clauseContext dmlTableExpressionClause : dmlTableExpressionClauseList) {
+        for (Dml_table_expression_clauseContext dmlTableExpressionClause : dmlTableExpressionClauseList) {
             if (dmlTableExpressionClause.LATERAL() != null)
                 currentBlock.peek().addUnconvertableBlock(dmlTableExpressionClause, Ticket.SELECT_LATERAL_ATTRIBUTE);
         }
 
 
-
-
-
-
     }
 
     @Override
-    public void enterInsert_statement(Insert_statementContext ctx) { }
+    public void enterInsert_statement(Insert_statementContext ctx) {
+    }
 
     @Override
-    public void enterUpdate_statement(Update_statementContext ctx) { }
+    public void enterUpdate_statement(Update_statementContext ctx) {
+    }
 
     @Override
-    public void enterDelete_statement(Delete_statementContext ctx) { }
+    public void enterDelete_statement(Delete_statementContext ctx) {
+    }
 
     @Override
-    public void enterExplain_statement(Explain_statementContext ctx) { }
+    public void enterExplain_statement(Explain_statementContext ctx) {
+    }
 
     @Override
-    public void enterLock_table_statement(Lock_table_statementContext ctx) { }
+    public void enterLock_table_statement(Lock_table_statementContext ctx) {
+    }
 
 }
