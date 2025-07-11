@@ -11,7 +11,7 @@ BEGIN
 /*
   forlabel:
   [-unconvertible RS-238757 FOR i IN 1] LOOP
-      summa = :summa + [-unconvertible RS-1 forlabel.i];
+      summa = :summa + [-unconvertible RS-239627 forlabel.i];
   END LOOP 
 */
 END;

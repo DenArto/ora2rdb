@@ -11,7 +11,7 @@ BEGIN
 /*
   forlabel:
   [-unconvertible RS-238745 FOR i IN INDICES OF vec] LOOP
-      summa = :summa + [-unconvertible RS-1 forlabel.i];
+      summa = :summa + [-unconvertible RS-239627 forlabel.i];
   END LOOP 
 */
 END;

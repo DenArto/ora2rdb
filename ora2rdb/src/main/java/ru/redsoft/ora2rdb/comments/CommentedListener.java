@@ -505,7 +505,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
             return;
         for (Id_expressionContext id : ctx.id_expression()) {
             if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
-                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.test);
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LABEL_VARIABLE);
         }
     }
 

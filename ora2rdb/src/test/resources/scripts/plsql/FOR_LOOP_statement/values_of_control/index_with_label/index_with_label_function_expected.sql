@@ -13,7 +13,7 @@ BEGIN
 /*
   forlabel:
   [-unconvertible RS-238760 FOR i IN VALUES OF vec] LOOP
-     summa = :summa || [-unconvertible RS-1 forlabel.i];
+     summa = :summa || [-unconvertible RS-239627 forlabel.i];
   END LOOP 
   RETURN summa; 
 */
