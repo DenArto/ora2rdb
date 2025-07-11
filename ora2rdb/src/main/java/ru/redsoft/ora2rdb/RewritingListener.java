@@ -3669,6 +3669,28 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitInsert_statement(Insert_statementContext ctx) {
+        Static_returning_clauseContext staticReturningClause = Finder.getFirstRuleContext(ctx, Static_returning_clauseContext.class);
+        if(staticReturningClause != null && staticReturningClause.RETURN() != null)
+            replace(staticReturningClause.RETURN(), "RETURNING");
+
+        Values_clauseContext valuesClause = Finder.getFirstRuleContext(ctx, Values_clauseContext.class);
+        if(valuesClause != null && valuesClause.expressions_() != null){
+            for(ExpressionContext expression : Finder.getAllRuleContexts(valuesClause, ExpressionContext.class)) {
+                General_element_partContext generalElementPart = Finder.getFirstRuleContext(expression, General_element_partContext.class);
+                if (generalElementPart != null) {
+                    if (generalElementPart.id_expression().size() <= 2
+                            && Ora2rdb.getRealName(generalElementPart.id_expression(generalElementPart.id_expression().size() - 1).getText()).equals("NEXTVAL")) {
+                        insertBefore(expression, "NEXT VALUE FOR ");
+                        delete(generalElementPart.id_expression(1));
+                        delete(generalElementPart.PERIOD(generalElementPart.PERIOD().size() - 1));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void exitRelational_expression(Relational_expressionContext ctx) {
         if (Ora2rdb.getRealName(ctx.getText()).equals("ROWID"))
             replace(ctx, "RDB$DB_KEY");

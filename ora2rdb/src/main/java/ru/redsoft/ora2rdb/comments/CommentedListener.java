@@ -644,7 +644,34 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
-    public void enterInsert_statement(Insert_statementContext ctx) { }
+    public void enterInsert_statement(Insert_statementContext ctx) {
+        Multi_table_insertContext multiTableInsert = Finder.getFirstRuleContext(ctx, Multi_table_insertContext.class);
+        if (multiTableInsert != null && multiTableInsert.ALL() != null)
+                currentBlock.peek().addUnconvertableBlock(
+                        multiTableInsert.start,
+                        Finder.getLastRuleContext(ctx, Multi_table_elementContext.class).stop,
+                        Ticket.INSERT_MULTI_TABLE_ALL
+                );
+
+        Conditional_insert_clauseContext conditionalInsertClause = Finder.getFirstRuleContext(ctx, Conditional_insert_clauseContext.class);
+        if(conditionalInsertClause != null){
+            if(conditionalInsertClause.ALL() != null)
+                currentBlock.peek().addUnconvertableBlock(conditionalInsertClause, Ticket.INSERT_CONDITION_ALL);
+            else if(conditionalInsertClause.FIRST() != null)
+                currentBlock.peek().addUnconvertableBlock(conditionalInsertClause, Ticket.INSERT_CONDITION_FIRST);
+            else
+                currentBlock.peek().addUnconvertableBlock(conditionalInsertClause, Ticket.INSERT_CONDITION_ALL);
+        }
+
+        Error_logging_clauseContext errorLoggingClause = Finder.getFirstRuleContext(ctx, Error_logging_clauseContext.class);
+        if(errorLoggingClause != null)
+            currentBlock.peek().addUnconvertableBlock(errorLoggingClause, Ticket.INSERT_ERROR_LOGGING);
+
+        General_table_refContext generalTableRef = Finder.getFirstRuleContext(ctx, General_table_refContext.class);
+        if(generalTableRef != null && Finder.getFirstRuleContext(generalTableRef, Query_blockContext.class) != null){
+            currentBlock.peek().addUnconvertableBlock(generalTableRef, Ticket.INSERT_INTO_SELECT);
+        }
+    }
 
     @Override
     public void enterUpdate_statement(Update_statementContext ctx) { }
