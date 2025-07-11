@@ -1713,7 +1713,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitFunction_body(Function_bodyContext ctx) {
-        replace(ctx.FUNCTION(), "DECLARE FUNCTION");
+        if (Finder.getParentRuleContext(ctx, Create_package_bodyContext.class) == null)
+            replace(ctx.FUNCTION(), "DECLARE FUNCTION");
         replace(ctx.IS(), "AS");
 //      replace(ctx.SEMICOLON(), "^");
         String getWhiteSpace = getIndentation(ctx) + "  ";
@@ -2378,7 +2379,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitProcedure_body(Procedure_bodyContext ctx) {
-        replace(ctx.PROCEDURE(), "DECLARE PROCEDURE");
+        if (Finder.getParentRuleContext(ctx, Create_package_bodyContext.class) == null)
+            replace(ctx.PROCEDURE(), "DECLARE PROCEDURE");
         replace(ctx.IS(), "AS");
         delete(ctx.SEMICOLON());
         StoredProcedure currentProcedure = (StoredProcedure) storedBlocksStack.peek();
