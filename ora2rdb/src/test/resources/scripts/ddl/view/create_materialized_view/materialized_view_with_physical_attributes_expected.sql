@@ -1,2 +1,5 @@
-CREATE VIEW emp_data
-   AS SELECT * FROM employees;
+/*[-unconvertible RS-241931 CREATE MATERIALIZED VIEW emp_data
+   PCTFREE 5 PCTUSED 60
+   TABLESPACE example
+   STORAGE (INITIAL 50K)
+   AS SELECT * FROM employees;]*/

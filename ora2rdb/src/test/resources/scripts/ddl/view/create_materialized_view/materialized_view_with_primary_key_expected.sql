@@ -1,2 +1,2 @@
-CREATE VIEW oe.customers
-  AS SELECT * FROM oe.customers@orc1.example.com;
+/*[-unconvertible RS-241931 CREATE MATERIALIZED VIEW customers REFRESH WITH PRIMARY KEY
+  AS SELECT * FROM customers@orc1.example.com;]*/
