@@ -1,3 +1,2 @@
-/* В настоящее время оператор FOR UPDATE не делает то, что от него ожидается. См. документацию */
-SELECT employee_id, last_name from employees
-    FOR UPDATE;
+/*SELECT employee_id, last_name from employees
+    [-unconvertible RS-241264 FOR UPDATE skip locked];*/

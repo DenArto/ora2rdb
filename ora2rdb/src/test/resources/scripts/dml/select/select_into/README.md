@@ -10,5 +10,5 @@ SELECT автоматически инициируются исключения:
 чение NO_DATA_FOUND.
 
 - Команда SELECT вернула несколько строк. В этом случае Oracle инициирует исклю-
-чение TOO_MANY_ROWS.
+чение TOO_MANY_ROWS. (RDB в этом же случае инициирует ошибку multiple rows in singleton select)
 

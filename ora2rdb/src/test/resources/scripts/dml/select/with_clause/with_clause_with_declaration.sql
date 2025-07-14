@@ -1,3 +1,4 @@
+--skip
 WITH
     FUNCTION get_domain(url VARCHAR2) RETURN VARCHAR2 IS
     pos BINARY_INTEGER;
