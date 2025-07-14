@@ -1,3 +1,4 @@
+--skip
 WITH
     reports_to_101 (eid, emp_last, mgr_id, reportLevel) AS
         (

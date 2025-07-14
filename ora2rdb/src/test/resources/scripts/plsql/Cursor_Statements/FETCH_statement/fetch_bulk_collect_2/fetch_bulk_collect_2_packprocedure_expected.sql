@@ -1,28 +1,34 @@
+
+
+
 CREATE PACKAGE PackP_Fetch_Bulk_Collect_2
+
 SQL SECURITY DEFINER
-AS BEGIN
-    PROCEDURE PP_Fetch_Bulk_Collect_2;
-END;
+AS BEGIN 
+    PROCEDURE PP_Fetch_Bulk_Collect_2;  
+  END;
+
+
 
 CREATE PACKAGE BODY PackP_Fetch_Bulk_Collect_2
-AS BEGIN
+AS BEGIN 
     PROCEDURE PP_Fetch_Bulk_Collect_2
     AS
-    /*
+/*
       DECLARE c1 CURSOR FOR
         (SELECT last_name, salary
         FROM employees
         WHERE salary > 10000
-        ORDER BY last_name);
+        ORDER BY last_name ASC NULLS LAST);
 
       [-unconvertible RS-239346 TYPE RecList IS TABLE OF TYPE OF TABLE c1;]
       [-unconvertible RS-239346 recs RecList];
     */
-    BEGIN
-    /*
-          OPEN c1;
-          FETCH c1 [-unconvertible RS-240714 BULK COLLECT INTO recs];
-          CLOSE c1;
-          */
-    END
-END;
+BEGIN
+/*
+      OPEN c1;
+      FETCH c1 [-unconvertible RS-240714 BULK COLLECT INTO recs];
+      CLOSE c1;
+      */
+END  
+  END;

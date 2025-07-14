@@ -1,6 +1,8 @@
+
 CREATE FUNCTION F_Fetch_Bulk_Collect
-    RETURNS VARCHAR(32765)
-    SQL SECURITY DEFINER
+RETURNS VARCHAR(32765)
+
+ SQL SECURITY DEFINER 
  AS
 /*
   [-unconvertible RS-239346 TYPE NameList IS TABLE OF TYPE OF COLUMN employees.last_name;]
@@ -10,7 +12,7 @@ CREATE FUNCTION F_Fetch_Bulk_Collect
     (SELECT last_name, salary
     FROM employees
     WHERE salary > 10000
-    ORDER BY last_name);
+    ORDER BY last_name ASC NULLS LAST);
 
   [-unconvertible RS-239346 names  NameList];
   [-unconvertible RS-239346 sals   SalList];

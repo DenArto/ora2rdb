@@ -89,7 +89,16 @@ class ParserTest {
     }
 
 
-
+    void convertScripts(String inputFile){
+        String expectedFile = inputFile.replace(".sql", "_expected.sql");
+        Path inputFilePath = Paths.get(startDirPath + inputFile);
+        Path outFile = Paths.get(startDirPath + expectedFile);
+        try {
+            Ora2rdb.main(new String[]{inputFilePath.toAbsolutePath().toString(), "-o", outFile.toAbsolutePath().toString()});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     void testForDevelopers(String inputFile) throws IOException {
         final Path outFile = Paths.get(System.getProperty("java.io.tmpdir"), "out.sql");

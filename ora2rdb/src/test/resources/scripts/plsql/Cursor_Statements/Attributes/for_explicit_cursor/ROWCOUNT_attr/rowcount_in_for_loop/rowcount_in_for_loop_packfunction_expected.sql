@@ -1,9 +1,12 @@
 CREATE PACKAGE PackF_Rowcount_In_For_Loop
+
 SQL SECURITY DEFINER
 AS BEGIN
    FUNCTION PF_Rowcount_In_For_Loop
    RETURNS VARCHAR(32765);
-END;
+  END;
+
+
 
 CREATE PACKAGE BODY PackF_Rowcount_In_For_Loop
 AS BEGIN
@@ -14,24 +17,26 @@ AS BEGIN
        (SELECT last_name, salary
        FROM employees
        WHERE salary > 10000
-       ORDER BY last_name);
+       ORDER BY last_name ASC NULLS LAST);
 
      DECLARE rc INTEGER;
   DECLARE VARIABLE C1_I TYPE OF TABLE C1;
 
   	DECLARE c1_counter INT = 0;
-    BEGIN
-        OPEN C1;
-        FETCH C1 INTO C1_I;
-        c1_counter = c1_counter + ROW_COUNT;
-            WHILE ( ROW_COUNT != 0 ) DO
-        BEGIN
-              rc = c1_counter;
-        FETCH C1 INTO C1_I;
-        c1_counter = c1_counter + ROW_COUNT;
-        END
-        CLOSE C1;
+BEGIN
+    OPEN C1;
+    FETCH C1 INTO C1_I;
 
-        RETURN '';
-    END
-END;
+	c1_counter = c1_counter + ROW_COUNT;
+    WHILE ( ROW_COUNT != 0 ) DO
+    BEGIN
+      rc = c1_counter;
+    	FETCH C1 INTO C1_I;
+
+	c1_counter = c1_counter + ROW_COUNT;
+END
+    CLOSE C1;
+
+     RETURN '';
+   END
+  END;

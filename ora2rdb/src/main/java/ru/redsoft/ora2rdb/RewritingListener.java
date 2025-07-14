@@ -3688,9 +3688,53 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitSelect_statement(Select_statementContext ctx) {
+       List<Order_by_elementsContext> orderByElementList = Finder.getAllRuleContexts(ctx, Order_by_elementsContext.class);
+       for( Order_by_elementsContext orderByElement : orderByElementList){
+           if(orderByElement.NULLS()==null){
+               if(orderByElement.ASC() != null){
+                   insertAfter(orderByElement.ASC(), " NULLS LAST");
+               }
+               else if(orderByElement.DESC() != null){
+                   insertAfter(orderByElement.DESC(), " NULLS FIRST");
+               }
+               else if(orderByElement.ASC() == null && orderByElement.DESC() == null){
+                   insertAfter(orderByElement, " ASC NULLS LAST");
+               }
+           }
+       }
+
+       Finder.getAllRuleContexts(ctx, Query_blockContext.class).stream()
+               .filter(queryBlock ->  queryBlock.UNIQUE() != null)
+               .forEach(queryBlock -> replace(queryBlock.UNIQUE(), "DISTINCT"));
+    }
+
+    @Override
     public void exitSelect_list_elements(Select_list_elementsContext ctx) {
         if (Ora2rdb.getRealName(ctx.getText()).equals("ROWID"))
             replace(ctx, "RDB$DB_KEY");
+    }
+
+    @Override
+    public void exitInsert_statement(Insert_statementContext ctx) {
+        Static_returning_clauseContext staticReturningClause = Finder.getFirstRuleContext(ctx, Static_returning_clauseContext.class);
+        if(staticReturningClause != null && staticReturningClause.RETURN() != null)
+            replace(staticReturningClause.RETURN(), "RETURNING");
+
+        Values_clauseContext valuesClause = Finder.getFirstRuleContext(ctx, Values_clauseContext.class);
+        if(valuesClause != null && valuesClause.expressions_() != null){
+            for(ExpressionContext expression : Finder.getAllRuleContexts(valuesClause, ExpressionContext.class)) {
+                General_element_partContext generalElementPart = Finder.getFirstRuleContext(expression, General_element_partContext.class);
+                if (generalElementPart != null) {
+                    if (generalElementPart.id_expression().size() <= 2
+                            && Ora2rdb.getRealName(generalElementPart.id_expression(generalElementPart.id_expression().size() - 1).getText()).equals("NEXTVAL")) {
+                        insertBefore(expression, "NEXT VALUE FOR ");
+                        delete(generalElementPart.id_expression(1));
+                        delete(generalElementPart.PERIOD(generalElementPart.PERIOD().size() - 1));
+                    }
+                }
+            }
+        }
     }
 
     @Override

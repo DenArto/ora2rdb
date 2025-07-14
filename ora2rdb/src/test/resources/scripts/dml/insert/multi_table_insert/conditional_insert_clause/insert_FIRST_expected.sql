@@ -1,5 +1,4 @@
-/* Red database does not support this type of insert. Please rewrite it by yourself*/
-[-unconvertible INSERT FIRST
+/*INSERT [-unconvertible RS-241761 FIRST
    WHEN ottl <= 100000 THEN
       INTO small_orders
          VALUES(oid, ottl, sid, cid)
@@ -10,8 +9,8 @@
       INTO special_orders
    WHEN ottl > 200000 THEN
       INTO large_orders
-         VALUES(oid, ottl, sid, cid)
+         VALUES(oid, ottl, sid, cid)]
 SELECT o.order_id oid, o.customer_id cid, o.order_total ottl,
        o.sales_rep_id sid, c.credit_limit cl, c.cust_email cem
 FROM orders o, customers c
-WHERE o.customer_id = c.customer_id];
+WHERE o.customer_id = c.customer_id;*/

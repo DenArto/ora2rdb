@@ -1,5 +1,7 @@
+
 CREATE PROCEDURE P_Fetch_Bulk_Collect
-    SQL SECURITY DEFINER
+
+ SQL SECURITY DEFINER 
  AS
 /*
   [-unconvertible RS-239346 TYPE NameList IS TABLE OF TYPE OF COLUMN employees.last_name;]
@@ -9,7 +11,7 @@ CREATE PROCEDURE P_Fetch_Bulk_Collect
     (SELECT last_name, salary
     FROM employees
     WHERE salary > 10000
-    ORDER BY last_name);
+    ORDER BY last_name ASC NULLS LAST);
 
   [-unconvertible RS-239346 names  NameList];
   [-unconvertible RS-239346 sals   SalList];

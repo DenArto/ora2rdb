@@ -1,13 +1,15 @@
 --SALS NUMTAB
 CREATE GLOBAL TEMPORARY TABLE SALS (
-                                       K INTEGER,
-                                       VAL TYPE OF COLUMN employees.salary,
-                                       CONSTRAINT PK_SALS PRIMARY KEY (K)
+	K INTEGER,
+	VAL TYPE OF COLUMN employees.salary,
+	CONSTRAINT PK_SALS PRIMARY KEY (K)
 );
 
+
 CREATE FUNCTION F_Fetch_Bulk_Collect_Limit
-    RETURNS VARCHAR(32765)
-    SQL SECURITY DEFINER
+RETURNS VARCHAR(32765)
+
+ SQL SECURITY DEFINER 
  AS
 /*
   --TYPE numtab IS TABLE OF TYPE OF COLUMN employees.salary INDEX BY INTEGER;
@@ -16,7 +18,7 @@ CREATE FUNCTION F_Fetch_Bulk_Collect_Limit
     (SELECT salary
     FROM employees
     WHERE salary > 10000
-    ORDER BY last_name);
+    ORDER BY last_name ASC NULLS LAST);
 
   --sals numtab;
 */

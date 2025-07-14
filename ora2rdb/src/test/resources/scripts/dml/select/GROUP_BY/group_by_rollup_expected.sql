@@ -1,5 +1,5 @@
-SELECT
+/*SELECT
     owner,
-    COUNT(*) ownerobj#    -- сколько объектов у каждого владельца
+    COUNT(*) ownerobj#
 FROM the_objects
-GROUP BY [-unconvertible ROLLUP(owner)];
+GROUP BY [-unconvertible RS-241396 ROLLUP(owner)];*/
