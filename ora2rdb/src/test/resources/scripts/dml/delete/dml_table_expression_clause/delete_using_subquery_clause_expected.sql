@@ -1,1 +1,1 @@
-DELETE FROM [-unconvertible (SELECT TITLE FROM BOOKS)];
+/*DELETE FROM [-unconvertible RS-242279 (SELECT TITLE FROM BOOKS)];*/

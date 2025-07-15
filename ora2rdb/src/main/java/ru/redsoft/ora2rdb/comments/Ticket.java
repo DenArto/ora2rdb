@@ -60,6 +60,10 @@ public enum Ticket {
     , UPDATE_PARTITION_SUBPARTITION         (242238)
     , UPDATE_MULTICOLUMN                    (242240)
 
+    , DELETE_FROM_SUBQUERY                  (242279)
+    , DELETE_PARTITION_SUBPARTITION         (242280)
+    , DELETE_ERROR_LOGGING                  (242281)
+
     , GOTO_OPERATOR                         (241308)
 
     , NESTED_PROCEDURE_FUNCTION             (241716)
