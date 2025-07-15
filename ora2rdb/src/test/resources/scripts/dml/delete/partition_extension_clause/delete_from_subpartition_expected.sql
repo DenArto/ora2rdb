@@ -1,1 +1,1 @@
-DELETE FROM SALES [-unconvertible SUBPARTITION (sales_2022_north)];
+/*DELETE FROM SALES [-unconvertible RS-242280 SUBPARTITION (sales_2022_north)];*/

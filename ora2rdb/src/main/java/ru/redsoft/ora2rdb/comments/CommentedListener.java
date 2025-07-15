@@ -759,19 +759,23 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterUpdate_statement(Update_statementContext ctx) {
+        //markup UPDATE_ERROR_LOGGING
         Error_logging_clauseContext errorLoggingClause = Finder.getFirstRuleContext(ctx, Error_logging_clauseContext.class);
         if(errorLoggingClause != null)
             currentBlock.peek().addUnconvertableBlock(errorLoggingClause, Ticket.UPDATE_ERROR_LOGGING);
 
+        //markup UPDATE_INTO_SELECT
         General_table_refContext generalTableRef = Finder.getFirstRuleContext(ctx, General_table_refContext.class);
         if(generalTableRef != null && Finder.getFirstRuleContext(generalTableRef, Query_blockContext.class) != null){
             currentBlock.peek().addUnconvertableBlock(generalTableRef, Ticket.UPDATE_INTO_SELECT);
         }
 
+        //markup UPDATE_FROM_USING
         From_using_clauseContext fromUsingClause = Finder.getFirstRuleContext(ctx, From_using_clauseContext.class);
         if(fromUsingClause != null)
             currentBlock.peek().addUnconvertableBlock(fromUsingClause, Ticket.UPDATE_FROM_USING);
 
+        //markup UPDATE_PARTITION_SUBPARTITION
         Finder.getAllRuleContexts(ctx, Partition_extension_clauseContext.class)
                 .forEach(partitionExtension ->
                         currentBlock.peek().addUnconvertableBlock(partitionExtension, Ticket.UPDATE_PARTITION_SUBPARTITION));
@@ -781,11 +785,26 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .filter( columnBasedUpdateSet -> columnBasedUpdateSet.paren_column_list() != null)
                 .forEach(columnBasedUpdateSet ->
                         currentBlock.peek().addUnconvertableBlock(columnBasedUpdateSet, Ticket.UPDATE_MULTICOLUMN));
-
     }
 
     @Override
-    public void enterDelete_statement(Delete_statementContext ctx) { }
+    public void enterDelete_statement(Delete_statementContext ctx) {
+        if(ctx.general_table_ref() != null) {
+            Dml_table_expression_clauseContext dmlTableExpression = Finder.getFirstRuleContext(ctx.general_table_ref(), Dml_table_expression_clauseContext.class);
+            if(dmlTableExpression.select_statement() != null)
+                currentBlock.peek().addUnconvertableBlock(dmlTableExpression, Ticket.DELETE_FROM_SUBQUERY);
+        }
+
+        Finder.getAllRuleContexts(ctx, Partition_extension_clauseContext.class)
+                .forEach( partitionExtension ->
+                    currentBlock.peek().addUnconvertableBlock(partitionExtension, Ticket.DELETE_PARTITION_SUBPARTITION)
+        );
+
+        Error_logging_clauseContext errorLoggingClause = Finder.getFirstRuleContext(ctx, Error_logging_clauseContext.class);
+        if(errorLoggingClause != null)
+            currentBlock.peek().addUnconvertableBlock(errorLoggingClause, Ticket.DELETE_ERROR_LOGGING);
+
+    }
 
     @Override
     public void enterExplain_statement(Explain_statementContext ctx) { }

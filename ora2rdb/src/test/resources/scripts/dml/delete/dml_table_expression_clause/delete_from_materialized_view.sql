@@ -1,3 +1,4 @@
+--skip
 /*При попытке удалить запись через материализованное представление выдает ошибку
 delete from mv_books;
 Error at Command Line : 6 Column : 13

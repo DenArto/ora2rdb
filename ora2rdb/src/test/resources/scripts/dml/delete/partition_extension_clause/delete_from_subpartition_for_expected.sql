@@ -1,1 +1,1 @@
-DELETE FROM SALES [-unconvertible SUBPARTITION FOR (2023, 'North')];
+/*DELETE FROM SALES [-unconvertible RS-242280 SUBPARTITION FOR (2023, 'North')];*/
