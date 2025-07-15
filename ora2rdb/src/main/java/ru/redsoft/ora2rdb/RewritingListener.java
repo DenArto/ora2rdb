@@ -3717,9 +3717,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitInsert_statement(Insert_statementContext ctx) {
-        Static_returning_clauseContext staticReturningClause = Finder.getFirstRuleContext(ctx, Static_returning_clauseContext.class);
-        if(staticReturningClause != null && staticReturningClause.RETURN() != null)
-            replace(staticReturningClause.RETURN(), "RETURNING");
+
 
         Values_clauseContext valuesClause = Finder.getFirstRuleContext(ctx, Values_clauseContext.class);
         if(valuesClause != null && valuesClause.expressions_() != null){
@@ -3735,6 +3733,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 }
             }
         }
+    }
+
+    @Override
+    public void exitStatic_returning_clause(Static_returning_clauseContext ctx) {
+        if(ctx.RETURN() != null)
+            replace(ctx.RETURN(), "RETURNING");
     }
 
     @Override

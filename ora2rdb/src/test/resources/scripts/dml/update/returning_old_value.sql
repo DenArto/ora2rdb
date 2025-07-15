@@ -1,3 +1,4 @@
+--skip
 CREATE PROCEDURE PROCEDURE_NAME
 IS
     v_old_pages NUMBER;

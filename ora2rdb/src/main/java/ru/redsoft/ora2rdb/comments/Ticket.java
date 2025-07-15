@@ -54,6 +54,11 @@ public enum Ticket {
     , INSERT_ERROR_LOGGING                  (241764)
     , INSERT_INTO_SELECT                    (241765)
 
+    , UPDATE_ERROR_LOGGING                  (242209)
+    , UPDATE_INTO_SELECT                    (242218)
+    , UPDATE_FROM_USING                     (242233)
+    , UPDATE_PARTITION_SUBPARTITION         (242238)
+    , UPDATE_MULTICOLUMN                    (242240)
 
     , GOTO_OPERATOR                         (241308)
 

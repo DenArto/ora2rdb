@@ -1,1 +1,1 @@
-UPDATE books SET (TITLE, PAGE_COUNT) = [-unconvertible (select 'C' , 500 from dual)];
+/*UPDATE books SET [-unconvertible RS-242240 (TITLE, PAGE_COUNT) = (select 'C' , 500 from RDB$DATABASE)];*/
