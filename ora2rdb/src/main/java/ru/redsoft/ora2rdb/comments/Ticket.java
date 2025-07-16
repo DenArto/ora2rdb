@@ -64,6 +64,16 @@ public enum Ticket {
     , DELETE_PARTITION_SUBPARTITION         (242280)
     , DELETE_ERROR_LOGGING                  (242281)
 
+    , MERGE_ERROR_LOGGING                   (242476)
+    , MERGE_UPDATE_DELETE_PART              (242478)
+    , MERGE_WHERE_CLAUSE                    (242485)
+
+    , EXPLAIN_PLAN                          (242306)
+
+    , LOCK_TABLE                            (242313)
+
+    , CALL_STATEMENT                        (242391)
+
     , GOTO_OPERATOR                         (241308)
 
     , NESTED_PROCEDURE_FUNCTION             (241716)

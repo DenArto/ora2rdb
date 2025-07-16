@@ -616,7 +616,51 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
-    public void enterMerge_statement(PlSqlParser.Merge_statementContext ctx) { }
+    public void enterCall_statement(Call_statementContext ctx) {
+        if(Finder.getParentRuleContext(ctx, StatementContext.class) == null)
+            currentBlock.push(new CommentedBlock(ctx, true));
+
+        if(ctx.CALL() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CALL_STATEMENT);
+    }
+
+    @Override
+    public void exitCall_statement(Call_statementContext ctx) {
+        if(Finder.getParentRuleContext(ctx, StatementContext.class) == null){
+            if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+                StorageInfo.commentedBlockList.add(currentBlock.pop());
+            else
+                currentBlock.pop();
+        }
+    }
+
+    @Override
+    public void enterMerge_statement(Merge_statementContext ctx) {
+        Error_logging_clauseContext errorLoggingClause = Finder.getFirstRuleContext(ctx, Error_logging_clauseContext.class);
+        if (errorLoggingClause != null)
+            currentBlock.peek().addUnconvertableBlock(errorLoggingClause, Ticket.MERGE_ERROR_LOGGING);
+
+        Finder.getAllRuleContexts(ctx, Merge_update_delete_partContext.class)
+                .forEach(mergeUpdateDeletePart ->
+                        currentBlock.peek().addUnconvertableBlock(mergeUpdateDeletePart, Ticket.MERGE_UPDATE_DELETE_PART));
+
+        //markup MERGE_WHERE_CLAUSE
+        Merge_insert_clauseContext mergeInsertClause = Finder.getFirstRuleContext(ctx, Merge_insert_clauseContext.class);
+        if(mergeInsertClause != null){
+            Where_clauseContext whereClause = Finder.getFirstRuleContext(mergeInsertClause, Where_clauseContext.class);
+            if(whereClause != null)
+                currentBlock.peek().addUnconvertableBlock(whereClause, Ticket.MERGE_WHERE_CLAUSE);
+        }
+
+        Merge_update_clauseContext mergeUpdateClause = Finder.getFirstRuleContext(ctx, Merge_update_clauseContext.class);
+        if(mergeUpdateClause != null) {
+            Where_clauseContext whereClause = Finder.getFirstRuleContext(mergeUpdateClause, Where_clauseContext.class);
+            if (whereClause != null)
+                currentBlock.peek().addUnconvertableBlock(whereClause, Ticket.MERGE_WHERE_CLAUSE);
+        }
+
+
+    }
 
     @Override
     public void enterSelect_statement(Select_statementContext ctx) {
@@ -807,9 +851,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
-    public void enterExplain_statement(Explain_statementContext ctx) { }
+    public void enterExplain_statement(Explain_statementContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.EXPLAIN_PLAN);
+    }
 
     @Override
-    public void enterLock_table_statement(Lock_table_statementContext ctx) { }
+    public void enterLock_table_statement(Lock_table_statementContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LOCK_TABLE);
+    }
 
 }

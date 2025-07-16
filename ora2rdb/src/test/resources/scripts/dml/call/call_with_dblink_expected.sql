@@ -1,5 +1,1 @@
-CALL set_bonus
-/*
- [-unconvertible @dbn1]
-*/ 
-(100000, experience => 10);
+/*[-unconvertible RS-242391 CALL set_bonus@dbn1(100000, experience => 10);]*/
