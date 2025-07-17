@@ -1,7 +1,7 @@
-UPDATE [-unconvertible (
+/*UPDATE [-unconvertible RS-242218 (
 SELECT "ISBN", "PAGE_COUNT"
-FROM "HR"."BOOKS"
+FROM "BOOKS"
 WHERE "PAGE_COUNT" > 400
-    WITH CHECK OPTION
+    
     )]
-SET "PAGE_COUNT" = 350;
+SET "PAGE_COUNT" = 350;*/

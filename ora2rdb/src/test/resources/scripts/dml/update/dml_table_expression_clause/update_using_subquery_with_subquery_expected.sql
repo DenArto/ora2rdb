@@ -1,8 +1,8 @@
-UPDATE [-unconvertible (
+/*UPDATE [-unconvertible RS-242218 (
 SELECT
     B."TITLE" AS BOOK_TITLE
 FROM
-    "HR"."BOOKS" B
+    "BOOKS" B
 WHERE ISBN =
       (SELECT ISBN FROM READER WHERE FIRST_NAME = 'Ivan Ivanov'))]
-SET BOOK_TITLE = 'Pascal';
+SET BOOK_TITLE = 'Pascal';*/

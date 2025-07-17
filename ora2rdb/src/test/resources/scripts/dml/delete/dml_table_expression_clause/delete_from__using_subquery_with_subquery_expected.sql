@@ -1,6 +1,6 @@
-DELETE FROM [-unconvertible (SELECT
+/*DELETE FROM [-unconvertible RS-242279 (SELECT
     B."TITLE" AS BOOK_TITLE
     FROM
-    "HR"."BOOKS" B
+    "BOOKS" B
     WHERE ISBN =
-    (SELECT ISBN FROM READER WHERE FIRST_NAME = 'Ivan Ivanov'))];
+    (SELECT ISBN FROM READER WHERE FIRST_NAME = 'Ivan Ivanov'))];*/

@@ -13,7 +13,16 @@
 
 ### [from_using_clause_table.sql](from_using_clause_table.sql)
 
-Ожидаемый результат 
+    UPDATE books b
+    SET b.page_count = bpc.PAGE_COUNT
+    FROM book_page_count bpс  WHERE b.ISBN = bpc.ISBN;
+
+    UPDATE books b
+    SET b.page_count = bpc.PAGE_COUNT
+    USING book_page_count bpc
+    WHERE b.ISBN = bpc.ISBN;
+
+Примерный ожидаемый результат
 
     update books b
     set b.page_count = (select bpc.page_count  from book_page_count bpc

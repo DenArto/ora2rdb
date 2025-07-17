@@ -1,5 +1,1 @@
-/*
-[-unconvertible VARIABLE qw Number;]
-*/
-
-SELECT get_bonus(100000, experience => 10) FROM RDB$DATABASE;
+/*[-unconvertible RS-242391 CALL get_bonus(100000, experience => 10) INTO :qw;]*/

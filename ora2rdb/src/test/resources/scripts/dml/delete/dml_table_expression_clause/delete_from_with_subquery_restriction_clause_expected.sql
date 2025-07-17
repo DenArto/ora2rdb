@@ -1,6 +1,6 @@
-DELETE FROM [-unconvertible (
+/*DELETE FROM [-unconvertible RS-242279 (
 SELECT "ISBN", "PAGE_COUNT"
-FROM "HR"."BOOKS"
+FROM "BOOKS"
 WHERE "PAGE_COUNT" > 400
-    WITH CHECK OPTION
-)];
+    
+)];*/

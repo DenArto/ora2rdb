@@ -7,3 +7,13 @@ BEGIN
     WHERE "PAGE_COUNT" > 200
         RETURNING "PAGE_COUNT", "TITLE" INTO v_new_pages, v_title;
 END;
+
+CREATE PROCEDURE PROCEDURE_NAME
+    IS
+    v_new_pages NUMBER;
+    v_title VARCHAR2(100);
+BEGIN
+    DELETE FROM  "HR"."BOOKS"
+    WHERE "PAGE_COUNT" > 200
+        RETURN "PAGE_COUNT", "TITLE" INTO v_new_pages, v_title;
+END;

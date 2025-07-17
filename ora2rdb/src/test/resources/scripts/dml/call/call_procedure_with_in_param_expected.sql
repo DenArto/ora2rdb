@@ -1,1 +1,1 @@
-CALL set_bonus(100000, experience => 10);
+/*[-unconvertible RS-242391 CALL set_bonus(100000, experience => 10);]*/
