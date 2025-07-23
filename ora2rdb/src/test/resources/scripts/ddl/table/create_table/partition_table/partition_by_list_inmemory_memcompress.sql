@@ -1,3 +1,4 @@
+--skip RS-243163
 CREATE TABLE list_customers
    ( customer_id             NUMBER(6)
    , nls_territory           VARCHAR2(30)

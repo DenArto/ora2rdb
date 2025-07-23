@@ -1,7 +1,7 @@
 /*CREATE TABLE ROWDEPENDENCIES_table (
-    order_id NUMERIC(34,8)
-) [-unconvertible ROWDEPENDENCIES];*/
+    order_id NUMERIC(34, 8)
+) [-unconvertible RS-243409 ROWDEPENDENCIES];*/
 
 /*CREATE TABLE NOROWDEPENDENCIES_table (
-    order_id NUMERIC(34,8)
-) [-unconvertible NOROWDEPENDENCIES];*/
+    order_id NUMERIC(34, 8)
+) [-unconvertible RS-243409 NOROWDEPENDENCIES];*/

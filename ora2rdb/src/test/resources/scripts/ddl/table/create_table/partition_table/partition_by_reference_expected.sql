@@ -7,4 +7,4 @@
       CONSTRAINT order_items_fk
       FOREIGN KEY(order_id) REFERENCES orders(order_id)
     )
-    [-unconvertible PARTITION BY REFERENCE(order_items_fk)];*/
+    [-unconvertible RS-243394 PARTITION BY REFERENCE(order_items_fk)];*/

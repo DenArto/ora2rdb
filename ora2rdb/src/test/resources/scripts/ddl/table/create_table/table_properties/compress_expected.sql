@@ -1,5 +1,5 @@
 CREATE TABLE employees (
-    emp_id NUMBER,
-    emp_name VARCHAR2(100),
-    salary NUMBER(10, 2)
+    emp_id NUMERIC(34, 8),
+    emp_name VARCHAR(100),
+    salary NUMERIC(10, 2)
 );

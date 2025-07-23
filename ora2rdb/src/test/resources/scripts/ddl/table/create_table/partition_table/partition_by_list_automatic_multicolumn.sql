@@ -1,3 +1,4 @@
+--skip RS-243163
 CREATE TABLE sales_by_region_and_channel
  (deptno           NUMBER,
   deptname         VARCHAR2(20),

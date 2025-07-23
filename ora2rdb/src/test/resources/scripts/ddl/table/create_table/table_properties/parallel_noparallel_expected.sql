@@ -1,7 +1,9 @@
 CREATE TABLE PARALLEL_TABLE (
     id NUMERIC(34, 8)
-);
+)
+;
 
 CREATE TABLE NOPARALLEL_TABLE (
     id NUMERIC(34, 8)
-);
+)
+;

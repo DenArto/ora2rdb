@@ -81,6 +81,15 @@ public enum Ticket {
     , OBJECT_VIEW                           (241921)
     , XML_TYPE_VIEW                         (241929)
     , MATERIALIZED_VIEW                     (241931)
+
+
+    , CREATE_TABLE_COLUMN_PROPERTIES        (243328)
+    , CREATE_PRIVATE_TEMPORARY_TABLE        (243353)
+    , CREATE_IMMUTABLE_BLOCKCHAIN_TABLE     (243359)
+    , CREATE_SHARDED_TABLE                  (243395)
+    , TABLE_PARTITION_CLAUSES               (243394)
+    , CREATE_TABLE_ROWDEPENDENCIES          (243409)
+
     ;
 
 

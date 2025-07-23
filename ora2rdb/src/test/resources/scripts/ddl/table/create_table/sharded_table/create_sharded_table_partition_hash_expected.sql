@@ -1,7 +1,7 @@
-/*CREATE [-unconvertible SHARDED] TABLE Customers(
+/*CREATE [-unconvertible RS-243395 SHARDED] TABLE Customers(
     CustNo      NUMERIC(34, 8) NOT NULL,
     Name        VARCHAR(50)
 )
-[-unconvertible PARTITION BY CONSISTENT HASH (CustNo)
-PARTITIONS AUTO]
-[-unconvertible TABLESPACE SET ts1];*/
+[-unconvertible RS-243394 PARTITION BY CONSISTENT HASH (CustNo)
+PARTITIONS AUTO
+TABLESPACE SET ts1];*/

@@ -76,6 +76,12 @@ public class CommentedBlock {
         }
     }
 
+    public void addUnconvertableBlock(TerminalNode start, TerminalNode stop, Ticket ticket) {
+        if (start != null && stop != null) {
+            this.unconvertableBlockList.add(new UnconvertableBlock(start.getSymbol(), stop.getSymbol(), ticket.getTicketCode()));
+        }
+    }
+
     public void addUnconvertableBlock(TerminalNode term, Ticket ticket) {
         if (term != null) {
             this.unconvertableBlockList.add(new UnconvertableBlock(term, ticket.getTicketCode()));
