@@ -2593,7 +2593,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                         declare_loop_rowtype_names.append("\n  DECLARE VARIABLE ").append(rec).
                                 append(" TYPE OF TABLE ").append(loop_rec_name_and_cursor_name.get(rec)).append(";\n");
                 }
-                insertBefore(ctx.body().seq_of_statements(), declare_loop_rowtype_names.toString());
+                insertBefore(ctx.body(), declare_loop_rowtype_names.toString());
             }
             loop_rec_name_and_cursor_name.clear();
 

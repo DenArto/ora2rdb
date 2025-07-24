@@ -512,6 +512,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
         if (!ctx.parameter_spec().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CURSOR_WITH_PARAMETER);
         }
+
+        if(Finder.getParentRuleContext(ctx, Create_packageContext.class) != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DECLARE_CURSOR_IN_PACKAGE);
+        }
     }
 
     @Override
@@ -649,6 +653,9 @@ public class CommentedListener extends PlSqlParserBaseListener {
                             || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
+                if(cursorLoopParam.select_statement() != null &&
+                        Finder.getParentRuleContext(ctx, Anonymous_blockContext.class) != null)
+                    unconvertableBlock.addTicketNumber(Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
             }
 
             currentBlock.peek().addUnconvertableBlock(unconvertableBlock);

@@ -1,0 +1,13 @@
+
+EXECUTE BLOCK
+ AS
+/*BEGIN
+[-unconvertible RS-243534 FOR (
+    SELECT LAST_NAME, EMP_NO
+    FROM EMPLOYEE
+  ) INTO ITEM DO
+BEGIN
+]
+
+    END
+END;*/

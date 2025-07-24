@@ -28,6 +28,8 @@ public enum Ticket {
     , FETCH_BULK_COLLECT                    (240714)
     , OPEN_WITH_PARAM                       (240722)
     , OPEN_FOR_STATEMENT                    (240783)
+    , DECLARE_CURSOR_IN_PACKAGE             (233552)
+    , CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK    (243534)
 
     , SELECT_FOR_UPDATE                     (241264)
     , SELECT_CROSS_APPLY                    (241266)
