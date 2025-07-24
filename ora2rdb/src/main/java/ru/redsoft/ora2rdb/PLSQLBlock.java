@@ -30,6 +30,7 @@ public class PLSQLBlock {
     Map<String, Token> fetch_statement = new TreeMap<>();
     Map<String, Token> close_statement = new TreeMap<>();
     Map<String, Token> open_statement = new TreeMap<>();
+    ArrayList<String> record_type_names = new ArrayList<>();
     public void setStatement(PlSqlParser.StatementContext ctx) {
         this.statement = ctx;
     }

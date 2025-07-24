@@ -1,3 +1,4 @@
+--SALARIES SALARYMAP
 CREATE GLOBAL TEMPORARY TABLE SALARIES (
 	K VARCHAR(100),
 	VAL NUMERIC(34, 8),
@@ -8,10 +9,13 @@ CREATE GLOBAL TEMPORARY TABLE SALARIES (
 EXECUTE BLOCK
  AS
 
-/*TYPE SalaryMap IS TABLE OF NUMERIC(34, 8) INDEX BY VARCHAR(100);*/
+/*
+--TYPE SalaryMap IS TABLE OF NUMERIC(34, 8) INDEX BY VARCHAR(100);
 
-    /*salaries SalaryMap = SalaryMap('John' => 50000, 'Alice' => 60000, 'Bob' => 55000);*/
-
+    --salaries SalaryMap = [-unconvertible RS-239362 SalaryMap('John' => 50000, 'Alice' => 60000, 'Bob' => 55000)];
+*/
 BEGIN
+/*
 
+*/
 END;

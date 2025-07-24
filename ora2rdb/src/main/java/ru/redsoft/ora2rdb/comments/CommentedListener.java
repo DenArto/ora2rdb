@@ -471,6 +471,26 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.pop();
     }
 
+    @Override
+    public void enterCreate_type(Create_typeContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+        if(Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class) != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
+
+        if(Finder.getFirstRuleContext(ctx, Varray_type_defContext.class) != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
+    }
+
+    @Override
+    public void exitCreate_type(Create_typeContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+
+
 
     //The markup of PL SQL constructions begins
 
@@ -530,13 +550,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
             associative_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
 
 
-        Nested_table_type_defContext nestedTableType = (Nested_table_type_defContext) Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class);
+        Nested_table_type_defContext nestedTableType = Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class);
         if (nestedTableType != null) {
             nested_array_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
         }
 
-        Varray_type_defContext varrayType = (Varray_type_defContext) Finder.getFirstRuleContext(ctx, Varray_type_defContext.class);
+        Varray_type_defContext varrayType = Finder.getFirstRuleContext(ctx, Varray_type_defContext.class);
         if (varrayType != null) {
             varray_types.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);

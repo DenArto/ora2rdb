@@ -128,6 +128,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
             rewriter.replace(term.getSymbol(), text);
     }
 
+    void replace(List<? extends ParserRuleContext> ctx_list, Object text) {
+        if (!ctx_list.isEmpty())
+            rewriter.replace(ctx_list.get(0).start, ctx_list.get(ctx_list.size() - 1).stop, text);
+    }
+
     void delete(ParserRuleContext ctx) {
         if (ctx != null)
             rewriter.delete(ctx.start, ctx.stop);
@@ -1903,7 +1908,34 @@ public class RewritingListener extends PlSqlParserBaseListener {
             String name = Ora2rdb.getRealName(getRuleText(ctx.identifier()));
             String type = Ora2rdb.getRealName(getRuleText(ctx.type_spec()));
 
+            String recordType = "";
+            Type_specContext typeSpec = Finder.getFirstRuleContext(ctx, Type_specContext.class);
+            if(typeSpec != null && typeSpec.type_name() != null){
+                if(typeSpec.type_name().PERIOD(0) == null)
+                    recordType = Ora2rdb.getRealName(getRuleText(typeSpec.type_name().id_expression(0)));
+                else if(typeSpec.type_name().PERIOD(0) != null){
+                    recordType = Ora2rdb.getRealName(getRuleText(typeSpec.type_name().id_expression(typeSpec.type_name().id_expression().size() - 1)));
+                }
+            }
+
+
             if (current_plsql_block != null) {
+                if (ctx.default_value_part() != null
+                        & !current_plsql_block.record_type_names.isEmpty()
+                        && current_plsql_block.record_type_names.contains(recordType)){
+                    General_element_partContext generalElementPart = Finder.getFirstRuleContext(ctx, General_element_partContext.class);
+                    if(generalElementPart != null
+                            && generalElementPart.PERIOD() == null
+                            && recordType.equals(Ora2rdb.getRealName(generalElementPart.id_expression(0).getText()))){
+                        replace(generalElementPart.id_expression(0), "ROW");
+                    }
+                    else if(generalElementPart != null
+                            && generalElementPart.PERIOD() != null
+                            && recordType.equals(Ora2rdb.getRealName(generalElementPart.id_expression(generalElementPart.id_expression().size() - 1 ).getText()))){
+                        replace(generalElementPart.id_expression(), "ROW");
+
+                    }
+                }
                 if (current_plsql_block.associative_array_types.containsKey(type)) {
                     current_plsql_block.declareAssociativeArray(name, type);
                     commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
@@ -1937,9 +1969,21 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitType_declaration(Type_declarationContext ctx) {
         if (ctx.record_type_def() != null) {
+            if(current_plsql_block != null)
+                current_plsql_block.record_type_names.add(Ora2rdb.getRealName(ctx.identifier().getText()));
             insertBefore(ctx.TYPE(), "DECLARE ");
             delete(ctx.IS());
             delete(ctx.record_type_def().RECORD());
+            Finder.getAllRuleContexts(ctx, Field_specContext.class)
+                    .forEach(fieldSpecContext -> {
+                        if (fieldSpecContext.NOT() != null && fieldSpecContext.NULL_() != null) {
+                            delete(fieldSpecContext.NOT());
+                            delete(fieldSpecContext.NULL_());
+                        }
+                        if (fieldSpecContext.default_value_part() != null) {
+                            replace(fieldSpecContext.default_value_part().ASSIGN_OP(), "DEFAULT");
+                        }
+                    });
         } else {
             if (ctx.table_type_def() != null) {
                 commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
