@@ -1,13 +1,11 @@
 DECLARE
-    TYPE employee_aat IS TABLE OF employees.employee_id%TYPE
-          INDEX BY PLS_INTEGER;
+   TYPE employee_aat IS TABLE OF employees.employee_id%TYPE INDEX BY PLS_INTEGER;
 
-   l_employees           employee_aat;
+   l_employees employee_aat;
 
-   TYPE boolean_aat IS TABLE OF BOOLEAN
-      INDEX BY PLS_INTEGER;
+   TYPE boolean_aat IS TABLE OF BOOLEAN INDEX BY PLS_INTEGER;
 
-   l_employee_indices   boolean_aat;
+   l_employee_indices boolean_aat;
 BEGIN
    l_employees (1) := 7839;
    l_employees (100) := 7654;
