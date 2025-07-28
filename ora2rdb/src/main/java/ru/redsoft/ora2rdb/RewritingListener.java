@@ -446,14 +446,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(ctx.precision_part().ASTERISK(), "34");
                 else
                     replace(ctx, getRewriterText(ctx) + "(34, 8)");
-            } else if (ctx.native_datatype_element().FLOAT() != null) {
-//                if (ctx.precision_part() != null)
-                replace(ctx, "DOUBLE PRECISION");
             } else if (ctx.native_datatype_element().TIMESTAMP() != null) {
                 delete(ctx.precision_part());
             } else if (ctx.native_datatype_element().VARCHAR2() != null ||
                     ctx.native_datatype_element().VARCHAR() != null) {
-                if (ctx.precision_part() == null)
+                if (ctx.precision_part() == null && Finder.getParentRuleContext(ctx, ParameterContext.class) == null)
                     replace(ctx, getRewriterText(ctx) + "(32765)");
             } else if (ctx.native_datatype_element().NUMERIC() != null) {
                 if (ctx.precision_part() == null)
@@ -480,14 +477,46 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx, "FLOAT");
         else if (ctx.BINARY_DOUBLE() != null)
             replace(ctx, "DOUBLE PRECISION");
-        else if (ctx.NCHAR() != null)
-            replace(ctx, "CHAR");
+        else if (ctx.NCHAR() != null) {
+            if (ctx.VARYING() != null)
+                replace(ctx, "VARCHAR");
+            else
+                replace(ctx, "CHAR");
+        }
         else if (ctx.BINARY_INTEGER() != null)
             replace(ctx, "INTEGER");
         else if (ctx.ROWID() != null)
             replace(ctx, "BINARY(8)");
         else if (ctx.PLS_INTEGER() != null)
             replace(ctx.PLS_INTEGER(), "INTEGER");
+        else if (ctx.RAW() != null && ctx.LONG() == null)
+            replace(ctx.RAW(), "BINARY(32767)");
+        else if (ctx.RAW() != null && ctx.LONG() != null) {
+            replace(ctx.RAW(), "BLOB");
+            delete(ctx.LONG());
+        } else if (ctx.DATE() != null)
+            replace(ctx, "TIMESTAMP");
+        else if (ctx.REAL() != null)
+            replace(ctx.REAL(), "DECFLOAT(16)");
+        else if (ctx.FLOAT() != null)
+            replace(ctx, "DECFLOAT(34)");
+        else if (ctx.SMALLINT() != null || ctx.INTEGER() != null || ctx.INT() != null)
+            replace(ctx, "INT128");
+        else if (ctx.DECIMAL() != null)
+            replace(ctx, "NUMERIC(34, 8)");
+        else if (ctx.DOUBLE() != null && ctx.PRECISION() != null)
+            replace(ctx, "DECFLOAT(34)");
+        else if (ctx.CHAR() != null || ctx.CHARACTER() != null) {
+            replace(ctx.CHARACTER(), "CHAR");
+            if (ctx.NATIONAL() != null)
+                delete(ctx.NATIONAL());
+            if (ctx.VARYING() != null)
+                replace(ctx, "VARCHAR");
+        }
+        else if (ctx.NCLOB() != null)
+            replace(ctx, "BLOB SUB_TYPE TEXT");
+        else if (ctx.LONG() != null)
+            replace(ctx, "BLOB SUB_TYPE TEXT");
     }
 
     @Override
