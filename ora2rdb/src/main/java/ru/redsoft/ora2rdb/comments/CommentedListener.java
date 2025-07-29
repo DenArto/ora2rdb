@@ -600,29 +600,36 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterDatatype(DatatypeContext ctx) {
         if (ctx.native_datatype_element() == null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
+            if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                currentBlock.peek().setConvertAllBlock(true);
         } else {
             if (ctx.native_datatype_element().LONG() != null && ctx.native_datatype_element().RAW() != null
                     && ctx.precision_part() != null) {
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.ANOTHER_DATATYPE);
+                if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                    currentBlock.peek().setConvertAllBlock(true);
             }
             if (ctx.native_datatype_element().TIMESTAMP() != null && ctx.precision_part() != null){
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
+                if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                    currentBlock.peek().setConvertAllBlock(true);
             }
             if (Ora2rdb.getRealName(ctx.getText()).matches("TIMESTAMP\\s*WITH\\s*LOCAL\\s*TIME\\s*ZONE")) {
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
+                if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                    currentBlock.peek().setConvertAllBlock(true);
             }
         }
-        if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
-            currentBlock.peek().setConvertAllBlock(true);
     }
 
     @Override
     public void enterNative_datatype_element(Native_datatype_elementContext ctx) {
         if (ctx.BFILE() != null || ctx.UROWID() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.ANOTHER_DATATYPE);
+            if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                currentBlock.peek().setConvertAllBlock(true);
         }
-        if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
-            currentBlock.peek().setConvertAllBlock(true);
+
     }
 
     @Override
