@@ -1,5 +1,0 @@
-/*
-CREATE TABLE TABLE_NAME(
-  ID [-unconvertible INTERVAL DAY TO SECOND(9)]
-)
-*/

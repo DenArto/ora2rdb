@@ -1,5 +1,0 @@
-/*
-CREATE TABLE TABLE_NAME(
-  ID [-unconvertible INTERVAL YEAR TO MONTH]
-)
-*/
