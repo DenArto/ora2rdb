@@ -3,7 +3,7 @@ CREATE OR ALTER TRIGGER T_Grade_meaning2
   ON students
   SQL SECURITY DEFINER
 AS
-   DECLARE degree INTEGER;
+   DECLARE degree INT128;
    DECLARE pass CHAR(1) = 'F';
    DECLARE res  CHAR(15) = '';
 BEGIN

@@ -1,14 +1,14 @@
 CREATE OR ALTER PACKAGE Pack_Grade_meaning1
 SQL SECURITY DEFINER
 AS BEGIN
-   FUNCTION PF_Grade_meaning1 (degree INTEGER)
+   FUNCTION PF_Grade_meaning1 (degree INT128)
    RETURNS BOOLEAN;
    PROCEDURE PP_Grade_meaning1;
 END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning1
 AS BEGIN
-    FUNCTION PF_Grade_meaning1 (degree INTEGER)
+    FUNCTION PF_Grade_meaning1 (degree INT128)
     RETURNS BOOLEAN
     AS
 

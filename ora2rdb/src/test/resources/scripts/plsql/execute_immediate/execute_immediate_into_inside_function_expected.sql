@@ -1,4 +1,4 @@
-CREATE FUNCTION tabcount (table_in  VARCHAR(32765))
+CREATE FUNCTION tabcount (table_in  VARCHAR)
     RETURNS INTEGER
 AS
     DECLARE l_query VARCHAR (32765) = 'SELECT COUNT(*) FROM ' || :table_in;

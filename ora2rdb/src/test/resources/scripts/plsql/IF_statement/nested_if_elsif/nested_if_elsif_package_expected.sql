@@ -1,22 +1,16 @@
-
-
-
 CREATE OR ALTER PACKAGE Pack_Grade_meaning7
-
 SQL SECURITY DEFINER
-AS BEGIN  
-   FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR(32765)) 
-   RETURNS VARCHAR(32765);  
+AS BEGIN
+   FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR)
+   RETURNS VARCHAR(32765);
 
-   PROCEDURE PP_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR(32765));  
+   PROCEDURE PP_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR);
 
-  END ;
+END ;
 
-
-
-RECREATE   PACKAGE BODY Pack_Grade_meaning7
-AS BEGIN  
-   FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR(32765)) 
+RECREATE PACKAGE BODY Pack_Grade_meaning7
+AS BEGIN
+   FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR)
    RETURNS VARCHAR(32765)
    AS
       DECLARE pass BOOLEAN = TRUE;
@@ -54,10 +48,10 @@ AS BEGIN
         END
      END
      RETURN res;
-   END   
+   END
 
-   PROCEDURE PP_Grade_meaning7(score NUMERIC(34, 8), subject VARCHAR(32765))
-   AS 
+   PROCEDURE PP_Grade_meaning7(score NUMERIC(34, 8), subject VARCHAR)
+   AS
       DECLARE pass BOOLEAN = TRUE;
       DECLARE res  CHAR(15) = '';
    BEGIN
@@ -92,5 +86,5 @@ AS BEGIN
             pass = FALSE;
         END
      END
-   END  
-  END ; 
+   END
+END ;
