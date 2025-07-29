@@ -1,0 +1,5 @@
+/*
+CREATE TABLE TABLE_NAME(
+  ID [-unconvertible INTERVAL DAY(4) TO SECOND(9)]
+)
+*/

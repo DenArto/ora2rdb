@@ -1,0 +1,5 @@
+/*
+CREATE TABLE TABLE_NAME(
+  ID [-unconvertible INTERVAL YEAR(4) TO MONTH]
+)
+*/
