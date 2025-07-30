@@ -1,3 +1,3 @@
 CREATE TABLE TABLE_NAME(
-  ID char
+  ID CHAR
 )

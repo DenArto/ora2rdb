@@ -1,5 +1,3 @@
-/*
-CREATE TABLE TABLE_NAME(
-  ID [-unconvertible INTERVAL DAY(4) TO SECOND]
-)
-*/
+/*CREATE TABLE TABLE_NAME(
+  ID [-unconvertible RS-244046 INTERVAL DAY(4) TO SECOND]
+)*/
