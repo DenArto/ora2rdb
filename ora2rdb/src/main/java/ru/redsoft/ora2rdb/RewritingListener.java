@@ -430,11 +430,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitColumn_definition(Column_definitionContext ctx) {
-        if (ctx != null)
-            if (ctx.datatype() != null)
-                if (ctx.datatype().native_datatype_element() != null)
-                    if (ctx.datatype().native_datatype_element().RAW() != null)
-                        replace(ctx, ctx.column_name().getText() + " BLOB ");
+//        if (ctx != null)
+//            if (ctx.datatype() != null)
+//                if (ctx.datatype().native_datatype_element() != null)
+//                    if (ctx.datatype().native_datatype_element().RAW() != null)
+//                        replace(ctx, ctx.column_name().getText() + " BLOB ");
     }
 
     @Override
@@ -445,9 +445,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(ctx.precision_part().ASTERISK(), "34");
                 else
                     replace(ctx, getRewriterText(ctx) + "(34, 8)");
-            }
-            else if (ctx.native_datatype_element().VARCHAR2() != null ||
-                    ctx.native_datatype_element().VARCHAR() != null || ctx.native_datatype_element().NVARCHAR2() != null ) {
+            } else if (ctx.native_datatype_element().VARCHAR2() != null ||
+                    ctx.native_datatype_element().VARCHAR() != null || ctx.native_datatype_element().NVARCHAR2() != null) {
+                if (ctx.native_datatype_element().LONG() != null) {
+                    replace(ctx, "BLOB SUB_TYPE TEXT");
+                    return;
+                }
                 if (ctx.precision_part() == null && Finder.getParentRuleContext(ctx, ParameterContext.class) == null)
                     replace(ctx, getRewriterText(ctx) + "(32765)");
             } else if (ctx.native_datatype_element().NUMERIC() != null) {
@@ -462,6 +465,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(ctx.native_datatype_element().RAW(), "BINARY(32767)");
                 else
                     replace(ctx.native_datatype_element(), "BINARY");
+
             } else if ((ctx.native_datatype_element().DOUBLE() != null && ctx.native_datatype_element().PRECISION() != null)
                     || ctx.native_datatype_element().FLOAT() != null) {
                 replace(ctx, "DECFLOAT(34)");
@@ -475,14 +479,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     delete(ctx.native_datatype_element().NATIONAL());
                 if (ctx.native_datatype_element().VARYING() != null)
                     if (Finder.getParentRuleContext(ctx, ParameterContext.class) == null
-                            && Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                            && Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null
+                            && ctx.precision_part() == null)
                         replace(ctx.native_datatype_element(), "VARCHAR(32765)");
                     else
                         replace(ctx.native_datatype_element(), "VARCHAR");
             } else if (ctx.native_datatype_element().CHARACTER() != null) {
                 if (Finder.getParentRuleContext(ctx, ParameterContext.class) == null
                         && ctx.native_datatype_element().NATIONAL() != null && ctx.precision_part() == null
-                        && ctx.native_datatype_element().VARYING() == null){
+                        && ctx.native_datatype_element().VARYING() == null) {
                     if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
                         replace(ctx.native_datatype_element(), "CHAR");
                     else
@@ -494,14 +499,16 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     delete(ctx.native_datatype_element().NATIONAL());
                 if (ctx.native_datatype_element().VARYING() != null)
                     if (Finder.getParentRuleContext(ctx, ParameterContext.class) == null
-                            && Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                            && Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null
+                            && ctx.precision_part() == null)
                         replace(ctx.native_datatype_element(), "VARCHAR(32765)");
                     else
                         replace(ctx.native_datatype_element(), "VARCHAR");
             } else if (ctx.native_datatype_element().NCHAR() != null) {
                 if (ctx.native_datatype_element().VARYING() != null) {
                     if (Finder.getParentRuleContext(ctx, ParameterContext.class) == null
-                            && Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                            && Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null
+                            && ctx.precision_part() == null)
                         replace(ctx.native_datatype_element(), "VARCHAR(32765)");
                     else
                         replace(ctx.native_datatype_element(), "VARCHAR");
@@ -512,6 +519,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(ctx.native_datatype_element(), "CHAR(900)");
                 } else
                     replace(ctx.native_datatype_element(), "CHAR");
+            } else if (ctx.native_datatype_element().LONG() != null && ctx.native_datatype_element().RAW() == null) {
+                replace(ctx, "BLOB SUB_TYPE TEXT");
             }
         }
     }
@@ -547,8 +556,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         else if (ctx.SMALLINT() != null || ctx.INTEGER() != null || ctx.INT() != null)
             replace(ctx, "INT128");
         else if (ctx.NCLOB() != null)
-            replace(ctx, "BLOB SUB_TYPE TEXT");
-        else if (ctx.LONG() != null && ctx.RAW() == null)
             replace(ctx, "BLOB SUB_TYPE TEXT");
     }
 
