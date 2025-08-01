@@ -1,9 +1,11 @@
-CREATE EXCEPTION invalid_month 'invalid_month exception';
+CREATE EXCEPTION INVALID_MONTH
+	'INVALID_MONTH EXCEPTION';
 
 CREATE PROCEDURE my_procedure
-AS
-    /*invalid_month EXCEPTION;*/
-    /*PRAGMA EXCEPTION_INIT (invalid_month, -1843);*/
+
+ SQL SECURITY DEFINER
+ AS
+    --invalid_month EXCEPTION;
 BEGIN
 
 END;
