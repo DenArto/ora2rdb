@@ -1,8 +1,12 @@
+CREATE EXCEPTION BULK_ERRORS
+	'BULK_ERRORS EXCEPTION';
+
 CREATE PROCEDURE P_Sqlbulk_Exceptions
-    SQL SECURITY DEFINER
+
+ SQL SECURITY DEFINER
  AS
 /*
-  bulk_errors EXCEPTION;
+  --bulk_errors EXCEPTION;
   [-unconvertible RS-239346 TYPE namelist_t IS TABLE OF VARCHAR(32767);]
 
   [-unconvertible RS-239346 enames_with_errors namelist_t] = [-unconvertible RS-239380 namelist_t ('ABC', 'DEF', NULL,
@@ -17,7 +21,7 @@ BEGIN
     UPDATE EMPLOYEES SET last_name = enames_with_errors (indx)];
 
   /*EXCEPTION*/
-    WHEN BULK_ERRORS
+    WHEN EXCEPTION BULK_ERRORS
     DO
       BEGIN
 	      indx = 1;
