@@ -4,7 +4,7 @@
         ELEMENT "Warehouse"
         WITH OBJECT ID
         (extract(OBJECT_VALUE, '/Warehouse/Area/text()').getnumberval())]
-AS SELECT XMLELEMENT("Warehouse",
+AS SELECT [-unconvertible RS-244710 XMLELEMENT("Warehouse",
                      XMLFOREST(WarehouseID as "Building",
                                area as "Area",
                                docks as "Docks",
@@ -12,5 +12,5 @@ AS SELECT XMLELEMENT("Warehouse",
                                wateraccess as "WaterAccess",
                                railaccess as "RailAccess",
                                parking as "Parking",
-                               VClearance as "VClearance"))
+                               VClearance as "VClearance"))]
    FROM warehouse_table;*/
