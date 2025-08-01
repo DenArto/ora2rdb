@@ -1177,6 +1177,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitRaise_statement(Raise_statementContext ctx) {
+        replace(ctx.RAISE(), "EXCEPTION");
+    }
+
+    @Override
     public void exitCall_statement(Call_statementContext ctx) {
         if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).identifier())).equals("DBMS_OUTPUT")) {
             if (Ora2rdb.getRealName(getRuleText(ctx.routine_name(0).id_expression(0))).equals("PUT_LINE"))
@@ -3885,6 +3890,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitException_declaration(Exception_declarationContext ctx) {
+        commentBlock(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex());
+        String exception_name = Ora2rdb.getRealName(getRuleText(ctx.identifier()));
+        exceptions.put(exception_name, exception_name + " EXCEPTION");
+    }
+
+    @Override
     public void exitException_handler(Exception_handlerContext ctx) {
         String indentation = getIndentation(ctx.seq_of_statements());
         replace(ctx.THEN(), "DO");
@@ -3896,18 +3908,22 @@ public class RewritingListener extends PlSqlParserBaseListener {
         for (int i = 0; i < ctx.exception_name().size(); i++) {
             replace(ctx.exception_name(i), convertException_name(ctx.exception_name(i)));
         }
-
+        for (TerminalNode t : ctx.OR())
+            replace(t, ",");
     }
 
     private String convertException_name(Exception_nameContext ctx) {
         String exceptionName = Ora2rdb.getRealName(ctx.getText());
+        if (exceptions.containsKey(exceptionName)) {
+            return "EXCEPTION " + exceptionName;
+        }
         switch (exceptionName) {
             case "TOO_MANY_ROWS":
                 return "GDSCODE SING_SELECT_ERR";
             case "DUP_VAL_ON_INDEX":
                 return "GDSCODE UNIQUE_KEY_VIOLATION";
-            case "NO_DATA_FOUND":
-                return "EXCEPTION NO_DATA_FOUND";
+//            case "NO_DATA_FOUND":
+//                return "EXCEPTION NO_DATA_FOUND";
 //             case "ROW_LOCKED":
 //                 return "SING_SELECT_ERR";
             case "VALUE_ERROR":
