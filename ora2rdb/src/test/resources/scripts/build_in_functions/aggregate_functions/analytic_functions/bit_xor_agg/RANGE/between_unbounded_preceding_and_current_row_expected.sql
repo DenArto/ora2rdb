@@ -1,6 +1,6 @@
 /*SELECT id,
        code,
        bin_value,
-       [-unconvertible bit_xor_agg(bin_value)] OVER (PARTITION BY code ORDER BY id
+       [-unconvertible RS-244710 bit_xor_agg(bin_value)] OVER (PARTITION BY code ORDER BY id ASC NULLS LAST
                       RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rows_avg
 from   t1;*/

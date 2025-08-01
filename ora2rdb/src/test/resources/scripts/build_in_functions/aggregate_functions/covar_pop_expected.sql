@@ -1,2 +1,2 @@
-SELECT COVAR_POP(CURRENT_DATE - hiredate, sal) AS covar_pop_val
+SELECT COVAR_POP(CURRENT_TIMESTAMP - hiredate, sal) AS covar_pop_val
 FROM emp;

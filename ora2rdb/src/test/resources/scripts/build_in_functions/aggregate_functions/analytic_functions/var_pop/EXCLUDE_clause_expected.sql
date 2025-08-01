@@ -1,4 +1,4 @@
-SELECT empno, deptno, sal,
-       VAR_POP(sal) OVER (PARTITION BY deptno ORDER BY sal NULLS LAST
-                      ROWS 1 PRECEDING [-unconvertible EXCLUDE CURRENT ROW]) AS rows_avg
-FROM emp;
+/*SELECT empno, deptno, sal,
+       VAR_POP(sal) OVER (PARTITION BY deptno ORDER BY sal ASC NULLS LAST
+                      ROWS 1 PRECEDING [-unconvertible RS-244675 EXCLUDE CURRENT ROW]) AS rows_avg
+FROM emp;*/

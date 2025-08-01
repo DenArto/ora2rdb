@@ -121,7 +121,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 if (identityClause.identity_options_parentheses() != null) {
 
 
-                    if(Finder.getAllRuleContexts(identityClause, Identity_optionsContext.class).stream()
+                    if (Finder.getAllRuleContexts(identityClause, Identity_optionsContext.class).stream()
                             .anyMatch(identityOptions ->
                                     identityOptions.MAXVALUE() != null ||
                                             identityOptions.MINVALUE() != null ||
@@ -138,43 +138,43 @@ public class CommentedListener extends PlSqlParserBaseListener {
             }
         }
 
-        if(ctx.PRIVATE() != null && ctx.TEMPORARY() != null){
+        if (ctx.PRIVATE() != null && ctx.TEMPORARY() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx.PRIVATE(), ctx.TEMPORARY(), Ticket.CREATE_PRIVATE_TEMPORARY_TABLE);
         }
         On_commit_definition_clausesContext onCommitDefinitionClauses = Finder.getFirstRuleContext(ctx, On_commit_definition_clausesContext.class);
-        if(onCommitDefinitionClauses != null)
+        if (onCommitDefinitionClauses != null)
             currentBlock.peek().addUnconvertableBlock(onCommitDefinitionClauses, Ticket.CREATE_PRIVATE_TEMPORARY_TABLE);
 
 //      markup IMMUTABLE BLOCKCHAIN table
-        if(ctx.IMMUTABLE() != null && ctx.BLOCKCHAIN() != null)
+        if (ctx.IMMUTABLE() != null && ctx.BLOCKCHAIN() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.IMMUTABLE(), ctx.BLOCKCHAIN(), Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
-        else if(ctx.BLOCKCHAIN() != null)
+        else if (ctx.BLOCKCHAIN() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.BLOCKCHAIN(), Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
-        else if(ctx.IMMUTABLE() != null)
+        else if (ctx.IMMUTABLE() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.IMMUTABLE(), Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
         Blockchain_table_clausesContext blockchainTableClauses = Finder.getFirstRuleContext(ctx, Blockchain_table_clausesContext.class);
-        if(blockchainTableClauses != null)
+        if (blockchainTableClauses != null)
             currentBlock.peek().addUnconvertableBlock(blockchainTableClauses, Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
         Immutable_table_clausesContext immutableTableClauses = Finder.getFirstRuleContext(ctx, Immutable_table_clausesContext.class);
-        if(immutableTableClauses != null)
+        if (immutableTableClauses != null)
             currentBlock.peek().addUnconvertableBlock(immutableTableClauses, Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
 
 //        markup SHARDED table
-        if(ctx.SHARDED() != null)
+        if (ctx.SHARDED() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.SHARDED(), Ticket.CREATE_SHARDED_TABLE);
         Table_partitioning_clausesContext tablePartitioningClauses = Finder.getFirstRuleContext(ctx, Table_partitioning_clausesContext.class);
-        if(tablePartitioningClauses != null)
+        if (tablePartitioningClauses != null)
             currentBlock.peek().addUnconvertableBlock(tablePartitioningClauses, Ticket.TABLE_PARTITION_CLAUSES);
 
-        if(ctx.DUPLICATED() != null)
+        if (ctx.DUPLICATED() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.DUPLICATED(), Ticket.CREATE_SHARDED_TABLE);
 
 //        markup table_properties
         Table_propertiesContext tableProperties = Finder.getFirstRuleContext(ctx, Table_propertiesContext.class);
-        if(tableProperties != null){
-            if(tableProperties.ROWDEPENDENCIES() != null)
+        if (tableProperties != null) {
+            if (tableProperties.ROWDEPENDENCIES() != null)
                 currentBlock.peek().addUnconvertableBlock(tableProperties.ROWDEPENDENCIES(), Ticket.CREATE_TABLE_ROWDEPENDENCIES);
-            if(tableProperties.NOROWDEPENDENCIES() != null)
+            if (tableProperties.NOROWDEPENDENCIES() != null)
                 currentBlock.peek().addUnconvertableBlock(tableProperties.NOROWDEPENDENCIES(), Ticket.CREATE_TABLE_ROWDEPENDENCIES);
         }
     }
@@ -474,10 +474,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterCreate_type(Create_typeContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
-        if(Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class) != null)
+        if (Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class) != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
 
-        if(Finder.getFirstRuleContext(ctx, Varray_type_defContext.class) != null)
+        if (Finder.getFirstRuleContext(ctx, Varray_type_defContext.class) != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
     }
 
@@ -488,8 +488,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
         else
             currentBlock.pop();
     }
-
-
 
 
     //The markup of PL SQL constructions begins
@@ -533,7 +531,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CURSOR_WITH_PARAMETER);
         }
 
-        if(Finder.getParentRuleContext(ctx, Create_packageContext.class) != null){
+        if (Finder.getParentRuleContext(ctx, Create_packageContext.class) != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DECLARE_CURSOR_IN_PACKAGE);
         }
     }
@@ -673,7 +671,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                             || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
-                if(cursorLoopParam.select_statement() != null &&
+                if (cursorLoopParam.select_statement() != null &&
                         Finder.getParentRuleContext(ctx, Anonymous_blockContext.class) != null)
                     unconvertableBlock.addTicketNumber(Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
             }
@@ -838,6 +836,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (rollupCubeClause.ROLLUP() != null)
                 currentBlock.peek().addUnconvertableBlock(rollupCubeClause, Ticket.SELECT_GROUP_BY_ROLLUP);
         }
+
+        Grouping_sets_clauseContext groupingSetsElements = Finder.getFirstRuleContext(ctx, Grouping_sets_clauseContext.class);
+        if (groupingSetsElements != null && groupingSetsElements.GROUPING() != null && groupingSetsElements.SETS() != null)
+            currentBlock.peek().addUnconvertableBlock(groupingSetsElements.GROUPING().getSymbol(), groupingSetsElements.SETS().getSymbol(), Ticket.SELECT_GROUP_BY_GROUPING_SETS);
+
+
         //markup SELECT_ROW_PATTERN
         Row_pattern_clauseContext rowPatternClause = Finder.getFirstRuleContext(ctx, Row_pattern_clauseContext.class);
         if (rowPatternClause != null) {
@@ -962,5 +966,109 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterLock_table_statement(Lock_table_statementContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LOCK_TABLE);
     }
+
+//      The markup of build_in_functions constructions begins
+
+    @Override
+    public void enterWindowing_clause(Windowing_clauseContext ctx) {
+        if (ctx.EXCLUDE() != null && ctx.exclude_elements() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.EXCLUDE().getSymbol(), ctx.exclude_elements().stop, Ticket.WINDOW_GROUPS_EXCLUDE);
+        }
+
+        if (ctx.windowing_type() != null) {
+            if (ctx.windowing_type().GROUPS() != null)
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.WINDOW_GROUPS_EXCLUDE);
+        }
+    }
+
+    @Override
+    public void enterAggregate_function(Aggregate_functionContext ctx) {
+
+        if (ctx.over_clause_keyword() != null) {
+            Over_clause_keywordContext overClauseKeyword = ctx.over_clause_keyword();
+            if (overClauseKeyword.BIT_AND_AGG() != null
+                    || overClauseKeyword.BIT_OR_AGG() != null
+                    || overClauseKeyword.BIT_XOR_AGG() != null
+                    || overClauseKeyword.CHECKSUM() != null
+                    || overClauseKeyword.STDDEV() != null
+                    || overClauseKeyword.VARIANCE() != null
+                    || overClauseKeyword.MEDIAN() != null
+            ) {
+                currentBlock.peek().addUnconvertableBlock(ctx.over_clause_keyword().start, ctx.function_argument_analytic().stop, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+            }
+
+
+        }
+
+        if (ctx.within_or_over_clause_keyword() != null) {
+            Within_or_over_clause_keywordContext within_or_over_clause_keyword = ctx.within_or_over_clause_keyword();
+            if (within_or_over_clause_keyword.PERCENTILE_CONT() != null
+                    || within_or_over_clause_keyword.PERCENTILE_DISC() != null
+            ) {
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+            }
+
+        }
+
+        if(ctx.stats_t_test() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+
+        if (ctx.ANY_VALUE() != null
+                || ctx.APPROX_COUNT() != null
+                || ctx.APPROX_COUNT_DISTINCT() != null
+                || ctx.APPROX_COUNT_DISTINCT_AGG() != null
+                || ctx.APPROX_COUNT_DISTINCT_DETAIL() != null
+                || ctx.APPROX_MEDIAN() != null
+                || ctx.APPROX_PERCENTILE() != null
+                || ctx.APPROX_PERCENTILE_AGG() != null
+                || ctx.APPROX_PERCENTILE_DETAIL() != null
+                || ctx.APPROX_RANK() != null
+                || ctx.APPROX_SUM() != null
+                || ctx.COLLECT() != null
+                || ctx.CORR_K() != null
+                || ctx.CORR_S() != null
+                || ctx.GROUP_ID() != null
+                || ctx.GROUPING() != null
+                || ctx.GROUPING_ID() != null
+                || ctx.LISTAGG() != null
+                || ctx.STATS_BINOMIAL_TEST() != null
+                || ctx.STATS_CROSSTAB() != null
+                || ctx.STATS_F_TEST() != null
+                || ctx.STATS_KS_TEST() != null
+                || ctx.STATS_MODE() != null
+                || ctx.STATS_MW_TEST() != null
+                || ctx.STATS_ONE_WAY_ANOVA() != null
+                || ctx.STATS_WSR_TEST() != null
+                || ctx.SYS_OP_ZONE_ID() != null
+                || ctx.SYS_XMLAGG() != null
+                || ctx.SYS_XMLGEN() != null
+                || ctx.TO_APPROX_COUNT_DISTINCT() != null
+                || ctx.TO_APPROX_PERCENTILE() != null
+                || ctx.XMLAGG() != null
+        ) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+        }
+
+        Keep_clauseContext keepClause = Finder.getFirstRuleContext(ctx, Keep_clauseContext.class);
+        if (keepClause != null) {
+            currentBlock.peek().addUnconvertableBlock(keepClause, Ticket.KEEP_CLAUSE);
+        }
+    }
+
+    @Override
+    public void enterOther_function(Other_functionContext ctx) {
+        if (ctx.XMLELEMENT() != null
+        ) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+        }
+    }
+
+    @Override
+    public void enterJson_function(Json_functionContext ctx) {
+        Order_by_clauseContext orderByClause = Finder.getFirstRuleContext(ctx, Order_by_clauseContext.class);
+        if(orderByClause != null)
+            currentBlock.peek().addUnconvertableBlock(orderByClause, Ticket.JSON_FUNCTION_ORDER_BY);
+    }
+
 
 }

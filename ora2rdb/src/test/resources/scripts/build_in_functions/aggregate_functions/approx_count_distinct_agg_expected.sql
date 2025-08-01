@@ -1,6 +1,6 @@
-/*CREATE VIEW monthly_prod_count_mv AS
-  SELECT year,
+/*CREATE OR ALTER VIEW MONTHLY_PROD_COUNT_MV  AS
+SELECT year,
          month,
-         [- unconvertible APPROX_COUNT_DISTINCT_AGG(daily_detail)] monthly_detail
+         [-unconvertible RS-244710 APPROX_COUNT_DISTINCT_AGG(daily_detail)] monthly_detail
   FROM daily_prod_count_mv
-  GROUP BY year, month;*/
+  GROUP BY year, month ;*/

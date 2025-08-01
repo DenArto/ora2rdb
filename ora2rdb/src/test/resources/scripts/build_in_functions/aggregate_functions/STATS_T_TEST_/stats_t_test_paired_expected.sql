@@ -1,2 +1,2 @@
-SELECT [-unconvertible STATS_T_TEST_PAIRED(price, 60)] t_observed
-  FROM products;
+/*SELECT [-unconvertible RS-244710 STATS_T_TEST_PAIRED(price, 60)] t_observed
+  FROM products;*/

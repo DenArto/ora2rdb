@@ -1,4 +1,4 @@
 /*SELECT empno, deptno, sal,
-       [-unconvertible checksum(sal)] OVER (PARTITION BY deptno ORDER BY sal
+       [-unconvertible RS-244710 checksum(sal)] OVER (PARTITION BY deptno ORDER BY sal ASC NULLS LAST
                       RANGE UNBOUNDED PRECEDING) AS rows_avg
 FROM emp;*/
