@@ -1,9 +1,11 @@
-/*
 CREATE PROCEDURE PROCEDURE_NAME
 SQL SECURITY DEFINER
 AS
-  DECLARE var [-unconvertible UROWID];
-BEGIN
-
-END;
+/*
+   DECLARE var [-unconvertible RS-244032 UROWID];
 */
+BEGIN
+/*
+   
+*/
+END;

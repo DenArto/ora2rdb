@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE P_Grade_meaning7(score NUMERIC(34, 8), subject VARCHAR(32765))
+CREATE PROCEDURE P_Grade_meaning7(score NUMERIC(34, 8), subject VARCHAR)
 
  SQL SECURITY DEFINER
  AS

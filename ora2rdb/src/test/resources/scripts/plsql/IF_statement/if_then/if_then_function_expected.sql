@@ -1,7 +1,8 @@
-CREATE FUNCTION F_Grade_meaning1 (degree INTEGER)
+CREATE FUNCTION F_Grade_meaning1 (degree INT128)
 RETURNS VARCHAR(32765)
-SQL SECURITY DEFINER
-AS
+
+ SQL SECURITY DEFINER
+ AS
    DECLARE pass BOOLEAN = FALSE;
    DECLARE res  CHAR(15) = '';
 BEGIN
@@ -14,7 +15,7 @@ BEGIN
     BEGIN
       res = 'Low';
       pass = FALSE;
-    END     
+    END
     IF (:degree < 5) THEN
     BEGIN
       res = 'Too low';

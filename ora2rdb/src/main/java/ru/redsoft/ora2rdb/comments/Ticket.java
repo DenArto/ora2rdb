@@ -92,6 +92,8 @@ public enum Ticket {
     , TABLE_PARTITION_CLAUSES               (243394)
     , CREATE_TABLE_ROWDEPENDENCIES          (243409)
 
+    , ANOTHER_DATATYPE                       (244032)
+    , DATE_TIME_DATATYPE                     (244046)
     ;
 
 

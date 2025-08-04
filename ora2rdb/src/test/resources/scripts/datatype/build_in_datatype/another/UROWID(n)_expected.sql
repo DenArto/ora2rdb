@@ -1,5 +1,3 @@
-/*
-CREATE TABLE TABLE_NAME(
-  ID [-unconvertible UROWID(56)]
-)
-*/
+/*CREATE TABLE TABLE_NAME(
+  ID [-unconvertible RS-244032 UROWID](56)
+)*/

@@ -1,9 +1,13 @@
-CREATE EXCEPTION past_due 'past_due exception';
+CREATE EXCEPTION PAST_DUE
+	'PAST_DUE EXCEPTION';
+CREATE EXCEPTION CUSTOM_EXCEPTION
+	'error';
 
 EXECUTE BLOCK
-    AS
-    /*past_due  EXCEPTION;*/                      -- declare exception
-    /*PRAGMA EXCEPTION_INIT (past_due, -20000);*/ -- assign error code to exception
+ AS
+
+    --past_due  EXCEPTION;                       -- declare exception
+  -- assign error code to exception
 BEGIN
-    EXCEPTION past_due( 'Account past due.');
+    EXCEPTION CUSTOM_EXCEPTION( 'Account past due.');
 END;

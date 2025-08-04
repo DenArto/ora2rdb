@@ -1,5 +1,3 @@
-/*
-CREATE TABLE TABLE_NAME(
-  ID [-unconvertible INTERVAL YEAR TO MONTH]
-)
-*/
+/*CREATE TABLE TABLE_NAME(
+  ID [-unconvertible RS-244046 INTERVAL YEAR TO MONTH]
+)*/

@@ -121,7 +121,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 if (identityClause.identity_options_parentheses() != null) {
 
 
-                    if(Finder.getAllRuleContexts(identityClause, Identity_optionsContext.class).stream()
+                    if (Finder.getAllRuleContexts(identityClause, Identity_optionsContext.class).stream()
                             .anyMatch(identityOptions ->
                                     identityOptions.MAXVALUE() != null ||
                                             identityOptions.MINVALUE() != null ||
@@ -138,43 +138,43 @@ public class CommentedListener extends PlSqlParserBaseListener {
             }
         }
 
-        if(ctx.PRIVATE() != null && ctx.TEMPORARY() != null){
+        if (ctx.PRIVATE() != null && ctx.TEMPORARY() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx.PRIVATE(), ctx.TEMPORARY(), Ticket.CREATE_PRIVATE_TEMPORARY_TABLE);
         }
         On_commit_definition_clausesContext onCommitDefinitionClauses = Finder.getFirstRuleContext(ctx, On_commit_definition_clausesContext.class);
-        if(onCommitDefinitionClauses != null)
+        if (onCommitDefinitionClauses != null)
             currentBlock.peek().addUnconvertableBlock(onCommitDefinitionClauses, Ticket.CREATE_PRIVATE_TEMPORARY_TABLE);
 
 //      markup IMMUTABLE BLOCKCHAIN table
-        if(ctx.IMMUTABLE() != null && ctx.BLOCKCHAIN() != null)
+        if (ctx.IMMUTABLE() != null && ctx.BLOCKCHAIN() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.IMMUTABLE(), ctx.BLOCKCHAIN(), Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
-        else if(ctx.BLOCKCHAIN() != null)
+        else if (ctx.BLOCKCHAIN() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.BLOCKCHAIN(), Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
-        else if(ctx.IMMUTABLE() != null)
+        else if (ctx.IMMUTABLE() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.IMMUTABLE(), Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
         Blockchain_table_clausesContext blockchainTableClauses = Finder.getFirstRuleContext(ctx, Blockchain_table_clausesContext.class);
-        if(blockchainTableClauses != null)
+        if (blockchainTableClauses != null)
             currentBlock.peek().addUnconvertableBlock(blockchainTableClauses, Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
         Immutable_table_clausesContext immutableTableClauses = Finder.getFirstRuleContext(ctx, Immutable_table_clausesContext.class);
-        if(immutableTableClauses != null)
+        if (immutableTableClauses != null)
             currentBlock.peek().addUnconvertableBlock(immutableTableClauses, Ticket.CREATE_IMMUTABLE_BLOCKCHAIN_TABLE);
 
 //        markup SHARDED table
-        if(ctx.SHARDED() != null)
+        if (ctx.SHARDED() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.SHARDED(), Ticket.CREATE_SHARDED_TABLE);
         Table_partitioning_clausesContext tablePartitioningClauses = Finder.getFirstRuleContext(ctx, Table_partitioning_clausesContext.class);
-        if(tablePartitioningClauses != null)
+        if (tablePartitioningClauses != null)
             currentBlock.peek().addUnconvertableBlock(tablePartitioningClauses, Ticket.TABLE_PARTITION_CLAUSES);
 
-        if(ctx.DUPLICATED() != null)
+        if (ctx.DUPLICATED() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.DUPLICATED(), Ticket.CREATE_SHARDED_TABLE);
 
 //        markup table_properties
         Table_propertiesContext tableProperties = Finder.getFirstRuleContext(ctx, Table_propertiesContext.class);
-        if(tableProperties != null){
-            if(tableProperties.ROWDEPENDENCIES() != null)
+        if (tableProperties != null) {
+            if (tableProperties.ROWDEPENDENCIES() != null)
                 currentBlock.peek().addUnconvertableBlock(tableProperties.ROWDEPENDENCIES(), Ticket.CREATE_TABLE_ROWDEPENDENCIES);
-            if(tableProperties.NOROWDEPENDENCIES() != null)
+            if (tableProperties.NOROWDEPENDENCIES() != null)
                 currentBlock.peek().addUnconvertableBlock(tableProperties.NOROWDEPENDENCIES(), Ticket.CREATE_TABLE_ROWDEPENDENCIES);
         }
     }
@@ -474,10 +474,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterCreate_type(Create_typeContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
-        if(Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class) != null)
+        if (Finder.getFirstRuleContext(ctx, Nested_table_type_defContext.class) != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NESTED_TABLE_TYPE_VARIABLE);
 
-        if(Finder.getFirstRuleContext(ctx, Varray_type_defContext.class) != null)
+        if (Finder.getFirstRuleContext(ctx, Varray_type_defContext.class) != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.VARRAY_TYPE_VARIABLE);
     }
 
@@ -488,8 +488,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
         else
             currentBlock.pop();
     }
-
-
 
 
     //The markup of PL SQL constructions begins
@@ -533,7 +531,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CURSOR_WITH_PARAMETER);
         }
 
-        if(Finder.getParentRuleContext(ctx, Create_packageContext.class) != null){
+        if (Finder.getParentRuleContext(ctx, Create_packageContext.class) != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DECLARE_CURSOR_IN_PACKAGE);
         }
     }
@@ -594,6 +592,42 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (Ora2rdb.getRealName(getRuleText(ctx.type_spec().type_name())).equals("SYS_REFCURSOR")) {
                 currentBlock.peek().addUnconvertableBlock(ctx.type_spec().type_name(), Ticket.SYS_REFCURSOR_REF_CURSOR_TYPE_DEF);
             }
+        }
+
+    }
+
+    @Override
+    public void enterDatatype(DatatypeContext ctx) {
+        if (ctx.native_datatype_element() == null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
+            if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                currentBlock.peek().setConvertAllBlock(true);
+        } else {
+            if (ctx.native_datatype_element().LONG() != null && ctx.native_datatype_element().RAW() != null
+                    && ctx.precision_part() != null) {
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.ANOTHER_DATATYPE);
+                if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                    currentBlock.peek().setConvertAllBlock(true);
+            }
+            if (ctx.native_datatype_element().TIMESTAMP() != null && ctx.precision_part() != null){
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
+                if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                    currentBlock.peek().setConvertAllBlock(true);
+            }
+            if (Ora2rdb.getRealName(ctx.getText()).matches("TIMESTAMP\\s*WITH\\s*LOCAL\\s*TIME\\s*ZONE")) {
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
+                if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                    currentBlock.peek().setConvertAllBlock(true);
+            }
+        }
+    }
+
+    @Override
+    public void enterNative_datatype_element(Native_datatype_elementContext ctx) {
+        if (ctx.BFILE() != null || ctx.UROWID() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.ANOTHER_DATATYPE);
+            if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
+                currentBlock.peek().setConvertAllBlock(true);
         }
 
     }
@@ -673,7 +707,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                             || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                         unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
-                if(cursorLoopParam.select_statement() != null &&
+                if (cursorLoopParam.select_statement() != null &&
                         Finder.getParentRuleContext(ctx, Anonymous_blockContext.class) != null)
                     unconvertableBlock.addTicketNumber(Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
             }

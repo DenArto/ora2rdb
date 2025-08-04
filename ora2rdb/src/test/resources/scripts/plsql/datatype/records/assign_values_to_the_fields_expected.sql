@@ -1,14 +1,15 @@
 EXECUTE BLOCK
-    AS
-    DECLARE TYPE EMPLOYEE_RECORD (
-        EMP_ID NUMERIC(34, 8),
-    	EMP_NAME VARCHAR(50),
-   	    EMP_SALARY NUMERIC(34, 8)
+ AS
+
+    DECLARE TYPE employee_record   (
+        emp_id NUMERIC(34, 8),
+        emp_name VARCHAR(50),
+        emp_salary NUMERIC(34, 8)
     );
 
-    DECLARE EMP EMPLOYEE_RECORD;
+     DECLARE emp employee_record;
 BEGIN
-    EMP.EMP_ID = 1001;
-    EMP.EMP_NAME = 'JOHN DOE';
-    EMP.EMP_SALARY = 50000;
+    emp.emp_id = 1001;
+    emp.emp_name = 'John Doe';
+    emp.emp_salary = 50000;
 END;
