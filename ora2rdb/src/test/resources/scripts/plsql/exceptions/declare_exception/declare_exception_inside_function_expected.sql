@@ -1,11 +1,13 @@
-CREATE EXCEPTION invalid_company_id 'invalid_company_id exception';
+CREATE EXCEPTION INVALID_COMPANY_ID
+	'INVALID_COMPANY_ID EXCEPTION';
 
 CREATE FUNCTION test_f
 RETURNS BOOLEAN
-    SQL SECURITY DEFINER
-AS
-    /*invalid_company_id EXCEPTION;*/
+
+ SQL SECURITY DEFINER
+ AS
+    --invalid_company_id EXCEPTION;
 BEGIN
-    NULL;
+
 RETURN TRUE;
 END;

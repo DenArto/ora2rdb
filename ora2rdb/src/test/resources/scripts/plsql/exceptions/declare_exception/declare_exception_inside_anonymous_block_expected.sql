@@ -1,8 +1,10 @@
-CREATE EXCEPTION exc_too_young 'exc_too_young exception';
+CREATE EXCEPTION INVALID_COMPANY_ID
+	'INVALID_COMPANY_ID EXCEPTION';
 
 EXECUTE BLOCK
-    AS
-    /*invalid_company_id EXCEPTION;*/
+ AS
+
+    --invalid_company_id EXCEPTION;
 BEGIN
-    NULL;
+
 END;

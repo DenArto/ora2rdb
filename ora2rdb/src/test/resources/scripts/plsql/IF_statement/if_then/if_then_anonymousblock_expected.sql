@@ -2,7 +2,7 @@ EXECUTE BLOCK
 AS
    DECLARE pass BOOLEAN = FALSE;
    DECLARE res  CHAR(15) = '';
-   DECLARE degree INTEGER = 14;
+   DECLARE degree INT128 = 14;
 BEGIN
     IF (:degree > 10) THEN
     BEGIN

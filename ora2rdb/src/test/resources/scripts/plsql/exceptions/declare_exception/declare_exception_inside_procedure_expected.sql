@@ -1,9 +1,11 @@
-CREATE EXCEPTION invalid_company_id 'invalid_company_id exception';
+CREATE EXCEPTION INVALID_COMPANY_ID
+	'INVALID_COMPANY_ID EXCEPTION';
 
 CREATE PROCEDURE calc_annual_sales
-    SQL SECURITY DEFINER
-AS
-        /*invalid_company_id EXCEPTION;*/
+
+ SQL SECURITY DEFINER
+ AS
+        --invalid_company_id EXCEPTION;
 BEGIN
 
 END;

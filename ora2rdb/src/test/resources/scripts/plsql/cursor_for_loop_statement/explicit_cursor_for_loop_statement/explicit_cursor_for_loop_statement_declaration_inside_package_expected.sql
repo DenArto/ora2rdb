@@ -1,7 +1,7 @@
 /*CREATE OR ALTER PACKAGE Pack_Grade_meaning1
 SQL SECURITY DEFINER
 AS BEGIN 
-   FUNCTION PF_Grade_meaning1 (degree INTEGER)
+   FUNCTION PF_Grade_meaning1 (degree INT128)
    RETURNS BOOLEAN;  
    PROCEDURE PP_Grade_meaning1;  
     [-unconvertible RS-233552 DECLARE BOOKS_CUR  ;]  
@@ -17,7 +17,7 @@ AS BEGIN
             CURSOR FOR
         (SELECT BOOK_NAME
         FROM BOOKS);  
-    FUNCTION PF_Grade_meaning1 (degree INTEGER)
+    FUNCTION PF_Grade_meaning1 (degree INT128)
        RETURNS BOOLEAN
        AS
     BEGIN

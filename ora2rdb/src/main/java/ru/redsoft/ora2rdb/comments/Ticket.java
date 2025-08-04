@@ -99,6 +99,8 @@ public enum Ticket {
     , JSON_FUNCTION_ORDER_BY                (244715)
 
 
+    , ANOTHER_DATATYPE                       (244032)
+    , DATE_TIME_DATATYPE                     (244046)
     ;
 
 
