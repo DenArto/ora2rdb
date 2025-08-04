@@ -1,2 +1,2 @@
-SELECT COVAR_SAMP(CURRENT_DATE - hiredate, sal) AS covar_pop_val
+SELECT COVAR_SAMP(CURRENT_TIMESTAMP - hiredate, sal) AS covar_pop_val
 FROM emp;

@@ -1,10 +1,10 @@
-SELECT co.country_region, co.country_subregion,
-       SUM(s.amount_sold) "Revenue", [-unconvertible GROUP_ID()] g
+/*SELECT co.country_region, co.country_subregion,
+       SUM(s.amount_sold) "Revenue", [-unconvertible RS-244710 GROUP_ID()] g
   FROM sales s, customers c, countries co
   WHERE s.cust_id = c.cust_id
     AND c.country_id = co.country_id
     AND s.time_id = '1-JAN-00'
     AND co.country_region IN ('Americas', 'Europe')
-  GROUP BY [-unconvertible GROUPING SETS] ( (co.country_region, co.country_subregion),
+  GROUP BY [-unconvertible RS-244719 GROUPING SETS] ( (co.country_region, co.country_subregion),
                            (co.country_region, co.country_subregion) )
-  ORDER BY co.country_region, co.country_subregion, "Revenue", g;
+  ORDER BY co.country_region ASC NULLS LAST, co.country_subregion ASC NULLS LAST, "Revenue" ASC NULLS LAST, g ASC NULLS LAST;*/

@@ -4,4 +4,4 @@ OVER (PARTITION BY deptno)
 avgx
    FROM emp
    where deptno in (20, 30, 10)
-   ORDER BY empno;
+   ORDER BY empno ASC NULLS LAST;

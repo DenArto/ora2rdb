@@ -1,3 +1,3 @@
-SELECT [-unconvertible SYS_OP_ZONE_ID(rowid)]
+/*SELECT [-unconvertible RS-244710 SYS_OP_ZONE_ID(RDB$DB_KEY)]
   FROM sales
-  GROUP BY [-unconvertible SYS_OP_ZONE_ID(rowid)];
+  GROUP BY [-unconvertible RS-244710 SYS_OP_ZONE_ID(RDB$DB_KEY)];*/

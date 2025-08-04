@@ -43,6 +43,7 @@ public enum Ticket {
     , SELECT_TABLE_COLLECTION               (241392)
     , SELECT_GROUP_BY_CUBE                  (241397)
     , SELECT_GROUP_BY_ROLLUP                (241396)
+    , SELECT_GROUP_BY_GROUPING_SETS         (244719)
     , SELECT_ROW_PATTERN                    (241390)
     , SELECT_PERCENT_KEYWORD                (241402)
     , SELECT_SET_OPERATOR_EXCEPT            (241406)
@@ -91,6 +92,12 @@ public enum Ticket {
     , CREATE_SHARDED_TABLE                  (243395)
     , TABLE_PARTITION_CLAUSES               (243394)
     , CREATE_TABLE_ROWDEPENDENCIES          (243409)
+
+    , KEEP_CLAUSE                           (244696)
+    , WINDOW_GROUPS_EXCLUDE                 (244675)
+    , AGGREGATE_AND_ANALYTIC_FUNCTION       (244710)
+    , JSON_FUNCTION_ORDER_BY                (244715)
+
 
     , ANOTHER_DATATYPE                       (244032)
     , DATE_TIME_DATATYPE                     (244046)

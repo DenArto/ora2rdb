@@ -872,6 +872,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (rollupCubeClause.ROLLUP() != null)
                 currentBlock.peek().addUnconvertableBlock(rollupCubeClause, Ticket.SELECT_GROUP_BY_ROLLUP);
         }
+
+        Grouping_sets_clauseContext groupingSetsElements = Finder.getFirstRuleContext(ctx, Grouping_sets_clauseContext.class);
+        if (groupingSetsElements != null && groupingSetsElements.GROUPING() != null && groupingSetsElements.SETS() != null)
+            currentBlock.peek().addUnconvertableBlock(groupingSetsElements.GROUPING().getSymbol(), groupingSetsElements.SETS().getSymbol(), Ticket.SELECT_GROUP_BY_GROUPING_SETS);
+
+
         //markup SELECT_ROW_PATTERN
         Row_pattern_clauseContext rowPatternClause = Finder.getFirstRuleContext(ctx, Row_pattern_clauseContext.class);
         if (rowPatternClause != null) {
@@ -996,5 +1002,109 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterLock_table_statement(Lock_table_statementContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LOCK_TABLE);
     }
+
+//      The markup of build_in_functions constructions begins
+
+    @Override
+    public void enterWindowing_clause(Windowing_clauseContext ctx) {
+        if (ctx.EXCLUDE() != null && ctx.exclude_elements() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.EXCLUDE().getSymbol(), ctx.exclude_elements().stop, Ticket.WINDOW_GROUPS_EXCLUDE);
+        }
+
+        if (ctx.windowing_type() != null) {
+            if (ctx.windowing_type().GROUPS() != null)
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.WINDOW_GROUPS_EXCLUDE);
+        }
+    }
+
+    @Override
+    public void enterAggregate_function(Aggregate_functionContext ctx) {
+
+        if (ctx.over_clause_keyword() != null) {
+            Over_clause_keywordContext overClauseKeyword = ctx.over_clause_keyword();
+            if (overClauseKeyword.BIT_AND_AGG() != null
+                    || overClauseKeyword.BIT_OR_AGG() != null
+                    || overClauseKeyword.BIT_XOR_AGG() != null
+                    || overClauseKeyword.CHECKSUM() != null
+                    || overClauseKeyword.STDDEV() != null
+                    || overClauseKeyword.VARIANCE() != null
+                    || overClauseKeyword.MEDIAN() != null
+            ) {
+                currentBlock.peek().addUnconvertableBlock(ctx.over_clause_keyword().start, ctx.function_argument_analytic().stop, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+            }
+
+
+        }
+
+        if (ctx.within_or_over_clause_keyword() != null) {
+            Within_or_over_clause_keywordContext within_or_over_clause_keyword = ctx.within_or_over_clause_keyword();
+            if (within_or_over_clause_keyword.PERCENTILE_CONT() != null
+                    || within_or_over_clause_keyword.PERCENTILE_DISC() != null
+            ) {
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+            }
+
+        }
+
+        if(ctx.stats_t_test() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+
+        if (ctx.ANY_VALUE() != null
+                || ctx.APPROX_COUNT() != null
+                || ctx.APPROX_COUNT_DISTINCT() != null
+                || ctx.APPROX_COUNT_DISTINCT_AGG() != null
+                || ctx.APPROX_COUNT_DISTINCT_DETAIL() != null
+                || ctx.APPROX_MEDIAN() != null
+                || ctx.APPROX_PERCENTILE() != null
+                || ctx.APPROX_PERCENTILE_AGG() != null
+                || ctx.APPROX_PERCENTILE_DETAIL() != null
+                || ctx.APPROX_RANK() != null
+                || ctx.APPROX_SUM() != null
+                || ctx.COLLECT() != null
+                || ctx.CORR_K() != null
+                || ctx.CORR_S() != null
+                || ctx.GROUP_ID() != null
+                || ctx.GROUPING() != null
+                || ctx.GROUPING_ID() != null
+                || ctx.LISTAGG() != null
+                || ctx.STATS_BINOMIAL_TEST() != null
+                || ctx.STATS_CROSSTAB() != null
+                || ctx.STATS_F_TEST() != null
+                || ctx.STATS_KS_TEST() != null
+                || ctx.STATS_MODE() != null
+                || ctx.STATS_MW_TEST() != null
+                || ctx.STATS_ONE_WAY_ANOVA() != null
+                || ctx.STATS_WSR_TEST() != null
+                || ctx.SYS_OP_ZONE_ID() != null
+                || ctx.SYS_XMLAGG() != null
+                || ctx.SYS_XMLGEN() != null
+                || ctx.TO_APPROX_COUNT_DISTINCT() != null
+                || ctx.TO_APPROX_PERCENTILE() != null
+                || ctx.XMLAGG() != null
+        ) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+        }
+
+        Keep_clauseContext keepClause = Finder.getFirstRuleContext(ctx, Keep_clauseContext.class);
+        if (keepClause != null) {
+            currentBlock.peek().addUnconvertableBlock(keepClause, Ticket.KEEP_CLAUSE);
+        }
+    }
+
+    @Override
+    public void enterOther_function(Other_functionContext ctx) {
+        if (ctx.XMLELEMENT() != null
+        ) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+        }
+    }
+
+    @Override
+    public void enterJson_function(Json_functionContext ctx) {
+        Order_by_clauseContext orderByClause = Finder.getFirstRuleContext(ctx, Order_by_clauseContext.class);
+        if(orderByClause != null)
+            currentBlock.peek().addUnconvertableBlock(orderByClause, Ticket.JSON_FUNCTION_ORDER_BY);
+    }
+
 
 }

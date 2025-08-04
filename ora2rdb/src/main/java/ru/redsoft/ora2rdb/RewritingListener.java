@@ -558,6 +558,19 @@ public class RewritingListener extends PlSqlParserBaseListener {
         else if (ctx.NCLOB() != null)
             replace(ctx, "BLOB SUB_TYPE TEXT");
     }
+    @Override
+    public void exitJson_return_clause(Json_return_clauseContext ctx){
+        delete(ctx.BYTE());
+        delete(ctx.CHAR());
+        if (ctx.VARCHAR2() != null) {
+            replace(ctx.VARCHAR2(), "VARCHAR");
+            if (ctx.UNSIGNED_INTEGER() == null)
+                insertAfter(ctx.VARCHAR2(), "(4000)");
+
+        }
+        else if(ctx.CLOB() != null)
+            replace(ctx.CLOB(), "BLOB SUB_TYPE TEXT");
+    }
 
     @Override
     public void exitComment_on_column(Comment_on_columnContext ctx) {
@@ -2121,6 +2134,11 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 t = getNextToken(t);
             current_plsql_block.open_statement.put(cursor_name, t);
         }
+    }
+
+    @Override
+    public void exitJson_function(Json_functionContext ctx) {
+        delete(ctx.STRICT());
     }
 
     @Override
