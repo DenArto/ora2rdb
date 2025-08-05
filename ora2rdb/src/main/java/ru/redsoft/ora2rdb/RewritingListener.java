@@ -558,8 +558,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         else if (ctx.NCLOB() != null)
             replace(ctx, "BLOB SUB_TYPE TEXT");
     }
+
     @Override
-    public void exitJson_return_clause(Json_return_clauseContext ctx){
+    public void exitJson_return_clause(Json_return_clauseContext ctx) {
         delete(ctx.BYTE());
         delete(ctx.CHAR());
         if (ctx.VARCHAR2() != null) {
@@ -567,8 +568,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             if (ctx.UNSIGNED_INTEGER() == null)
                 insertAfter(ctx.VARCHAR2(), "(4000)");
 
-        }
-        else if(ctx.CLOB() != null)
+        } else if (ctx.CLOB() != null)
             replace(ctx.CLOB(), "BLOB SUB_TYPE TEXT");
     }
 
@@ -978,7 +978,16 @@ public class RewritingListener extends PlSqlParserBaseListener {
                         replace(reg_id.non_reserved_keywords_pre12c().MONTHS_BETWEEN(), "-DATEDIFF");
                         replace(ctx.function_argument().LEFT_PAREN(), "(MONTH, ");
                     }
+
                 }
+
+                // trigger_event_attribute_functions
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_DICT_OBJ_NAME"))
+                    replace(reg_id, "RDB$GET_CONTEXT ('DDL_TRIGGER','OBJECT_NAME')");
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_DICT_OBJ_TYPE"))
+                    replace(reg_id, "RDB$GET_CONTEXT ('DDL_TRIGGER','OBJECT_TYPE')");
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_SYSEVENT"))
+                    replace(reg_id, "RDB$GET_CONTEXT ('DDL_TRIGGER','EVENT_TYPE')");
             }
         }
         if (ctx.id_expression().size() > 1) {
@@ -2857,7 +2866,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 insertAfter(ctx.non_dml_trigger(), "]");
                 current_plsql_block.commentBlock = true;
             } else {
-                boolean checkDDL = false;
                 for (Non_dml_eventContext stmt : ctx.non_dml_trigger().non_dml_event()) {
                     if (stmt.database_event() != null) {
                         if (stmt.database_event().LOGON() != null) {
@@ -2874,9 +2882,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     }
                     if (stmt.ddl_event() != null) {
                         if (stmt.ddl_event().CREATE() != null || stmt.ddl_event().ALTER() != null
-                                || stmt.ddl_event().DROP() != null || stmt.ddl_event().DDL() != null && !checkDDL) {
-                            replace(stmt.ddl_event(), " ANY DDL STATEMENT");
-                            checkDDL = true;
+                                || stmt.ddl_event().DROP() != null || stmt.ddl_event().DDL() != null) {
+                            if (ctx.non_dml_trigger().AFTER() != null)
+                                replace(ctx.non_dml_trigger(), " AFTER ANY DDL STATEMENT");
+                            else if (ctx.non_dml_trigger().BEFORE() != null)
+                                replace(ctx.non_dml_trigger(), " BEFORE ANY DDL STATEMENT");
+                            return;
                         } else {
                             insertBefore(stmt.ddl_event(), "[-unconvertible RS-228339 ");
                             insertAfter(stmt.ddl_event(), "]");

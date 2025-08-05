@@ -725,11 +725,17 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterGeneral_element_part(General_element_partContext ctx) {
-        if (labelLoopArea.empty())
-            return;
+//        if (labelLoopArea.empty())
+//            return;
         for (Id_expressionContext id : ctx.id_expression()) {
-            if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
-                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LABEL_VARIABLE);
+            if (!labelLoopArea.empty())
+                if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
+                    currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LABEL_VARIABLE);
+            if (id.regular_id() != null) {
+                Regular_idContext reg_id = id.regular_id();
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_SQL_TXT"))
+                    currentBlock.peek().addUnconvertableBlock(ctx, Ticket.ORA_SQL_TXT);
+            }
         }
     }
 

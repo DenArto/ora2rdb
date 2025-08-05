@@ -101,6 +101,8 @@ public enum Ticket {
 
     , ANOTHER_DATATYPE                       (244032)
     , DATE_TIME_DATATYPE                     (244046)
+
+    , ORA_SQL_TXT                            (245165)
     ;
 
 
