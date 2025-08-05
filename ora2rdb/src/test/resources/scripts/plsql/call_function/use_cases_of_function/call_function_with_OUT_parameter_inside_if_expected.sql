@@ -1,11 +1,27 @@
+CREATE PROCEDURE FUNCTION_NAME (in_value VARCHAR, out_value  VARCHAR)
+RETURNS ( RET_VAL VARCHAR(32765),
+OUT_VALUE_OUT VARCHAR)
+ SQL SECURITY DEFINER
+ AS
+BEGIN
+    RET_VAL = 'in_value';
+    OUT_VALUE_OUT = OUT_VALUE;
+    SUSPEND;
+    EXIT;
+END;
+
 CREATE FUNCTION CALLING_F
 RETURNS VARCHAR(32765)
-AS
+ SQL SECURITY DEFINER
+ AS
      DECLARE out_value_from_function VARCHAR(50);
-     DECLARE return_value_from_function VARCHAR(50);
+     DECLARE in_value VARCHAR(50) = 'value';
+  DECLARE FUNCTION_NAME_RET_VAL VARCHAR (32765);
 BEGIN
-	SELECT RET_VAL, OUT_VALUE_OUT FROM FUNCTION_NAME(:out_value_from_function, 'in_value') INTO return_value_from_function, out_value_from_function;
-    if (return_value_from_function = 'in_value') then   -- inside IF-ELSE
+    SELECT RET_VAL, OUT_VALUE_OUT  FROM FUNCTION_NAME(:in_value, :out_value_from_function) INTO FUNCTION_NAME_RET_VAL, out_value_from_function;
+if (FUNCTION_NAME_RET_VAL = 'in_value') then
+    BEGIN
         RETURN out_value_from_function;
+    END
     RETURN 'empty';
 END;
