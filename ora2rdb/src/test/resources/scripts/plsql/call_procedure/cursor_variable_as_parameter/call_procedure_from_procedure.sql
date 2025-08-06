@@ -1,3 +1,9 @@
+CREATE PROCEDURE PROCEDURE_NAME(in_p VARCHAR)
+IS
+BEGIN
+    NULL;
+END;
+
 CREATE PROCEDURE CALLING_PROCEDURE
     IS
     cursor_variable pkg.cursor_type;

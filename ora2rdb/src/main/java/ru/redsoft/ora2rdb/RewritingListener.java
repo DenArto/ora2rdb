@@ -1721,16 +1721,16 @@ public class RewritingListener extends PlSqlParserBaseListener {
         delete(ctx.NONEDITIONABLE());
         //convert invoker_rights_clause statement
         if (ctx.invoker_rights_clause().isEmpty()) {
-            replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
-            replace(ctx.AS(), "\n SQL SECURITY DEFINER \n AS");
+            replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+            replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
         } else {
             if (ctx.invoker_rights_clause().get(0).CURRENT_USER() != null) {
-                replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
-                replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
+                replace(ctx.IS(), " SQL SECURITY INVOKER \n AS");
+                replace(ctx.AS(), " SQL SECURITY INVOKER \n AS");
             }
             if (ctx.invoker_rights_clause().get(0).DEFINER() != null) {
-                replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
-                replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
+                replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+                replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
             }
             delete(ctx.invoker_rights_clause().get(0));
             deleteSPACESLeft(ctx.invoker_rights_clause().get(0));
@@ -2309,13 +2309,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
         if (ctx.AS() != null) {
             if (ctx.invoker_rights_clause() == null)
-                insertBefore(ctx.AS(), "\nSQL SECURITY DEFINER\n");
+                insertBefore(ctx.AS(), " SQL SECURITY DEFINER\n");
             insertAfter(ctx.AS(), " BEGIN");
         }
         if (ctx.IS() != null) {
             replace(ctx.IS(), "AS");
             if (ctx.invoker_rights_clause() == null)
-                insertBefore(ctx.IS(), "\nSQL SECURITY DEFINER\n");
+                insertBefore(ctx.IS(), " SQL SECURITY DEFINER\n");
             insertAfter(ctx.IS(), " BEGIN");
         }
         if (!ctx.package_name().isEmpty()) {
@@ -2427,16 +2427,16 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx.REPLACE(), "ALTER");
         //convert invoker_rights_clause statement
         if (ctx.invoker_rights_clause().isEmpty()) {
-            replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
-            replace(ctx.AS(), "\n SQL SECURITY DEFINER \n AS");
+            replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+            replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
         } else {
             if (ctx.invoker_rights_clause().get(0).CURRENT_USER() != null) {
-                replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
-                replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
+                replace(ctx.IS(), " SQL SECURITY INVOKER \n AS");
+                replace(ctx.AS(), " SQL SECURITY INVOKER \n AS");
             }
             if (ctx.invoker_rights_clause().get(0).DEFINER() != null) {
-                replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
-                replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
+                replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+                replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
             }
             delete(ctx.invoker_rights_clause().get(0));
             deleteSPACESLeft(ctx.invoker_rights_clause().get(0));
@@ -2828,7 +2828,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
         loop_index_names.clear();
 
-        insertBefore(ctx.trigger_body(), indentation + position + "\nSQL SECURITY DEFINER\nAS\n");
+        insertBefore(ctx.trigger_body(), indentation + position + " SQL SECURITY DEFINER\nAS\n");
 
         if (ctx.simple_dml_trigger() != null) {
             if (ctx.simple_dml_trigger().for_each_row() == null) {

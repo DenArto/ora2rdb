@@ -1,7 +1,15 @@
-EXECUTE BLOCK
-    AS
-    DECLARE in_value VARCHAR(50);
+CREATE PROCEDURE PROCEDURE_NAME (in_p VARCHAR)
+ SQL SECURITY DEFINER
+ AS
 BEGIN
-	in_value = 'in_value';
+
+END;
+
+EXECUTE BLOCK
+ AS
+
+     DECLARE in_value VARCHAR(50);
+BEGIN
+    in_value = 'in_value';
     EXECUTE PROCEDURE PROCEDURE_NAME(:in_value);
 END;
