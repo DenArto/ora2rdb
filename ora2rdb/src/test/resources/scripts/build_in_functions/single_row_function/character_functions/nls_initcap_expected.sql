@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLS_INITCAP('ijsland', 'NLS_SORT = XDutch')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 NLS_INITCAP('ijsland', 'NLS_SORT = XDutch')] FROM RDB$DATABASE;*/

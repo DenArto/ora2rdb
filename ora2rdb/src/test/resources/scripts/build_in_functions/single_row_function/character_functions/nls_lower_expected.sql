@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLS_LOWER('NOKTASINDA', 'NLS_SORT = XTurkish')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 NLS_LOWER('NOKTASINDA', 'NLS_SORT = XTurkish')] FROM RDB$DATABASE;*/

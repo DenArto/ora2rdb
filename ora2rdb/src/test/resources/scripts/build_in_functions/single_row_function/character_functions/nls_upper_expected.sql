@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLS_UPPER('große')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 NLS_UPPER('große')] FROM RDB$DATABASE;*/

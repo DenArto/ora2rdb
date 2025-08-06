@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible REGEXP_REPLACE('abcd1234efgh5678', '([[:alpha:]]+)([0-9]+)', '\1')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 REGEXP_REPLACE('abcd1234efgh5678', '([[:alpha:]]+)([0-9]+)', '\1')] FROM RDB$DATABASE;*/

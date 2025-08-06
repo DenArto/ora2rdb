@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible REGEXP_COUNT('123123123123123', '(12)3', 1, 'i')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 REGEXP_COUNT('123123123123123', '(12)3', 1, 'i')] FROM RDB$DATABASE;*/

@@ -609,7 +609,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
                     currentBlock.peek().setConvertAllBlock(true);
             }
-            if (ctx.native_datatype_element().TIMESTAMP() != null && ctx.precision_part() != null){
+            if (ctx.native_datatype_element().TIMESTAMP() != null && ctx.precision_part() != null) {
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
                 if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
                     currentBlock.peek().setConvertAllBlock(true);
@@ -1032,8 +1032,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
             ) {
                 currentBlock.peek().addUnconvertableBlock(ctx.over_clause_keyword().start, ctx.function_argument_analytic().stop, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
             }
-
-
         }
 
         if (ctx.within_or_over_clause_keyword() != null) {
@@ -1046,7 +1044,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
         }
 
-        if(ctx.stats_t_test() != null)
+        if (ctx.stats_t_test() != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
 
         if (ctx.ANY_VALUE() != null
@@ -1092,6 +1090,55 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void enterString_function(String_functionContext ctx) {
+        if (ctx.CHR() != null && ctx.NCHAR_CS() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.USING(), ctx.NCHAR_CS(), Ticket.STRING_FUNCTION);
+        } else if (ctx.instr_function_name() != null) {
+            if (ctx.instr_function_name().INSTR() == null)
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+            if (ctx.expression(2) != null && Ora2rdb.getRealName(ctx.expression(2).getText()).startsWith("-"))
+                currentBlock.peek().addUnconvertableBlock(ctx.expression(2), Ticket.STRING_FUNCTION);
+        } else if (ctx.INITCAP() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.length_function_name() != null && ctx.length_function_name().LENGTH() == null && ctx.length_function_name().LENGTHB() == null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.LPAD() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.LTRIM() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NCHR() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLS_INITCAP() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLS_LOWER() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLS_UPPER() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLSSORT() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.REGEXP_COUNT() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.REGEXP_INSTR() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.REGEXP_REPLACE() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.REGEXP_SUBSTR() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        }else if (ctx.RPAD() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        }else if (ctx.RTRIM() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        }else if (ctx.SOUNDEX() != null) {
+
+        } else if (ctx.substr_function_name() != null) {
+            if(ctx.substr_function_name().SUBSTR() == null)
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.TRANSLATE() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        }
+    }
+
+    @Override
     public void enterOther_function(Other_functionContext ctx) {
         if (ctx.XMLELEMENT() != null
         ) {
@@ -1102,7 +1149,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterJson_function(Json_functionContext ctx) {
         Order_by_clauseContext orderByClause = Finder.getFirstRuleContext(ctx, Order_by_clauseContext.class);
-        if(orderByClause != null)
+        if (orderByClause != null)
             currentBlock.peek().addUnconvertableBlock(orderByClause, Ticket.JSON_FUNCTION_ORDER_BY);
     }
 

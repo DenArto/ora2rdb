@@ -558,8 +558,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         else if (ctx.NCLOB() != null)
             replace(ctx, "BLOB SUB_TYPE TEXT");
     }
+
     @Override
-    public void exitJson_return_clause(Json_return_clauseContext ctx){
+    public void exitJson_return_clause(Json_return_clauseContext ctx) {
         delete(ctx.BYTE());
         delete(ctx.CHAR());
         if (ctx.VARCHAR2() != null) {
@@ -567,8 +568,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             if (ctx.UNSIGNED_INTEGER() == null)
                 insertAfter(ctx.VARCHAR2(), "(4000)");
 
-        }
-        else if(ctx.CLOB() != null)
+        } else if (ctx.CLOB() != null)
             replace(ctx.CLOB(), "BLOB SUB_TYPE TEXT");
     }
 
@@ -640,13 +640,68 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitString_function(String_functionContext ctx) {
-        if (ctx.SUBSTR() != null) {
-            replace(ctx.SUBSTR(), "SUBSTRING");
-            replace(ctx.COMMA(0), " FROM ");
-            if (ctx.COMMA(1) != null)
-                replace(ctx.COMMA(1), " FOR ");
+        if (ctx.ASCII() != null) {
+            replace(ctx.ASCII(), "ASCII_VAL");
+        } else if (ctx.CHR() != null) {
+            replace(ctx.CHR(), "ASCII_CHAR");
+        } else if (ctx.NVL() != null) {
+            replace(ctx.NVL(), "COALESCE");
+        } else if (ctx.CONCAT() != null) {
+            delete(ctx.CONCAT());
+            delete(ctx.LEFT_PAREN());
+            delete(ctx.RIGHT_PAREN());
+            ctx.COMMA().forEach(comma -> replace(comma, "||"));
+        } else if (ctx.instr_function_name() != null) {
+            if (ctx.instr_function_name().INSTR() != null)
+                replace(ctx.instr_function_name(), "POSITION");
+        } else if (ctx.length_function_name() != null) {
+            if(ctx.length_function_name().LENGTH() != null) {
+                replace(ctx.length_function_name(), "CHAR_LENGTH");
+                decodeWrapper(ctx);
+            } else if(ctx.length_function_name().LENGTHB() != null) {
+                replace(ctx.length_function_name(), "OCTET_LENGTH");
+                decodeWrapper(ctx);
+            }
+        } else if (ctx.LOWER() != null) {
+            decodeWrapper(ctx);
+        } else if (ctx.REPLACE() != null) {
+            insertBefore(ctx.expression(0), "NULLIF(");
+            insertAfter(ctx.expression(0), ", '')");
+            insertBefore(ctx.expression(1), "COALESCE(");
+            insertAfter(ctx.expression(1), ", '')");
+            if(ctx.expression(2) != null) {
+                insertBefore(ctx.expression(2), "COALESCE(");
+                insertAfter(ctx.expression(2), ", '')");
+            }
+            else{
+                insertBefore(ctx.RIGHT_PAREN(), "COALESCE('','')");
+            }
+        } else if(ctx.substr_function_name() != null) {
+            if (ctx.substr_function_name().SUBSTR() != null) {
+                replace(ctx.substr_function_name(), "SUBSTRING");
+                replace(ctx.COMMA(0), " FROM ");
+                if (ctx.COMMA(1) != null)
+                    replace(ctx.COMMA(1), " FOR ");
+            }
+        } else if (ctx.UPPER() != null) {
+            decodeWrapper(ctx);
+        } else if (ctx.ASCII() != null) {
+
+        } else if (ctx.ASCII() != null) {
+
+        } else if (ctx.ASCII() != null) {
+
+        } else if (ctx.ASCII() != null) {
 
         }
+    }
+
+    private void decodeWrapper(String_functionContext ctx){
+        StringBuilder decodeFunc = new StringBuilder();
+        decodeFunc.append("DECODE(").append(ctx.expression(0).getText())
+                        .append(", '', NULL, ");
+        insertBefore(ctx, decodeFunc);
+        insertAfter(ctx, ")");
     }
 
     @Override
@@ -3132,33 +3187,33 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx, getRuleText(ctx.label_name()) + ":");
     }
 
-    @Override
-    public void exitStandard_function(Standard_functionContext ctx) {
-        if (ctx.string_function() != null) {
-            if (ctx.string_function().NVL() != null)
-                replace(ctx.string_function().NVL(), "COALESCE");
-            if (ctx.string_function().TO_CHAR() != null) {
-                replace(ctx.string_function().TO_CHAR(), "CAST");
-                if (ctx.string_function().COMMA(0) != null) {
-                    insertBefore(ctx, "UPPER( ");
-                    replace(ctx.string_function().COMMA(0), " AS VARCHAR(32765) FORMAT");
-                    replace(ctx, getRewriterText(ctx) + ")");
-                } else {
-                    insertAfter(ctx.string_function().expression(0), " AS VARCHAR(32765)");
-                }
-            }
-            if (ctx.string_function().TO_DATE() != null) {
-                replace(ctx.string_function().TO_DATE(), "CAST");
-                delete(ctx.string_function().RIGHT_PAREN());
-                if (ctx.string_function().expression() != null)
-                    insertAfter(ctx.string_function().expression(0), " AS TIMESTAMP)");
-                else if (ctx.string_function().table_element() != null)
-                    insertAfter(ctx.string_function().table_element(), " AS TIMESTAMP)");
-                delete(ctx.string_function().COMMA(0));
-                delete(ctx.string_function().quoted_string());
-            }
-        }
-    }
+//    @Override
+//    public void exitStandard_function(Standard_functionContext ctx) {
+//        if (ctx.string_function() != null) {
+//            if (ctx.string_function().NVL() != null)
+//                replace(ctx.string_function().NVL(), "COALESCE");
+//            if (ctx.string_function().TO_CHAR() != null) {
+//                replace(ctx.string_function().TO_CHAR(), "CAST");
+//                if (ctx.string_function().COMMA(0) != null) {
+//                    insertBefore(ctx, "UPPER( ");
+//                    replace(ctx.string_function().COMMA(0), " AS VARCHAR(32765) FORMAT");
+//                    replace(ctx, getRewriterText(ctx) + ")");
+//                } else {
+//                    insertAfter(ctx.string_function().expression(0), " AS VARCHAR(32765)");
+//                }
+//            }
+//            if (ctx.string_function().TO_DATE() != null) {
+//                replace(ctx.string_function().TO_DATE(), "CAST");
+//                delete(ctx.string_function().RIGHT_PAREN());
+//                if (ctx.string_function().expression() != null)
+//                    insertAfter(ctx.string_function().expression(0), " AS TIMESTAMP)");
+//                else if (ctx.string_function().table_element() != null)
+//                    insertAfter(ctx.string_function().table_element(), " AS TIMESTAMP)");
+//                delete(ctx.string_function().COMMA(0));
+//                delete(ctx.string_function().quoted_string());
+//            }
+//        }
+//    }
 
     @Override
     public void enterStatement(StatementContext ctx) {

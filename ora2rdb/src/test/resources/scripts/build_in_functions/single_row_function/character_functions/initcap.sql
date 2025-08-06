@@ -1,4 +1,3 @@
 SELECT INITCAP('hello world') FROM DUAL;
 SELECT INITCAP('  6hello w6orld') FROM DUAL;
 SELECT INITCAP('hELLO  _ _   wOOORLD   ') FROM DUAL;
-SELECT INITCAP('привет, мир!') FROM DUAL;
