@@ -655,10 +655,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
             if (ctx.instr_function_name().INSTR() != null)
                 replace(ctx.instr_function_name(), "POSITION");
         } else if (ctx.length_function_name() != null) {
-            if(ctx.length_function_name().LENGTH() != null) {
+            if (ctx.length_function_name().LENGTH() != null) {
                 replace(ctx.length_function_name(), "CHAR_LENGTH");
                 decodeWrapper(ctx);
-            } else if(ctx.length_function_name().LENGTHB() != null) {
+            } else if (ctx.length_function_name().LENGTHB() != null) {
                 replace(ctx.length_function_name(), "OCTET_LENGTH");
                 decodeWrapper(ctx);
             }
@@ -669,14 +669,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
             insertAfter(ctx.expression(0), ", '')");
             insertBefore(ctx.expression(1), "COALESCE(");
             insertAfter(ctx.expression(1), ", '')");
-            if(ctx.expression(2) != null) {
+            if (ctx.expression(2) != null) {
                 insertBefore(ctx.expression(2), "COALESCE(");
                 insertAfter(ctx.expression(2), ", '')");
-            }
-            else{
+            } else {
                 insertBefore(ctx.RIGHT_PAREN(), "COALESCE('','')");
             }
-        } else if(ctx.substr_function_name() != null) {
+        } else if (ctx.substr_function_name() != null) {
             if (ctx.substr_function_name().SUBSTR() != null) {
                 replace(ctx.substr_function_name(), "SUBSTRING");
                 replace(ctx.COMMA(0), " FROM ");
@@ -696,12 +695,20 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
     }
 
-    private void decodeWrapper(String_functionContext ctx){
+    private void decodeWrapper(String_functionContext ctx) {
         StringBuilder decodeFunc = new StringBuilder();
         decodeFunc.append("DECODE(").append(ctx.expression(0).getText())
-                        .append(", '', NULL, ");
+                .append(", '', NULL, ");
         insertBefore(ctx, decodeFunc);
         insertAfter(ctx, ")");
+    }
+
+    @Override
+    public void exitDatetime_function(Datetime_functionContext ctx) {
+        if (ctx.SYSDATE() != null)
+            replace(ctx, "CURRENT_TIMESTAMP");
+        else if (ctx.SYSTIMESTAMP() != null)
+            replace(ctx, "CURRENT_TIMESTAMP");
     }
 
     @Override
@@ -1732,23 +1739,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx, getRewriterText(ctx) + ";" + if_clause);
             exceptions.put("NO_DATA_FOUND", "no data found");
         }
-    }
-
-    @Override
-    public void exitRegular_id(Regular_idContext ctx) {
-        if (ctx.non_reserved_keywords_pre12c() != null) {
-            switch (getRuleText(ctx.non_reserved_keywords_pre12c()).toUpperCase()) {
-                case "SYSTIMESTAMP":
-                    replace(ctx, "CURRENT_TIMESTAMP");
-                    break;
-                case "SYSDATE":
-                    replace(ctx, "CURRENT_TIMESTAMP");
-            }
-        }
-    }
-
-    @Override
-    public void exitFunction_name(Function_nameContext ctx) {
     }
 
     @Override
