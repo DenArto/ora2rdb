@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLS_CHARSET_NAME(2)] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 NLS_CHARSET_NAME(2)] FROM RDB$DATABASE;*/

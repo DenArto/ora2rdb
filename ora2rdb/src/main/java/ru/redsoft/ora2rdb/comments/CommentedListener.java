@@ -1128,13 +1128,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
         } else if (ctx.RTRIM() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
-        }else if (ctx.SOUNDEX() != null) {
-
         } else if (ctx.SOUNDEX() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
         } else if (ctx.substr_function_name() != null) {
             if (ctx.substr_function_name().SUBSTR() == null)
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
         } else if (ctx.TRANSLATE() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLS_CHARSET_DECL_LEN() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLS_CHARSET_ID() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
+        } else if (ctx.NLS_CHARSET_NAME() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STRING_FUNCTION);
         }
     }
