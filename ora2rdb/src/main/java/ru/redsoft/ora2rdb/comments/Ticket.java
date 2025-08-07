@@ -103,6 +103,7 @@ public enum Ticket {
     , DATE_TIME_DATATYPE                     (244046)
     , STRING_FUNCTION                        (245294)
     , NUMERIC_FUNCTION                       (245388)
+    , COLLATION_FUNCTION                     (245419)
     ;
 
 

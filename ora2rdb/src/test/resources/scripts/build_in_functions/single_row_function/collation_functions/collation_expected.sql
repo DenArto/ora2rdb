@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible COLLATION('sdff')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245419 COLLATION('sdff')] FROM RDB$DATABASE;*/

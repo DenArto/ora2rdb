@@ -1147,8 +1147,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void exitNumeric_function(Numeric_functionContext ctx) {
         if (ctx.MOD() != null
-        || ctx.NANVL() != null
-        || ctx.REMAINDER() != null
+                || ctx.NANVL() != null
+                || ctx.REMAINDER() != null
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NUMERIC_FUNCTION);
         }
@@ -1159,6 +1159,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
         if (ctx.XMLELEMENT() != null
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
+        } else if (ctx.COLLATION() != null
+                || ctx.NLS_COLLATION_NAME() != null
+                || ctx.NLS_COLLATION_ID() != null
+        ) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.COLLATION_FUNCTION);
         }
     }
 
