@@ -1,1 +1,2 @@
-SELECT 'Hello'|| ' World' FROM RDB$DATABASE;
+SELECT COALESCE('Hello' , '')|| COALESCE(' World' , '') FROM RDB$DATABASE;
+SELECT COALESCE('Hello' , '')|| COALESCE(null , '') FROM RDB$DATABASE;

@@ -651,6 +651,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.LEFT_PAREN());
             delete(ctx.RIGHT_PAREN());
             ctx.COMMA().forEach(comma -> replace(comma, "||"));
+            ctx.expression().forEach(expr -> replace(expr, "COALESCE(" + expr.getText() + " , '')"));
         } else if (ctx.instr_function_name() != null) {
             if (ctx.instr_function_name().INSTR() != null)
                 replace(ctx.instr_function_name(), "POSITION");
