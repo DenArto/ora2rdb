@@ -713,6 +713,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitNumeric_function(Numeric_functionContext ctx) {
+        if(ctx.BITAND() != null)
+            replace(ctx.BITAND(), "BIN_AND");
+    }
+
+    @Override
     public void exitSchema_and_name(Schema_and_nameContext ctx) {
         delete(ctx.schema);
         delete(ctx.PERIOD());
