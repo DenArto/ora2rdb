@@ -1,5 +1,6 @@
+
 CREATE OR ALTER TRIGGER T_For_With_When
-  AFTER INSERT 
+  AFTER INSERT
   ON students
 SQL SECURITY DEFINER
 AS
@@ -9,7 +10,7 @@ AS
 */
 BEGIN
 /*
-  [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHEN MOD(power, 32)= 0] 
+  [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHEN [-unconvertible RS-245388 MOD(power, 32)]= 0]
   LOOP
     if (power > 64) then
     BEGIN LEAVE;
