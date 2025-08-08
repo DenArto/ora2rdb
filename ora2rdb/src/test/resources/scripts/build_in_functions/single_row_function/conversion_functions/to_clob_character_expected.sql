@@ -1,1 +1,1 @@
-select CAST('Hello world!' AS BLOB SUB_TYPE TEXT) from rdb$database;
+/*select [-unconvertible RS-245838 TO_CLOB('Hello world!')] from RDB$DATABASE;*/

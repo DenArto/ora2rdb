@@ -1,7 +1,13 @@
+
 EXECUTE BLOCK 
-AS
-  DECLARE raw_col BINARY(10) = 'hello';
-  DECLARE res NCHAR VARYING(100);
+ AS 
+
+/*
+   DECLARE raw_col BINARY(10) = utl_raw.cast_to_raw('hello');
+   DECLARE res VARCHAR(100);
+*/
 BEGIN
-  res = CAST(HEX_ENCODE(raw_col) AS NCHAR VARYING(32765));
+/*
+  res = [-unconvertible RS-245838 RAWTONHEX(:raw_col)];
+*/
 END;

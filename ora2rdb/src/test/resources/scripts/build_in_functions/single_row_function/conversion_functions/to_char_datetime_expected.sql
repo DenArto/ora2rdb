@@ -1,30 +1,91 @@
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
 EXECUTE BLOCK 
-AS
-  DECLARE p1 DATE =  date '2011-11-03';
-  DECLARE p2 TIMESTAMP = LOCALTIMESTAMP;
-  DECLARE p3 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
-  DECLARE res VARCHAR(100);
-BEGIN
-  select CAST(:p1 AS VARCHAR) from rdb$database into :res;
-  select CAST(:p1 AS VARCHAR FORMAT 'DD-MON-YYYY') from rdb$database into :res;
-  select CAST(:p1 AS VARCHAR FORMAT 'DD-MON-YYYY') from rdb$database into :res;
-  
-  select CAST(:p2 AS VARCHAR) from rdb$database into :res;
-  select CAST(:p2 AS VARCHAR FORMAT 'HH24:MI:SS.FF9 DD-MON-YYYY') from rdb$database into :res;
-  select CAST(:p2 AS VARCHAR FORMAT 'HH24:MI:SS.FF9 DD-MON-YYYY') from rdb$database into :res;
-    
-  select CAST(:p3 AS VARCHAR) from rdb$database into :res;
-  select CAST(:p3 AS VARCHAR FORMAT 'HH24:MI:SS.FF9 DD-MON-YYYY') from rdb$database into :res;
-  select CAST(:p3 AS VARCHAR FORMAT 'HH24:MI:SS.FF9 DD-MON-YYYY') from rdb$database into :res;
-END;
+ AS 
 
 /*
-DECLARE
-  [-unconvertible p4 TIMESTAMP WITH LOCAL TIME ZONE := timestamp '2020-10-25 02:30:00+02:00';]
-  res VARCHAR2(100);
-BEGIN
-  select [-unconvertible TO_CHAR(p4)] into res from dual;
-  select [-unconvertible TO_CHAR(p4, 'DD-MON-YYYY')] into res from dual;
-  select [-unconvertible TO_CHAR(p4, 'DD-MON-YYYY', 'NLS_DATE_LANGUAGE = american')] into res from dual;
-END;
+   DECLARE p1 TIMESTAMP =  date '2011-11-03';
+   DECLARE p2 TIMESTAMP = LOCALTIMESTAMP;
+   DECLARE p3 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
+   DECLARE res VARCHAR(100);
 */
+BEGIN
+/*
+  select [-unconvertible RS-245838 CAST(:p1)
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p1 AS VARCHAR(32765) FORMAT 'DD-MON-YYYY'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p1 AS VARCHAR(32765) FORMAT 'DD-MON-YYYY', 'NLS_DATE_LANGUAGE = american'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  
+  select [-unconvertible RS-245838 CAST(:p2)
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(32765) FORMAT 'HH24:MI:SSxFF DD-MON-YYYY'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(32765) FORMAT 'HH24:MI:SSxFF DD-MON-YYYY', 'NLS_DATE_LANGUAGE = american'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+    
+  select [-unconvertible RS-245838 CAST(:p3)
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p3 AS VARCHAR(32765) FORMAT 'HH24:MI:SSxFF DD-MON-YYYY'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p3 AS VARCHAR(32765) FORMAT 'HH24:MI:SSxFF DD-MON-YYYY', 'NLS_DATE_LANGUAGE = american'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+*/
+END;
+
+
+EXECUTE BLOCK 
+ AS 
+
+/*
+   DECLARE p4 [-unconvertible RS-244046 TIMESTAMP WITH LOCAL TIME ZONE] = timestamp '2020-10-25 02:30:00+02:00';
+   DECLARE res VARCHAR(100);
+*/
+BEGIN
+/*
+  select [-unconvertible RS-245838 CAST(:p4)
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p4 AS VARCHAR(32765) FORMAT 'DD-MON-YYYY'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select UPPER( [-unconvertible RS-245838 CAST(:p4 AS VARCHAR(32765) FORMAT 'DD-MON-YYYY', 'NLS_DATE_LANGUAGE = american'))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+*/
+END;

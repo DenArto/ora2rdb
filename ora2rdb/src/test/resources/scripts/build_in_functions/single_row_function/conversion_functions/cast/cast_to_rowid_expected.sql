@@ -1,17 +1,39 @@
-create table ttt(id int);
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+create table ttt(id INT128);
 insert into ttt values (100);
 
-/*
-DECLARE
-  p1 VARCHAR2(100);
-  [-unconvertible p2 UROWID;]
-  [-unconvertible res ROWID;]
-BEGIN
-  SELECT [-unconvertible ROWID] INTO p2
-  FROM ttt WHERE ROWNUM = 1;
-  select [-unconvertible CAST(p2 AS VARCHAR2(100))] into p1 from dual;
 
-  select [-unconvertible CAST(p1 AS ROWID)] into res from dual;
-  select [-unconvertible CAST(p2 AS ROWID)] into res from dual;
-END; 
+EXECUTE BLOCK 
+ AS 
+
+/*
+   DECLARE p1 VARCHAR(100);
+   DECLARE p2 [-unconvertible RS-244032 UROWID];
+   DECLARE res BINARY(8);
 */
+BEGIN
+/*
+  SELECT RDB$DB_KEY
+  FROM ttt WHERE ROWNUM = 1
+  INTO :p2;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(100))
+  ]from RDB$DATABASE
+  into :p1;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select [-unconvertible RS-245838 CAST(:p1 AS BINARY(8))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select [-unconvertible RS-245838 CAST(:p2 AS BINARY(8))
+  ]from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+*/
+END; 

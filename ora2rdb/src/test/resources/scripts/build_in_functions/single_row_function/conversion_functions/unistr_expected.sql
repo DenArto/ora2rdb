@@ -1,3 +1,1 @@
-/*
-select [-unconvertible UNISTR('Знак евро \20AC')] from dual;
-*/
+/*select [-unconvertible RS-245838 UNISTR('Знак евро \20AC')] from RDB$DATABASE;*/

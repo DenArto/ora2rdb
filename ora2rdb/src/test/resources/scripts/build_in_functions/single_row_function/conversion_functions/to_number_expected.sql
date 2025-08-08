@@ -1,16 +1,11 @@
-SELECT CAST('345.45' AS NUMERIC(34,8)) FROM RDB$DATABASE;
+SELECT CAST('345.45' AS NUMERIC)) FROM RDB$DATABASE;
 
-/*
-select [-unconvertible TO_NUMBER('$100.00', '$999.99')] from dual;
-/*
-/*
-SELECT [-unconvertible TO_NUMBER('-AusDollars100','L9G999D99',
+/*select [-unconvertible RS-245838 CAST('$100.00', '$999.99' AS NUMERIC))] from RDB$DATABASE;*/
+
+/*SELECT [-unconvertible RS-245838 CAST('-AusDollars100','L9G999D99',
    ' NLS_NUMERIC_CHARACTERS = '',.''
-     NLS_CURRENCY = ''AusDollars'' ')] FROM DUAL;
-*/
+     NLS_CURRENCY = ''AusDollars'' ' AS NUMERIC))] FROM RDB$DATABASE;*/
 
-SELECT CAST('2,00' AS NUMERIC(34,8)) FROM RDB$DATABASE;
+/*SELECT CAST('2,00' [-unconvertible RS-245741 DEFAULT 0 ON CONVERSION ERROR] AS NUMERIC)) FROM RDB$DATABASE;*/
 
-/*
-select [-unconvertible TO_NUMBER('100.00' DEFAULT 0 ON CONVERSION ERROR, '9G999D99')] from dual;
-*/
+/*select [-unconvertible RS-245838 CAST('100.00' [-unconvertible RS-245741 DEFAULT 0 ON CONVERSION ERROR], '9G999D99' AS NUMERIC))] from RDB$DATABASE;*/

@@ -653,8 +653,12 @@ public class RewritingListener extends PlSqlParserBaseListener {
             ctx.COMMA().forEach(comma -> replace(comma, "||"));
             ctx.expression().forEach(expr -> replace(expr, "COALESCE(" + expr.getText() + " , '')"));
         } else if (ctx.instr_function_name() != null) {
-            if (ctx.instr_function_name().INSTR() != null)
+            if (ctx.instr_function_name().INSTR() != null) {
                 replace(ctx.instr_function_name(), "POSITION");
+                String tempArgument = ctx.string.getText();
+                replace(ctx.string, ctx.substring.getText());
+                replace(ctx.string, tempArgument);
+            }
         } else if (ctx.length_function_name() != null) {
             if (ctx.length_function_name().LENGTH() != null) {
                 replace(ctx.length_function_name(), "CHAR_LENGTH");
@@ -714,8 +718,39 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitNumeric_function(Numeric_functionContext ctx) {
-        if(ctx.BITAND() != null)
+        if (ctx.BITAND() != null)
             replace(ctx.BITAND(), "BIN_AND");
+    }
+
+    @Override
+    public void exitConversion_function(Conversion_functionContext ctx) {
+
+        if (ctx.TO_CHAR() != null) {
+            replace(ctx.TO_CHAR(), "CAST");
+            if (ctx.COMMA(0) != null) {
+                insertBefore(ctx, "UPPER( ");
+                replace(ctx.COMMA(0), " AS VARCHAR(32765) FORMAT");
+                replace(ctx, getRewriterText(ctx) + ")");
+            } else {
+                insertAfter(ctx.expression(0), " AS VARCHAR(32765)");
+            }
+        }
+
+        if (ctx.TO_NUMBER() != null) {
+            replace(ctx.TO_NUMBER(), "CAST");
+            insertBefore(ctx.RIGHT_PAREN(ctx.RIGHT_PAREN().size() - 1), " AS NUMERIC)");
+        }
+
+//        if (ctx.TO_DATE() != null) {
+//            replace(ctx.TO_DATE(), "CAST");
+//            insertBefore(ctx.RIGHT_PAREN(ctx.RIGHT_PAREN().size() - 1), " AS TIMESTAMP)");
+//        }
+
+        if (ctx.HEXTORAW() != null)
+            replace(ctx.TO_DATE(), "HEX_DECODE");
+
+        if(ctx.RAWTOHEX() != null)
+            replace(ctx.TO_DATE(), "HEX_ENCODE");
     }
 
     @Override
@@ -1015,39 +1050,10 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (ctx.id_expression().size() == 1) {
             Id_expressionContext id_expr_ctx = ctx.id_expression(0);
             if (id_expr_ctx.regular_id() != null) {
-                Regular_idContext reg_id = id_expr_ctx.regular_id();
-                if (reg_id.non_reserved_keywords_pre12c() != null) {
-                    if (reg_id.non_reserved_keywords_pre12c().TO_NUMBER() != null) {
-                        replace(reg_id.non_reserved_keywords_pre12c().TO_NUMBER(), "CAST");
-                        delete(ctx.function_argument().RIGHT_PAREN());
-                        insertAfter(ctx.function_argument(), " AS NUMERIC)");
-                    }
-
-                    if (reg_id.non_reserved_keywords_pre12c().TO_DATE() != null) {
-                        replace(reg_id.non_reserved_keywords_pre12c().TO_DATE(), "CAST");
-                        delete(ctx.function_argument().RIGHT_PAREN());
-                        insertAfter(ctx.function_argument(), " AS TIMESTAMP)");
-
-                        if (ctx.function_argument().argument().size() > 1) {
-                            for (int i = 1; i < ctx.function_argument().argument().size(); i++) {
-                                delete(ctx.function_argument().COMMA(i - 1));
-                                delete(ctx.function_argument().argument(i));
-                            }
-                        }
-                    }
-
-                    if (reg_id.non_reserved_keywords_pre12c().INSTR() != null) {
-                        replace(reg_id.non_reserved_keywords_pre12c().INSTR(), "POSITION");
-                        String tempArgument = ctx.function_argument().argument(0).getText();
-                        replace(ctx.function_argument().argument(0), ctx.function_argument().argument(1).getText());
-                        replace(ctx.function_argument().argument(1), tempArgument);
-                    }
-
-                    if (reg_id.non_reserved_keywords_pre12c().MONTHS_BETWEEN() != null) {
-                        replace(reg_id.non_reserved_keywords_pre12c().MONTHS_BETWEEN(), "-DATEDIFF");
-                        replace(ctx.function_argument().LEFT_PAREN(), "(MONTH, ");
-                    }
-                }
+//                    if (reg_id.non_reserved_keywords_pre12c().MONTHS_BETWEEN() != null) {
+//                        replace(reg_id.non_reserved_keywords_pre12c().MONTHS_BETWEEN(), "-DATEDIFF");
+//                        replace(ctx.function_argument().LEFT_PAREN(), "(MONTH, ");
+//                    }
             }
         }
         if (ctx.id_expression().size() > 1) {
@@ -3184,34 +3190,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx, getRuleText(ctx.label_name()) + ":");
     }
 
-//    @Override
-//    public void exitStandard_function(Standard_functionContext ctx) {
-//        if (ctx.string_function() != null) {
-//            if (ctx.string_function().NVL() != null)
-//                replace(ctx.string_function().NVL(), "COALESCE");
-//            if (ctx.string_function().TO_CHAR() != null) {
-//                replace(ctx.string_function().TO_CHAR(), "CAST");
-//                if (ctx.string_function().COMMA(0) != null) {
-//                    insertBefore(ctx, "UPPER( ");
-//                    replace(ctx.string_function().COMMA(0), " AS VARCHAR(32765) FORMAT");
-//                    replace(ctx, getRewriterText(ctx) + ")");
-//                } else {
-//                    insertAfter(ctx.string_function().expression(0), " AS VARCHAR(32765)");
-//                }
-//            }
-//            if (ctx.string_function().TO_DATE() != null) {
-//                replace(ctx.string_function().TO_DATE(), "CAST");
-//                delete(ctx.string_function().RIGHT_PAREN());
-//                if (ctx.string_function().expression() != null)
-//                    insertAfter(ctx.string_function().expression(0), " AS TIMESTAMP)");
-//                else if (ctx.string_function().table_element() != null)
-//                    insertAfter(ctx.string_function().table_element(), " AS TIMESTAMP)");
-//                delete(ctx.string_function().COMMA(0));
-//                delete(ctx.string_function().quoted_string());
-//            }
-//        }
-//    }
-
     @Override
     public void enterStatement(StatementContext ctx) {
         current_plsql_block.setStatement(ctx);
@@ -3925,6 +3903,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
     public void exitSelect_list_elements(Select_list_elementsContext ctx) {
         if (Ora2rdb.getRealName(ctx.getText()).equals("ROWID"))
             replace(ctx, "RDB$DB_KEY");
+    }
+
+    @Override
+    public void exitWhere_clause(Where_clauseContext ctx) {
+        Finder.getAllRuleContexts(ctx, Id_expressionContext.class).stream()
+                .filter(id_exp -> Ora2rdb.getRealName(id_exp.getText()).equals("ROWID"))
+                .forEach(id_exp -> replace(id_exp, "RDB$DB_KEY"));
     }
 
     @Override

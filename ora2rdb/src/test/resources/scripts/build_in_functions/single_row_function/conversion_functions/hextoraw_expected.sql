@@ -1,6 +1,8 @@
+
 EXECUTE BLOCK 
-AS
-  DECLARE raw_col BINARY(10);
+ AS 
+
+   DECLARE raw_col BINARY(10);
 BEGIN
-  raw_col = HEX_DECODE('4041424344');
+  raw_col = HEXTORAW('4041424344');
 END;

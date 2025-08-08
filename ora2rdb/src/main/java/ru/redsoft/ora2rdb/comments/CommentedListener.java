@@ -1145,13 +1145,61 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
-    public void exitNumeric_function(Numeric_functionContext ctx) {
+    public void enterNumeric_function(Numeric_functionContext ctx) {
         if (ctx.MOD() != null
                 || ctx.NANVL() != null
                 || ctx.REMAINDER() != null
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.NUMERIC_FUNCTION);
         }
+    }
+
+    @Override
+    public void enterConversion_function(Conversion_functionContext ctx) {
+        if(ctx.ASCIISTR() != null
+        || ctx.BIN_TO_NUM() != null
+        || ctx.CHARTOROWID() != null
+        || ctx.COMPOSE() != null
+        || ctx.CONVERT() != null
+        || ctx.DECOMPOSE() != null
+        || ctx.NUMTODSINTERVAL() != null
+        || ctx.NUMTOYMINTERVAL() != null
+        || ctx.RAWTONHEX() != null
+        || ctx.ROWIDTOCHAR() != null
+        || ctx.ROWIDTONCHAR() != null
+        || ctx.SCN_TO_TIMESTAMP() != null
+        || ctx.TIMESTAMP_TO_SCN() != null
+        || ctx.TREAT() != null
+        || ctx.UNISTR() != null
+        || ctx.VALIDATE_CONVERSION() != null
+        || ctx.ASCIISTR() != null
+        || ctx.ASCIISTR() != null
+        || ctx.TO_BINARY_DOUBLE() != null
+        || ctx.TO_BINARY_FLOAT() != null
+        || ctx.TO_BLOB() != null
+        || ctx.TO_CHAR() != null
+        || ctx.TO_CLOB() != null
+        || ctx.TO_DATE() != null
+        || ctx.TO_DSINTERVAL() != null
+        || ctx.TO_LOB() != null
+        || ctx.TO_MULTI_BYTE() != null
+        || ctx.TO_NCHAR() != null
+        || ctx.TO_NCLOB() != null
+        || ctx.TO_NUMBER() != null && ctx.format != null
+        || ctx.TO_SINGLE_BYTE() != null
+        || ctx.TO_TIMESTAMP() != null
+        || ctx.TO_TIMESTAMP_TZ() != null
+        || ctx.TO_YMINTERVAL() != null
+        || ctx.CAST() != null
+        ){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CONVERT_FUNCTION);
+        }
+
+        Default_on_conversion_error_clauseContext defaultOnConversionError = Finder.getFirstRuleContext(ctx, Default_on_conversion_error_clauseContext.class);
+        if(defaultOnConversionError != null)
+            currentBlock.peek().addUnconvertableBlock(defaultOnConversionError, Ticket.DEFAULT_ON_CONVERSION_ERROR);
+        if(ctx.nls != null)
+            currentBlock.peek().addUnconvertableBlock(defaultOnConversionError, Ticket.CONVERT_FUNCTION);
     }
 
     @Override

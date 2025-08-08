@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible BIN_TO_NUM(1,0,1,0)] FROM DUAL; 
-*/
+/*SELECT [-unconvertible RS-245838 BIN_TO_NUM(1,0,1,0)] FROM RDB$DATABASE;*/ 
