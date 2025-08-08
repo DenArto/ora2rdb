@@ -103,6 +103,9 @@ public enum Ticket {
     , DATE_TIME_DATATYPE                     (244046)
 
     , ORA_SQL_TXT                            (245165)
+
+    , EXECUTE_IMMEDIATE_USING_CLAUSE         (245747)
+    , EXECUTE_IMMEDIATE_RETURNING_INTO_CLAUSE(245749)
     ;
 
 

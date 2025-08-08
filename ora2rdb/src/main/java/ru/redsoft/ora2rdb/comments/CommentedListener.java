@@ -609,7 +609,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
                     currentBlock.peek().setConvertAllBlock(true);
             }
-            if (ctx.native_datatype_element().TIMESTAMP() != null && ctx.precision_part() != null){
+            if (ctx.native_datatype_element().TIMESTAMP() != null && ctx.precision_part() != null) {
                 currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATE_TIME_DATATYPE);
                 if (Finder.getParentRuleContext(ctx, Seq_of_declare_specsContext.class) == null)
                     currentBlock.peek().setConvertAllBlock(true);
@@ -1052,7 +1052,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
         }
 
-        if(ctx.stats_t_test() != null)
+        if (ctx.stats_t_test() != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.AGGREGATE_AND_ANALYTIC_FUNCTION);
 
         if (ctx.ANY_VALUE() != null
@@ -1108,8 +1108,20 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterJson_function(Json_functionContext ctx) {
         Order_by_clauseContext orderByClause = Finder.getFirstRuleContext(ctx, Order_by_clauseContext.class);
-        if(orderByClause != null)
+        if (orderByClause != null)
             currentBlock.peek().addUnconvertableBlock(orderByClause, Ticket.JSON_FUNCTION_ORDER_BY);
+    }
+
+    @Override
+    public void enterExecute_immediate(Execute_immediateContext ctx) {
+        if (ctx.using_clause() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.using_clause(), Ticket.EXECUTE_IMMEDIATE_USING_CLAUSE);
+        }
+        if (ctx.dynamic_returning_clause() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.dynamic_returning_clause(), Ticket.EXECUTE_IMMEDIATE_RETURNING_INTO_CLAUSE);
+
+        }
+
     }
 
 
