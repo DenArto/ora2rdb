@@ -1,1 +1,1 @@
-select CURRENT_DATE from rdb$database;
+select CURRENT_TIMESTAMP from RDB$DATABASE;

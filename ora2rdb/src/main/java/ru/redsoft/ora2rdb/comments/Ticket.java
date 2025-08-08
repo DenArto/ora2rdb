@@ -104,6 +104,7 @@ public enum Ticket {
     , STRING_FUNCTION                        (245294)
     , NUMERIC_FUNCTION                       (245388)
     , COLLATION_FUNCTION                     (245419)
+    , DATETIME_FUNCTION                      (245858)
     , CONVERT_FUNCTION                       (245838)
     , DEFAULT_ON_CONVERSION_ERROR            (245741)
     ;

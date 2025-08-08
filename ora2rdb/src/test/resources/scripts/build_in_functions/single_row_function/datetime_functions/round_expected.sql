@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible ROUND(TO_DATE ('31.07.2014'),'MONTH')] FROM DUAL;
-*/
+/*SELECT ROUND([-unconvertible RS-245838 TO_DATE ('31.07.2014')],'MONTH') FROM RDB$DATABASE;*/

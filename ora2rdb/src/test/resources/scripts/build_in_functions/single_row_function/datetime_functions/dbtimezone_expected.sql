@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible DBTIMEZONE] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245858 DBTIMEZONE] FROM RDB$DATABASE;*/

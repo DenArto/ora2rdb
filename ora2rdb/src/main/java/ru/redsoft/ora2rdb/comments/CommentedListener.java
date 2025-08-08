@@ -1203,6 +1203,23 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void enterDatetime_function(Datetime_functionContext ctx) {
+        if(ctx.ADD_MONTHS() != null
+                || ctx.DBTIMEZONE() != null
+                || ctx.EXTRACT() != null
+                || ctx.FROM_TZ() != null
+                || ctx.LAST_DAY() != null
+                || ctx.MONTHS_BETWEEN() != null
+                || ctx.NEW_TIME() != null
+                || ctx.NEXT_DAY() != null
+                || ctx.SESSIONTIMEZONE() != null
+                || ctx.SYS_EXTRACT_UTC() != null
+                || ctx.TZ_OFFSET() != null
+        ){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATETIME_FUNCTION);
+        }
+    }
+    @Override
     public void enterOther_function(Other_functionContext ctx) {
         if (ctx.XMLELEMENT() != null
         ) {
