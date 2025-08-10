@@ -106,6 +106,14 @@ public enum Ticket {
 
     , EXECUTE_IMMEDIATE_USING_CLAUSE         (245747)
     , EXECUTE_IMMEDIATE_RETURNING_INTO_CLAUSE(245749)
+
+    , STATEMENT_TRIGGER                      (228329)
+    , COMPOUND_TRIGGER                       (228297)
+    , INSTEAD_OF_CREATE_TRIGGER              (228348)
+    , DATABASE_TRIGGER                       (228336)
+    , DDL_TRIGGER                            (228339)
+    , REFERENCING_PARENT_AS_CLAUSE           (228325)
+    , INSTEAD_OF_TRIGGER_FOR_NESTED_TABLE    (228312)
     ;
 
 
