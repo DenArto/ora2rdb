@@ -260,6 +260,63 @@ public class CommentedListener extends PlSqlParserBaseListener {
             );
         else
             currentBlock.push(new CommentedBlock(ctx));
+
+        // comment trigger without FOR EACH ROW
+        if (ctx.simple_dml_trigger() != null)
+            if (ctx.simple_dml_trigger().for_each_row() == null) {
+                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.STATEMENT_TRIGGER);
+                currentBlock.peek().setConvertAllBlock(true);
+            }
+
+        if (ctx.compound_dml_trigger() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.compound_dml_trigger(), Ticket.COMPOUND_TRIGGER);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+
+        if (ctx.non_dml_trigger() != null)
+            if (ctx.non_dml_trigger().INSTEAD() != null) {
+                currentBlock.peek().addUnconvertableBlock(ctx.non_dml_trigger(), Ticket.INSTEAD_OF_CREATE_TRIGGER);
+                currentBlock.peek().setConvertAllBlock(true);
+            } else {
+                for (Non_dml_eventContext stmt : ctx.non_dml_trigger().non_dml_event()) {
+                    if (stmt.database_event() != null) {
+                        if (stmt.database_event().LOGON() != null) {
+                            continue;
+                        } else if (stmt.database_event().LOGOFF() != null) {
+                            continue;
+                        } else {
+                            currentBlock.peek().addUnconvertableBlock(stmt.database_event(), Ticket.DATABASE_TRIGGER);
+                            currentBlock.peek().setConvertAllBlock(true);
+                        }
+                    }
+                    if (stmt.ddl_event() != null) {
+                        if (stmt.ddl_event().CREATE() != null || stmt.ddl_event().ALTER() != null
+                                || stmt.ddl_event().DROP() != null || stmt.ddl_event().DDL() != null) {
+                        } else {
+                            currentBlock.peek().addUnconvertableBlock(stmt.ddl_event(), Ticket.DDL_TRIGGER);
+                            currentBlock.peek().setConvertAllBlock(true);
+                        }
+                    }
+                }
+
+            }
+    }
+
+    @Override
+    public void enterReferencing_clause(Referencing_clauseContext ctx) {
+        for (int i = 0; i < ctx.referencing_element().size(); i++) {
+            Referencing_elementContext stmt = ctx.referencing_element().get(i);
+            if (stmt.PARENT() != null) {
+                currentBlock.peek().addUnconvertableBlock(stmt.PARENT(), Ticket.REFERENCING_PARENT_AS_CLAUSE);
+                currentBlock.peek().setConvertAllBlock(true);
+            }
+        }
+    }
+
+    @Override
+    public void enterDml_event_nested_clause(Dml_event_nested_clauseContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.INSTEAD_OF_TRIGGER_FOR_NESTED_TABLE);
+        currentBlock.peek().setConvertAllBlock(true);
     }
 
     @Override
@@ -725,11 +782,17 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterGeneral_element_part(General_element_partContext ctx) {
-        if (labelLoopArea.empty())
-            return;
+//        if (labelLoopArea.empty())
+//            return;
         for (Id_expressionContext id : ctx.id_expression()) {
-            if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
-                currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LABEL_VARIABLE);
+            if (!labelLoopArea.empty())
+                if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
+                    currentBlock.peek().addUnconvertableBlock(ctx, Ticket.LABEL_VARIABLE);
+            if (id.regular_id() != null) {
+                Regular_idContext reg_id = id.regular_id();
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_SQL_TXT"))
+                    currentBlock.peek().addUnconvertableBlock(ctx, Ticket.ORA_SQL_TXT);
+            }
         }
     }
 
@@ -1237,6 +1300,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
         Order_by_clauseContext orderByClause = Finder.getFirstRuleContext(ctx, Order_by_clauseContext.class);
         if (orderByClause != null)
             currentBlock.peek().addUnconvertableBlock(orderByClause, Ticket.JSON_FUNCTION_ORDER_BY);
+    }
+
+    @Override
+    public void enterExecute_immediate(Execute_immediateContext ctx) {
+        if (ctx.using_clause() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.using_clause(), Ticket.EXECUTE_IMMEDIATE_USING_CLAUSE);
+        }
+        if (ctx.dynamic_returning_clause() != null) {
+            currentBlock.peek().addUnconvertableBlock(ctx.dynamic_returning_clause(), Ticket.EXECUTE_IMMEDIATE_RETURNING_INTO_CLAUSE);
+
+        }
+
     }
 
 

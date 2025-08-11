@@ -1,25 +1,34 @@
-CREATE PACKAGE CALLING_PACKAGE
-SQL SECURITY DEFINER
-AS BEGIN
-   /*FUNCTION CALLING_FUNCTION RETURNS NUMERIC(34, 8);*/
-   /*PROCEDURE CALLING_PROCEDURE;*/
+CREATE PROCEDURE PROCEDURE_NAME(in_p VARCHAR)
+ SQL SECURITY DEFINER
+ AS
+BEGIN
+
 END;
+
+
+CREATE PACKAGE CALLING_PACKAGE
+ SQL SECURITY DEFINER
+AS BEGIN
+   FUNCTION CALLING_FUNCTION RETURNS NUMERIC(34, 8);
+   PROCEDURE CALLING_PROCEDURE;
+  END ;
+
 
 CREATE PACKAGE BODY CALLING_PACKAGE
 AS BEGIN
-   /*FUNCTION CALLING_FUNCTION
+   FUNCTION CALLING_FUNCTION
    RETURNS NUMERIC(34, 8)
    AS
-        [-unconvertible DECLARE cursor_variable pkg.cursor_type];
+         DECLARE cursor_variable pkg.cursor_type;
     BEGIN
-        PROCEDURE_NAME([-unconvertible :cursor_variable]); -- call procedure
+        EXECUTE PROCEDURE PROCEDURE_NAME(:cursor_variable); -- call procedure
     RETURN 1;
-    END*/
+    END
 
-   /*PROCEDURE CALLING_PROCEDURE
+   PROCEDURE CALLING_PROCEDURE
     AS
-       [-unconvertible DECLARE cursor_variable pkg.cursor_type];
+          DECLARE cursor_variable pkg.cursor_type;
     BEGIN
-        PROCEDURE_NAME([-unconvertible :cursor_variable]); -- call procedure
-    END*/
-END;
+        EXECUTE PROCEDURE PROCEDURE_NAME(:cursor_variable); -- call procedure
+    END
+  END ;

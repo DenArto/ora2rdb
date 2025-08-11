@@ -1054,6 +1054,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
 //                        replace(reg_id.non_reserved_keywords_pre12c().MONTHS_BETWEEN(), "-DATEDIFF");
 //                        replace(ctx.function_argument().LEFT_PAREN(), "(MONTH, ");
 //                    }
+                Regular_idContext reg_id = id_expr_ctx.regular_id();
+
+                // trigger_event_attribute_functions
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_DICT_OBJ_NAME"))
+                    replace(reg_id, "RDB$GET_CONTEXT ('DDL_TRIGGER','OBJECT_NAME')");
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_DICT_OBJ_TYPE"))
+                    replace(reg_id, "RDB$GET_CONTEXT ('DDL_TRIGGER','OBJECT_TYPE')");
+                if (Ora2rdb.getRealName(getRuleText(reg_id)).equals("ORA_SYSEVENT"))
+                    replace(reg_id, "RDB$GET_CONTEXT ('DDL_TRIGGER','EVENT_TYPE')");
             }
         }
         if (ctx.id_expression().size() > 1) {
@@ -1770,16 +1779,16 @@ public class RewritingListener extends PlSqlParserBaseListener {
         delete(ctx.NONEDITIONABLE());
         //convert invoker_rights_clause statement
         if (ctx.invoker_rights_clause().isEmpty()) {
-            replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
-            replace(ctx.AS(), "\n SQL SECURITY DEFINER \n AS");
+            replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+            replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
         } else {
             if (ctx.invoker_rights_clause().get(0).CURRENT_USER() != null) {
-                replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
-                replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
+                replace(ctx.IS(), " SQL SECURITY INVOKER \n AS");
+                replace(ctx.AS(), " SQL SECURITY INVOKER \n AS");
             }
             if (ctx.invoker_rights_clause().get(0).DEFINER() != null) {
-                replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
-                replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
+                replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+                replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
             }
             delete(ctx.invoker_rights_clause().get(0));
             deleteSPACESLeft(ctx.invoker_rights_clause().get(0));
@@ -2358,13 +2367,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
         if (ctx.AS() != null) {
             if (ctx.invoker_rights_clause() == null)
-                insertBefore(ctx.AS(), "\nSQL SECURITY DEFINER\n");
+                insertBefore(ctx.AS(), " SQL SECURITY DEFINER\n");
             insertAfter(ctx.AS(), " BEGIN");
         }
         if (ctx.IS() != null) {
             replace(ctx.IS(), "AS");
             if (ctx.invoker_rights_clause() == null)
-                insertBefore(ctx.IS(), "\nSQL SECURITY DEFINER\n");
+                insertBefore(ctx.IS(), " SQL SECURITY DEFINER\n");
             insertAfter(ctx.IS(), " BEGIN");
         }
         if (!ctx.package_name().isEmpty()) {
@@ -2476,16 +2485,16 @@ public class RewritingListener extends PlSqlParserBaseListener {
         replace(ctx.REPLACE(), "ALTER");
         //convert invoker_rights_clause statement
         if (ctx.invoker_rights_clause().isEmpty()) {
-            replace(ctx.IS(), "\n SQL SECURITY DEFINER \n AS");
-            replace(ctx.AS(), "\n SQL SECURITY DEFINER \n AS");
+            replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+            replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
         } else {
             if (ctx.invoker_rights_clause().get(0).CURRENT_USER() != null) {
-                replace(ctx.IS(), "SQL SECURITY INVOKER \n AS");
-                replace(ctx.AS(), "SQL SECURITY INVOKER \n AS");
+                replace(ctx.IS(), " SQL SECURITY INVOKER \n AS");
+                replace(ctx.AS(), " SQL SECURITY INVOKER \n AS");
             }
             if (ctx.invoker_rights_clause().get(0).DEFINER() != null) {
-                replace(ctx.IS(), "SQL SECURITY DEFINER \n AS");
-                replace(ctx.AS(), "SQL SECURITY DEFINER \n AS");
+                replace(ctx.IS(), " SQL SECURITY DEFINER \n AS");
+                replace(ctx.AS(), " SQL SECURITY DEFINER \n AS");
             }
             delete(ctx.invoker_rights_clause().get(0));
             deleteSPACESLeft(ctx.invoker_rights_clause().get(0));
@@ -2877,13 +2886,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
         loop_index_names.clear();
 
-        insertBefore(ctx.trigger_body(), indentation + position + "\nSQL SECURITY DEFINER\nAS\n");
+        insertBefore(ctx.trigger_body(), indentation + position + " SQL SECURITY DEFINER\nAS\n");
 
         if (ctx.simple_dml_trigger() != null) {
-            if (ctx.simple_dml_trigger().for_each_row() == null) {
-                replace(ctx, " -unconvertible  RS-228329 \n" + getRewriterText(ctx));
-                current_plsql_block.commentBlock = true;
-            }
             if (ctx.simple_dml_trigger().DISABLE() != null)
                 insertAfter(ctx, "\nALTER TRIGGER " + Ora2rdb.getRealName(ctx.trigger_name().getText()) + " INACTIVE;");
 
@@ -2892,10 +2897,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
         if (ctx.compound_dml_trigger() != null) {
-            replace(ctx.compound_dml_trigger(), "[-unconvertible RS-228297 " + getRewriterText(ctx.compound_dml_trigger()));
-            insertAfter(ctx.trigger_body().compound_trigger_block(), "]");
-            current_plsql_block.commentBlock = true;
-
             if (ctx.compound_dml_trigger().DISABLE() != null)
                 insertAfter(ctx, "\nALTER TRIGGER " + Ora2rdb.getRealName(ctx.trigger_name().getText()) + " INACTIVE;");
 
@@ -2909,47 +2910,34 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
             delete(ctx.non_dml_trigger().DISABLE());
             delete(ctx.non_dml_trigger().ENABLE());
-
-            if (ctx.non_dml_trigger().INSTEAD() != null) {
-                insertBefore(ctx.non_dml_trigger(), "[-unconvertible RS-228348 ");
-                insertAfter(ctx.non_dml_trigger(), "]");
-                current_plsql_block.commentBlock = true;
-            } else {
-                boolean checkDDL = false;
-                for (Non_dml_eventContext stmt : ctx.non_dml_trigger().non_dml_event()) {
-                    if (stmt.database_event() != null) {
-                        if (stmt.database_event().LOGON() != null) {
-                            replace(stmt.database_event().LOGON(), "ON CONNECT");
-                        } else if (stmt.database_event().LOGOFF() != null) {
-                            replace(stmt.database_event().LOGOFF(), "ON DISCONNECT");
-                        } else {
-                            insertBefore(stmt.database_event(), "[-unconvertible RS-228336 ");
-                            insertAfter(stmt.database_event(), "]");
-                            current_plsql_block.commentBlock = true;
-                        }
-                        delete(ctx.non_dml_trigger().AFTER());
-                        delete(ctx.non_dml_trigger().BEFORE());
+            for (Non_dml_eventContext stmt : ctx.non_dml_trigger().non_dml_event()) {
+                if (stmt.database_event() != null) {
+                    if (stmt.database_event().LOGON() != null) {
+                        replace(stmt.database_event().LOGON(), "ON CONNECT");
+                    } else if (stmt.database_event().LOGOFF() != null) {
+                        replace(stmt.database_event().LOGOFF(), "ON DISCONNECT");
                     }
-                    if (stmt.ddl_event() != null) {
-                        if (stmt.ddl_event().CREATE() != null || stmt.ddl_event().ALTER() != null
-                                || stmt.ddl_event().DROP() != null || stmt.ddl_event().DDL() != null && !checkDDL) {
-                            replace(stmt.ddl_event(), " ANY DDL STATEMENT");
-                            checkDDL = true;
-                        } else {
-                            insertBefore(stmt.ddl_event(), "[-unconvertible RS-228339 ");
-                            insertAfter(stmt.ddl_event(), "]");
-                            current_plsql_block.commentBlock = true;
-                        }
+                    delete(ctx.non_dml_trigger().AFTER());
+                    delete(ctx.non_dml_trigger().BEFORE());
+                }
+                if (stmt.ddl_event() != null) {
+                    if (stmt.ddl_event().CREATE() != null || stmt.ddl_event().ALTER() != null
+                            || stmt.ddl_event().DROP() != null || stmt.ddl_event().DDL() != null) {
+                        if (ctx.non_dml_trigger().AFTER() != null)
+                            replace(ctx.non_dml_trigger(), " AFTER ANY DDL STATEMENT");
+                        else if (ctx.non_dml_trigger().BEFORE() != null)
+                            replace(ctx.non_dml_trigger(), " BEFORE ANY DDL STATEMENT");
+                        return;
                     }
                 }
             }
+
             delete(ctx.non_dml_trigger().ON());
             delete(ctx.non_dml_trigger().SCHEMA());
             delete(ctx.non_dml_trigger().schema_name());
             delete(ctx.non_dml_trigger().PLUGGABLE());
             delete(ctx.non_dml_trigger().DATABASE());
         }
-
         if (!Ora2rdb.reorder)
             insertBefore(ctx, temp_tables_ddl + "\n");
 //            replace(ctx, temp_tables_ddl + getRewriterText(ctx));
@@ -2971,6 +2959,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitReferencing_clause(Referencing_clauseContext ctx) {
+        boolean deleteCtx = true;
         if (current_plsql_block != null) {
             for (int i = 0; i < ctx.referencing_element().size(); i++) {
                 Referencing_elementContext stmt = ctx.referencing_element().get(i);
@@ -2980,16 +2969,15 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 if (stmt.OLD() != null) {
                     current_plsql_block.trigger_referencing_attributes.oldValue = Ora2rdb.getRealName(stmt.column_alias().identifier().getText());
                 }
-                if (stmt.PARENT() != null) {
-                    replace(stmt.PARENT(), "[-unconvertible RS-228325 " + stmt.PARENT());
-                    replace(stmt.column_alias(), getRewriterText(stmt.column_alias()) + "]");
-                    current_plsql_block.commentBlock = true;
-                    return;
-                }
+                if (stmt.PARENT() != null)
+                    deleteCtx = false;
             }
+            if (deleteCtx){
+                delete(ctx);
+                deleteSPACESLeft(ctx);
+            }
+
         }
-        delete(ctx);
-        deleteSPACESLeft(ctx);
     }
 
     @Override
@@ -3042,13 +3030,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (ctx.column_list() != null) {
             delete(ctx.column_list().column_name());
         }
-    }
-
-    @Override
-    public void exitDml_event_nested_clause(Dml_event_nested_clauseContext ctx) {
-        replace(ctx, "[-unconvertible RS-228312 " + getRewriterText(ctx) + "]");
-        if (current_plsql_block != null)
-            current_plsql_block.commentBlock = true;
     }
 
     @Override

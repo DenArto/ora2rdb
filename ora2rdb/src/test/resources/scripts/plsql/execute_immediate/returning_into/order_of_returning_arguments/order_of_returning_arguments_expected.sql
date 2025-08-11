@@ -1,12 +1,17 @@
+
 EXECUTE BLOCK
-    AS
-    DECLARE sql_stmt           VARCHAR(200);
+ AS
+
+/*
+     DECLARE sql_stmt           VARCHAR(200);
      DECLARE country_in         VARCHAR(50) = 'Russia';
      DECLARE currency_in        VARCHAR(20) = 'Ru';
-
+*/
 BEGIN
-	sql_stmt = 'INSERT INTO COUNTRY VALUES(:value1, :value2)';
+/*
+    sql_stmt = 'INSERT INTO COUNTRY VALUES(:1, :2)';
 
     EXECUTE STATEMENT (:sql_stmt)
-        (value1 := country_in , value2 := currency_in);
+        [-unconvertible RS-245747 USING :country_in, :currency_in];
+*/
 END;

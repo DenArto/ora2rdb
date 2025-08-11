@@ -1,9 +1,30 @@
-CREATE TRIGGER TRIGGER_NAME
-BEFORE INSERT ON EMPLOYEE
+CREATE PACKAGE PACKAGE_NAME
+SQL SECURITY DEFINER
+AS BEGIN
+       FUNCTION FUNCTION_NAME (out_value  VARCHAR)
+    RETURNS VARCHAR(32765);
+  END;
+
+CREATE PACKAGE BODY PACKAGE_NAME
+       AS BEGIN
+    DECLARE PROCEDURE FUNCTION_NAME (out_value  VARCHAR)
+        RETURNS ( RET_VAL VARCHAR(32765),
+        OUT_VALUE_OUT VARCHAR)
+    AS
+    BEGIN
+        RET_VAL = 'in_value';
+        OUT_VALUE_OUT = OUT_VALUE;
+        SUSPEND;
+        EXIT;
+    END
+END;
+
+CREATE OR ALTER TRIGGER TRIGGER_NAME
+BEFORE INSERT ON EMPLOYEES
 SQL SECURITY DEFINER
 AS
-	DECLARE out_value_from_function VARCHAR(50);
+     DECLARE out_value_from_function VARCHAR(50);
      DECLARE return_value_from_function VARCHAR(50);
 BEGIN
-    SELECT RET_VAL, OUT_VALUE_OUT FROM PACKAGE_NAME.FUNCTION_NAME(:out_value_from_function) INTO return_value_from_function, out_value_from_function; -- call function
+    return_value_from_function = PACKAGE_NAME.FUNCTION_NAME(:out_value_from_function); -- call function
 END;
