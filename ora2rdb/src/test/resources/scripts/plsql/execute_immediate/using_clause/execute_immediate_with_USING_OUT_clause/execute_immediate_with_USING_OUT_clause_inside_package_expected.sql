@@ -1,0 +1,32 @@
+RECREATE   PACKAGE BODY CALL_PCKG
+AS BEGIN
+    FUNCTION TEST_F
+        RETURNS BOOLEAN
+    AS
+/*
+         DECLARE VALUE_OUT NUMERIC(34, 8);
+         DECLARE STMT VARCHAR(50);
+    */
+BEGIN
+/*
+        VALUE_OUT = 0;
+        STMT = 'BEGIN OUT_P(:A); END;';
+        EXECUTE STATEMENT (:STMT) [-unconvertible RS-245747 USING OUT :VALUE_OUT];
+        RETURN TRUE;
+    */
+END
+
+    PROCEDURE TEST_P
+    AS
+/*
+         DECLARE VALUE_OUT NUMERIC(34, 8);
+         DECLARE STMT VARCHAR(50);
+    */
+BEGIN
+/*
+        VALUE_OUT = 0;
+        STMT = 'BEGIN OUT_P(:A); END;';
+        EXECUTE STATEMENT (:STMT) [-unconvertible RS-245747 USING OUT :VALUE_OUT];
+    */
+END
+  END;

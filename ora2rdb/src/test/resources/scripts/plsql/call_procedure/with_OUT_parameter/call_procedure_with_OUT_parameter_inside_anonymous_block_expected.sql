@@ -1,7 +1,22 @@
-EXECUTE BLOCK
-    AS
-    DECLARE out_value VARCHAR(50);
+
+CREATE PROCEDURE PROCEDURE_NAME(out_p  VARCHAR)
+  RETURNS( OUT_P_OUT VARCHAR)
+
+
+ SQL SECURITY DEFINER
+ AS
 BEGIN
-	out_value = 'out_value';
-    SELECT OUT_PARAMETER_OUT FROM PROCEDURE_NAME(:out_value) INTO :out_value;
+
+
+OUT_P_OUT = OUT_P;
+  SUSPEND;
+END;
+
+EXECUTE BLOCK
+ AS
+
+     DECLARE out_value VARCHAR(50);
+BEGIN
+    out_value = 'out_value';
+    EXECUTE PROCEDURE PROCEDURE_NAME(:out_value);
 END;

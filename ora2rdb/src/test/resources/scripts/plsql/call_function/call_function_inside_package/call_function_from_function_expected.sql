@@ -1,10 +1,34 @@
+CREATE PACKAGE PACKAGE_NAME
+SQL SECURITY DEFINER
+AS BEGIN
+       FUNCTION FUNCTION_NAME (out_value  VARCHAR)
+    RETURNS VARCHAR(32765);
+  END;
+
+CREATE PACKAGE BODY PACKAGE_NAME
+       AS BEGIN
+    DECLARE PROCEDURE FUNCTION_NAME (out_value  VARCHAR)
+        RETURNS ( RET_VAL VARCHAR(32765),
+        OUT_VALUE_OUT VARCHAR)
+    AS
+    BEGIN
+        RET_VAL = 'in_value';
+        OUT_VALUE_OUT = OUT_VALUE;
+        SUSPEND;
+        EXIT;
+    END
+  END;
+
+
 CREATE FUNCTION CALLING_FUNCTION
 RETURNS VARCHAR(32765)
-SQL SECURITY DEFINER
-AS
+ SQL SECURITY DEFINER
+ AS
      DECLARE out_value_from_function VARCHAR(50);
      DECLARE return_value_from_function VARCHAR(50);
+  DECLARE FUNCTION_NAME_RET_VAL VARCHAR (32765);
 BEGIN
-    SELECT RET_VAL, OUT_VALUE_OUT FROM PACKAGE_NAME.FUNCTION_NAME(:out_value_from_function) INTO return_value_from_function, out_value_from_function; -- call function
+    SELECT RET_VAL, OUT_VALUE_OUT  FROM PACKAGE_NAME.FUNCTION_NAME(:out_value_from_function) INTO FUNCTION_NAME_RET_VAL, out_value_from_function;
+:return_value_from_function = FUNCTION_NAME_RET_VAL; -- call function
     RETURN out_value_from_function;
 END;

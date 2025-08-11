@@ -1,6 +1,14 @@
-EXECUTE BLOCK
-    AS
-    DECLARE record_variable pkg.my_record;
+CREATE PROCEDURE PROCEDURE_NAME(in_p VARCHAR)
+ SQL SECURITY DEFINER
+ AS
 BEGIN
-    EXECUTE PROCEDURE PROCEDURE_NAME(:record_variable);   -- call procedure
+
+END;
+
+EXECUTE BLOCK
+ AS
+
+     DECLARE record_variable pkg.my_record;
+BEGIN
+     EXECUTE PROCEDURE PROCEDURE_NAME(:record_variable);   -- call procedure
 END;
