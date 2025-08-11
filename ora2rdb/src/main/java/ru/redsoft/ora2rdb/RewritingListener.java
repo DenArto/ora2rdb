@@ -1983,7 +1983,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitFunction_spec(Function_specContext ctx) {
-        replace(ctx.FUNCTION(), "DECLARE FUNCTION");
+        if (Finder.getParentRuleContext(ctx, Create_package_bodyContext.class) == null)
+            replace(ctx.FUNCTION(), "DECLARE FUNCTION");
         replace(ctx.RETURN(), "RETURNS");
         deleteSPACESLeft(ctx.SEMICOLON());
         StringBuilder return_parameters = new StringBuilder();
@@ -2049,15 +2050,18 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx, getRewriterText(ctx).substring(1));
 
         if (current_plsql_block != null && ctx.CONSTANT() != null
-                && ctx.parent.getClass().equals(PlSqlParser.Package_obj_specContext.class)
-                || ctx.parent.getClass().equals(PlSqlParser.Package_obj_bodyContext.class)) {
+                && (ctx.parent.getClass().equals(PlSqlParser.Package_obj_specContext.class)
+                || ctx.parent.getClass().equals(PlSqlParser.Package_obj_bodyContext.class))) {
 
             current_plsql_block.package_constant_names.add(ctx.identifier().getText());
-            if (ctx.default_value_part() != null)
+            if (ctx.default_value_part() != null) {
                 replace(ctx.default_value_part().ASSIGN_OP(), "=");
-
+                replace(ctx.default_value_part().DEFAULT(), "=");
+            }
             delete(ctx.CONSTANT());
             insertBefore(ctx, "CONSTANT ");
+            delete(ctx.NOT());
+            delete(ctx.NULL_());
         } else {
             String name = Ora2rdb.getRealName(getRuleText(ctx.identifier()));
             String type = Ora2rdb.getRealName(getRuleText(ctx.type_spec()));
@@ -2365,6 +2369,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.schema_object_name());
             delete(ctx.PERIOD());
         }
+        if(ctx.invoker_rights_clause() != null){
+            replace(ctx.invoker_rights_clause().AUTHID(), "SQL SECURITY");
+        }
         if (ctx.AS() != null) {
             if (ctx.invoker_rights_clause() == null)
                 insertBefore(ctx.AS(), " SQL SECURITY DEFINER\n");
@@ -2449,7 +2456,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitProcedure_spec(Procedure_specContext ctx) {
-        replace(ctx.PROCEDURE(), "DECLARE PROCEDURE");
+        if (Finder.getParentRuleContext(ctx, Create_package_bodyContext.class) == null)
+            replace(ctx.PROCEDURE(), "DECLARE PROCEDURE");
         StringBuilder return_parameters = new StringBuilder();
         return_parameters.append("RETURNS ( ");
 

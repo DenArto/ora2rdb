@@ -1,0 +1,5 @@
+/*RECREATE PACKAGE BODY PACKAGE_NAME AS BEGIN
+
+    [-unconvertible RS-239343 TYPE type_varray IS VARRAY(5) OF NUMERIC(34, 8);]
+
+END ;*/

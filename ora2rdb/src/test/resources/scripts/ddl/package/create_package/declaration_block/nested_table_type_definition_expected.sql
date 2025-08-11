@@ -1,7 +1,7 @@
-CREATE OR ALTER PACKAGE PACKAGE_NAME
+/*CREATE OR ALTER PACKAGE PACKAGE_NAME
 SQL SECURITY DEFINER
-AS BEGIN
-/*
-    [-unconvertible TYPE type_nested_table IS TABLE OF VARCHAR2(100)];
-*/
-END;
+AS BEGIN 
+
+    [-unconvertible RS-239346 TYPE type_nested_table IS TABLE OF VARCHAR(100);]  
+
+END ;*/

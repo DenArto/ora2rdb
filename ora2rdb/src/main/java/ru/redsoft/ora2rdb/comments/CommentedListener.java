@@ -179,7 +179,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
     }
 
-
     @Override
     public void exitCreate_table(Create_tableContext ctx) {
         if (!currentBlock.peek().unconvertableBlocksIsEmpty())
@@ -303,6 +302,14 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
     @Override
+    public void exitCreate_trigger(Create_triggerContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
+    @Override
     public void enterReferencing_clause(Referencing_clauseContext ctx) {
         for (int i = 0; i < ctx.referencing_element().size(); i++) {
             Referencing_elementContext stmt = ctx.referencing_element().get(i);
@@ -317,14 +324,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterDml_event_nested_clause(Dml_event_nested_clauseContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx, Ticket.INSTEAD_OF_TRIGGER_FOR_NESTED_TABLE);
         currentBlock.peek().setConvertAllBlock(true);
-    }
-
-    @Override
-    public void exitCreate_trigger(Create_triggerContext ctx) {
-        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
-            StorageInfo.commentedBlockList.add(currentBlock.pop());
-        else
-            currentBlock.pop();
     }
 
     @Override
@@ -369,6 +368,21 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterCreate_package(Create_packageContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
+        if(ctx.accessible_by_clause() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(), Ticket.ACCESSIBLE_BY_CLAUSE);
+
+        ctx.package_obj_spec().stream()
+                .filter(obj -> obj.variable_declaration() != null && obj.variable_declaration().CONSTANT() == null)
+                .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_VARIABLE_INTO_PAC));
+
+        ctx.package_obj_spec().stream()
+                .filter(obj -> obj.cursor_declaration() != null)
+                .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_CURSOR_IN_PACKAGE));
+
+        ctx.package_obj_spec().stream()
+                .filter(obj -> obj.exception_declaration() != null)
+                .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_EXCEPTION));
+
     }
 
     @Override
@@ -381,10 +395,29 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
-        if (ctx.AS() != null)
+        if (ctx.AS() != null )
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.BEGIN(), ctx.END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.BEGIN(), ctx.END()));
+
+        ctx.package_obj_body().stream()
+                .filter(obj -> obj.variable_declaration() != null && obj.variable_declaration().CONSTANT() == null)
+                .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_VARIABLE_INTO_PAC));
+
+        if(ctx.BEGIN() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx.BEGIN(), ctx.END(), Ticket.PACKAGE_INIT_BLOCK);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+
+        ctx.package_obj_body().stream()
+                .filter(obj -> obj.cursor_declaration() != null)
+                .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_CURSOR_IN_PACKAGE));
+
+        ctx.package_obj_body().stream()
+                .filter(obj -> obj.exception_declaration() != null)
+                .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_EXCEPTION));
+
+
     }
 
     @Override
@@ -587,10 +620,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
         if (!ctx.parameter_spec().isEmpty()) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CURSOR_WITH_PARAMETER);
         }
-
-        if (Finder.getParentRuleContext(ctx, Create_packageContext.class) != null) {
-            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DECLARE_CURSOR_IN_PACKAGE);
-        }
     }
 
     @Override
@@ -620,6 +649,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
         // convert TYPE <name> IS REF CURSOR
         if (ctx.ref_cursor_type_def() != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.SYS_REFCURSOR_REF_CURSOR_TYPE_DEF);
+    }
+
+    @Override
+    public void enterSubtype_declaration(Subtype_declarationContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DECLARE_SUBTYPE);
     }
 
     @Override

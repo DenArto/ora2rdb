@@ -1,0 +1,5 @@
+/*RECREATE   PACKAGE BODY PACKAGE_NAME AS BEGIN
+
+     DECLARE [-unconvertible RS-246002 global_variable NUMERIC(34, 8);]
+
+END ;*/

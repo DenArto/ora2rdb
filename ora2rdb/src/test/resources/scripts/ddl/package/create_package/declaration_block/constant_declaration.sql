@@ -1,5 +1,6 @@
 CREATE OR REPLACE PACKAGE PACKAGE_NAME IS
 
     global_constant CONSTANT NUMBER := 100;
+    global_constant2 CONSTANT NUMBER not null default 100;
 
 END PACKAGE_NAME;

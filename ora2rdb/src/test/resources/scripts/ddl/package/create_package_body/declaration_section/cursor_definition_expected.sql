@@ -1,0 +1,5 @@
+/*RECREATE PACKAGE BODY PACKAGE_NAME AS BEGIN
+
+    [-unconvertible RS-233552 DECLARE cur_emp CURSOR FOR (SELECT * FROM employees);]
+
+END ;*/

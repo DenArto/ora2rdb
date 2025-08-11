@@ -1,7 +1,7 @@
-CREATE OR ALTER PACKAGE PACKAGE_NAME
+/*CREATE OR ALTER PACKAGE PACKAGE_NAME
 SQL SECURITY DEFINER
-AS BEGIN
-/*
-    [-unconvertible DECLARE cur_emp RETURN TYPE OF TABLE employee];
-*/
-END;
+AS BEGIN 
+
+    [-unconvertible RS-233552 DECLARE cur_emp  ;]  
+
+END ;*/

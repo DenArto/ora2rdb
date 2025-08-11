@@ -1,0 +1,5 @@
+/*RECREATE PACKAGE BODY PACKAGE_NAME AS BEGIN
+
+    [-unconvertible RS-239346 TYPE type_nested_table IS TABLE OF VARCHAR(100);]
+
+END ;*/
