@@ -126,7 +126,7 @@ public enum Ticket {
     , DECLARE_VARIABLE_INTO_PAC                 (246002)
     , PACKAGE_INIT_BLOCK                        (246022)
 
-
+    , SEQUENCE_CURRVAL                          (246219)
     ;
 
 
