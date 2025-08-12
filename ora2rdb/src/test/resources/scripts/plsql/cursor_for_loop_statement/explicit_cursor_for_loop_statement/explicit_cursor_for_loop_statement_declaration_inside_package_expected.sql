@@ -1,22 +1,22 @@
 /*CREATE OR ALTER PACKAGE Pack_Grade_meaning1
-SQL SECURITY DEFINER
-AS BEGIN 
+ SQL SECURITY DEFINER
+AS BEGIN
    FUNCTION PF_Grade_meaning1 (degree INT128)
-   RETURNS BOOLEAN;  
-   PROCEDURE PP_Grade_meaning1;  
-    [-unconvertible RS-233552 DECLARE BOOKS_CUR  ;]  
+   RETURNS BOOLEAN;
+   PROCEDURE PP_Grade_meaning1;
+    [-unconvertible RS-233552 DECLARE BOOKS_CUR  ;]
     [-unconvertible RS-233552 DECLARE C1 CURSOR FOR
         (SELECT LAST_NAME, JOB_ID FROM EMPLOYEES
         WHERE MANAGER_ID > 120
-        ORDER BY LAST_NAME ASC NULLS LAST);]  
+        ORDER BY LAST_NAME ASC NULLS LAST);]
   END ;*/
-RECREATE   PACKAGE BODY Pack_Grade_meaning1
-AS BEGIN 
-    DECLARE BOOKS_CUR
-         
+/*RECREATE   PACKAGE BODY Pack_Grade_meaning1
+AS BEGIN
+    [-unconvertible RS-233552 DECLARE BOOKS_CUR
+
             CURSOR FOR
         (SELECT BOOK_NAME
-        FROM BOOKS);  
+        FROM BOOKS);]
     FUNCTION PF_Grade_meaning1 (degree INT128)
        RETURNS BOOLEAN
        AS
@@ -25,24 +25,24 @@ AS BEGIN
         FETCH C1 INTO C1_ITEM;
         WHILE ( ROW_COUNT != 0 ) DO
         BEGIN
-                
+
         	FETCH C1 INTO C1_ITEM;
         END
         CLOSE C1;
     RETURN TRUE;
-    END  
+    END
     PROCEDURE PP_Grade_meaning1
     AS
-    
+
   DECLARE VARIABLE BOOKS_CUR_ITEM TYPE OF COLUMN BOOKS.BOOK_NAME;
 BEGIN
         OPEN BOOKS_CUR;
         FETCH BOOKS_CUR INTO BOOKS_CUR_ITEM;
         WHILE ( ROW_COUNT != 0 ) DO
         BEGIN
-                
+
         	FETCH BOOKS_CUR INTO BOOKS_CUR_ITEM;
         END
         CLOSE BOOKS_CUR;
-    END  
-  END ;
+    END
+  END ;*/

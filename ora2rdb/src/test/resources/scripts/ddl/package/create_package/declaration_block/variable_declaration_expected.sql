@@ -1,7 +1,7 @@
-CREATE OR ALTER PACKAGE PACKAGE_NAME
+/*CREATE OR ALTER PACKAGE PACKAGE_NAME
 SQL SECURITY DEFINER
-AS BEGIN
-/*
-    [-unconvertible global_variable NUMBER];
-*/
-END;
+AS BEGIN 
+
+     DECLARE [-unconvertible RS-246002 global_variable NUMERIC(34, 8);]  
+
+END ;*/

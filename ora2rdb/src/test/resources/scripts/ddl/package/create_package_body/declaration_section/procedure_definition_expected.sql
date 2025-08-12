@@ -4,6 +4,6 @@ RECREATE PACKAGE BODY PACKAGE_NAME AS BEGIN
     AS
     BEGIN
 
-    END /*update_salary*/
+    END
 
 END;
