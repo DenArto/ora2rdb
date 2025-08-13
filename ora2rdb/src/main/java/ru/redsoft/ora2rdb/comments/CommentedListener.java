@@ -1349,4 +1349,26 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
 
+    //SQL-OPERATORS
+
+    @Override
+    public void enterColumn_collation_name(Column_collation_nameContext ctx) {
+        ConcatenationContext concatenation = Finder.getParentRuleContext(ctx, ConcatenationContext.class);
+        if(concatenation != null){
+            currentBlock.peek().addUnconvertableBlock(concatenation.COLLATE().getSymbol(), concatenation.column_collation_name().stop, Ticket.COLLATE_OPERATOR);
+        }
+    }
+
+    @Override public void enterHierarchical_query_clause(PlSqlParser.Hierarchical_query_clauseContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.HIERARCHICAL_QUERY);
+
+    }
+
+    @Override
+    public void enterHierarchical_pseudocolumn(Hierarchical_pseudocolumnContext ctx) {
+        currentBlock.peek().addUnconvertableBlock(ctx, Ticket.HIERARCHICAL_QUERY_PSEUDOCOLUMNS);
+    }
+
+
+
 }
