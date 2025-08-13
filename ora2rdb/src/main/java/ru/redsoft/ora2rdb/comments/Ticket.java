@@ -126,6 +126,10 @@ public enum Ticket {
     , DECLARE_VARIABLE_INTO_PAC                 (246002)
     , PACKAGE_INIT_BLOCK                        (246022)
 
+    , COLLATE_OPERATOR                          (246304)
+    , HIERARCHICAL_QUERY                        (246313)
+    , HIERARCHICAL_QUERY_PSEUDOCOLUMNS          (246310)
+
     , BITMAP_INDEX                              (246430)
     , CREATE_INDEX                              (246433)
 

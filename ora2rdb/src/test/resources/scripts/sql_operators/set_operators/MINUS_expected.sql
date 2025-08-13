@@ -1,3 +1,3 @@
 /*select TITLE from BOOKS
-[-unconvertible MINUS]
+[-unconvertible RS-241407 MINUS]
 select TITLE from BOOKS;*/
