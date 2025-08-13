@@ -1,4 +1,4 @@
---при конвертации обратить внимание на порядок в select
+-- pay attention to the SELECT order during conversion
 /*INSERT [-unconvertible RS-241760 ALL
    WHEN ottl <= 100000 THEN
       INTO small_orders

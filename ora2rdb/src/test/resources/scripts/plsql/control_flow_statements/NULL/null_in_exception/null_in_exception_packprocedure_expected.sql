@@ -12,7 +12,7 @@ BEGIN
     PROCEDURE PP_Null_In_Exception
     AS
     BEGIN
-      EXCEPTION CUSTOM_EXCEPTION( 'Неправильный номер');
+      EXCEPTION CUSTOM_EXCEPTION( 'Invalid number');
       /*EXCEPTION*/
       WHEN ANY DO BEGIN
       END

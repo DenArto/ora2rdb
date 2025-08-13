@@ -1,3 +1,3 @@
-/*select TITLE from BOOKS
-[-unconvertible UNION ALL]
-select TITLE from BOOKS;*/
+select TITLE from BOOKS
+UNION ALL
+select TITLE from BOOKS;
