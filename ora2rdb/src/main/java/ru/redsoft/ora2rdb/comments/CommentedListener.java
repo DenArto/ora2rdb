@@ -580,6 +580,30 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
 
+    @Override
+    public void enterCreate_index(Create_indexContext ctx) {
+        currentBlock.push(new CommentedBlock(ctx));
+
+        if(ctx.bitmap_join_index_clause() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.BITMAP_INDEX);
+        else if(ctx.table_index_clause() == null)
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CREATE_INDEX);
+
+        if(ctx.MULTIVALUE() != null)
+            currentBlock.peek().addUnconvertableBlock(ctx.MULTIVALUE(), Ticket.CREATE_INDEX);
+
+
+
+    }
+
+    @Override
+    public void exitCreate_index(Create_indexContext ctx) {
+        if (!currentBlock.peek().unconvertableBlocksIsEmpty())
+            StorageInfo.commentedBlockList.add(currentBlock.pop());
+        else
+            currentBlock.pop();
+    }
+
     //The markup of PL SQL constructions begins
 
     @Override

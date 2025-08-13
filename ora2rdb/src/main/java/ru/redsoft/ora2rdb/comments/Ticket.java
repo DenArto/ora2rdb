@@ -126,6 +126,8 @@ public enum Ticket {
     , DECLARE_VARIABLE_INTO_PAC                 (246002)
     , PACKAGE_INIT_BLOCK                        (246022)
 
+    , BITMAP_INDEX                              (246430)
+    , CREATE_INDEX                              (246433)
 
     ;
 
