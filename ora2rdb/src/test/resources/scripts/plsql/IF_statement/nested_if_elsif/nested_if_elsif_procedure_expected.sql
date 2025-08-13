@@ -1,6 +1,5 @@
 
 CREATE PROCEDURE P_Grade_meaning7(score NUMERIC(34, 8), subject VARCHAR)
-
  SQL SECURITY DEFINER
  AS
    DECLARE pass BOOLEAN = TRUE;
@@ -8,17 +7,17 @@ CREATE PROCEDURE P_Grade_meaning7(score NUMERIC(34, 8), subject VARCHAR)
 BEGIN
     IF (:score > 50) THEN
     BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Информатика') THEN
+        ELSE IF (:subject = 'Computer Science') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
@@ -26,12 +25,12 @@ BEGIN
     END
     ELSE
     BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;

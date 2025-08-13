@@ -13,7 +13,7 @@ AS BEGIN
    RETURNS VARCHAR(32765)
    AS
    BEGIN
-     EXCEPTION CUSTOM_EXCEPTION( 'Неправильный номер');
+     EXCEPTION CUSTOM_EXCEPTION( 'Invalid number');
      RETURN '';
      /*EXCEPTION*/
      WHEN ANY DO BEGIN

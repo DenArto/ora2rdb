@@ -16,21 +16,21 @@ AS
      res  CHAR(15) := '';
    BEGIN
      IF score > 50 THEN
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Информатика' THEN
+        ELSIF subject = 'Computer Science' THEN
             res := 'Good';
             pass := TRUE;
         END IF;
      ELSE
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Poor';
             pass := FALSE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Poor';
             pass := FALSE;
         END IF;
@@ -44,21 +44,21 @@ AS
      res  CHAR(15) := '';
    BEGIN
      IF score > 50 THEN
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Информатика' THEN
+        ELSIF subject = 'Computer Science' THEN
             res := 'Good';
             pass := TRUE;
         END IF;
      ELSE
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Poor';
             pass := FALSE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Poor';
             pass := FALSE;
         END IF;
