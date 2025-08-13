@@ -11,7 +11,7 @@ DECLARE
 BEGIN
     NUMELEMENTS := TEAM.COUNT;
     -- EXTEND
-    TEAM.EXTEND; -- УВЕЛИЧИВАЕТ РАЗМЕР КОЛЛЕКЦИИ (МОЖНО УДАЛИТЬ ПРИ КОНВЕРТАЦИИ)
+    TEAM.EXTEND; -- INCREASES THE COLLECTION SIZE (CAN BE REMOVED DURING CONVERSION)
     -- GET ELEMENT BY ID (2)
     FIRSTELEMENT := TEAM(2);
     -- ACCESS THE FIRST ELEMENT OF THE VARRAY DIRECTLY USING INDEX 1
@@ -27,7 +27,7 @@ BEGIN
     -- ONLY VARRAY HAVE LIMIT
     LIMITVAR := TEAM.LIMIT;
     -- EXISTS IS A FUNCTION THAT TELLS YOU WHETHER THE SPECIFIED ELEMENT OF A VARRAY OR NESTED TABLE EXISTS.
-    ELEMENTEXISTS := TEAM.EXISTS(2); -- проверяет, что второй элемент существует
-    I := TEAM.NEXT; -- возвращеает индекс следующего элемента
-    I := TEAM.PRIOR; -- возвращает индекс предыдыщего элемента
+    ELEMENTEXISTS := TEAM.EXISTS(2); -- checks if the second element exists
+    I := TEAM.NEXT; -- returns the index of the next element
+    I := TEAM.PRIOR; -- returns the index of the previous element
 END;

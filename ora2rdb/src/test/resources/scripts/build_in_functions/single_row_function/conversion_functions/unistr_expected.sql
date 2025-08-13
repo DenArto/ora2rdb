@@ -1,1 +1,1 @@
-/*select [-unconvertible RS-245838 UNISTR('Знак евро \20AC')] from RDB$DATABASE;*/
+/*select [-unconvertible RS-245838 UNISTR('Euro sign \20AC')] from RDB$DATABASE;*/

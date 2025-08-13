@@ -1,1 +1,1 @@
-/*SELECT [-unconvertible RS-245294 NLS_UPPER('große')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 NLS_UPPER('qwerty')] FROM RDB$DATABASE;*/

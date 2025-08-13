@@ -6,25 +6,25 @@ DECLARE
     score NUMERIC;
     pass CHAR(1) := 'T';
     res  CHAR(15) := '';
-    subject VARCHAR2(50) := 'Математика';
+    subject VARCHAR2(50) := 'Mathematics';
 BEGIN
    score := :NEW.score;
    IF score > 50 THEN
-      IF subject = 'Математика' THEN
+      IF subject = 'Mathematics' THEN
           res := 'Good';
           pass := 'T';
-      ELSIF subject = 'Физика' THEN
+      ELSIF subject = 'Physics' THEN
           res := 'Good';
           pass := 'T';
-      ELSIF subject = 'Информатика' THEN
+      ELSIF subject = 'Computer Science' THEN
           res := 'Good';
           pass := 'T';
       END IF;
    ELSE
-      IF subject = 'Математика' THEN
+      IF subject = 'Mathematics' THEN
           res := 'Poor';
           pass := 'F';
-      ELSIF subject = 'Физика' THEN
+      ELSIF subject = 'Physics' THEN
           res := 'Poor';
           pass := 'F';
       END IF;

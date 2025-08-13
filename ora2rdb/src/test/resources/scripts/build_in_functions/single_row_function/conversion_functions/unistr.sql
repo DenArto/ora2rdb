@@ -1,1 +1,1 @@
-select UNISTR('Знак евро \20AC') from dual;
+select UNISTR('Euro sign \20AC') from dual;

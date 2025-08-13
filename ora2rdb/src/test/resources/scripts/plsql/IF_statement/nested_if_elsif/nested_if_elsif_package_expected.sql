@@ -1,14 +1,19 @@
+
+
+
 CREATE OR ALTER PACKAGE Pack_Grade_meaning7
-SQL SECURITY DEFINER
+ SQL SECURITY DEFINER
 AS BEGIN
    FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR)
    RETURNS VARCHAR(32765);
 
    PROCEDURE PP_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR);
 
-END ;
+  END ;
 
-RECREATE PACKAGE BODY Pack_Grade_meaning7
+
+
+RECREATE   PACKAGE BODY Pack_Grade_meaning7
 AS BEGIN
    FUNCTION PF_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR)
    RETURNS VARCHAR(32765)
@@ -18,17 +23,17 @@ AS BEGIN
    BEGIN
      IF (:score > 50) THEN
      BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Информатика') THEN
+        ELSE IF (:subject = 'Computer Science') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
@@ -36,12 +41,12 @@ AS BEGIN
      END
      ELSE
      BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
@@ -57,17 +62,17 @@ AS BEGIN
    BEGIN
      IF (:score > 50) THEN
      BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Информатика') THEN
+        ELSE IF (:subject = 'Computer Science') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
@@ -75,16 +80,16 @@ AS BEGIN
      END
      ELSE
      BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
         END
      END
    END
-END ;
+  END ;

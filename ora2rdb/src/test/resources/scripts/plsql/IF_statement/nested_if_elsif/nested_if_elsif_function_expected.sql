@@ -1,25 +1,24 @@
 
 CREATE FUNCTION P_Grade_meaning7 (score NUMERIC(34, 8), subject VARCHAR)
 RETURNS VARCHAR(32765)
-
- SQL SECURITY DEFINER 
+ SQL SECURITY DEFINER
  AS
    DECLARE pass BOOLEAN = TRUE;
    DECLARE res  CHAR(15) = '';
 BEGIN
     IF (:score > 50) THEN
     BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
         END
-        ELSE IF (:subject = 'Информатика') THEN
+        ELSE IF (:subject = 'Computer Science') THEN
         BEGIN
             res = 'Good';
             pass = TRUE;
@@ -27,12 +26,12 @@ BEGIN
     END
     ELSE
     BEGIN
-        IF (:subject = 'Математика') THEN
+        IF (:subject = 'Mathematics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
         END
-        ELSE IF (:subject = 'Физика') THEN
+        ELSE IF (:subject = 'Physics') THEN
         BEGIN
             res = 'Poor';
             pass = FALSE;
