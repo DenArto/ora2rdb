@@ -1,8 +1,8 @@
 CREATE EXCEPTION NO_DATA_FOUND
 	'no data found';
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
 /*
    DECLARE p1 VARCHAR(100) = 'January 15, 1989';
@@ -22,7 +22,7 @@ BEGIN
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select [-unconvertible RS-245838 CAST(:p1 AS TIMESTAMP [-unconvertible RS-245838 [-unconvertible RS-245741 DEFAULT NULL ON CONVERSION ERROR]], 'Month dd, YYYY', 'NLS_DATE_LANGUAGE = AMERICAN')
+  select [-unconvertible RS-245838 CAST(:p1 AS TIMESTAMP [-unconvertible RS-245838 RS-245741 DEFAULT NULL ON CONVERSION ERROR], 'Month dd, YYYY', 'NLS_DATE_LANGUAGE = AMERICAN')
   ]from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
@@ -52,9 +52,8 @@ BEGIN
 */
 END;
 
-
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
 /*
    DECLARE p4 [-unconvertible RS-244046 TIMESTAMP WITH LOCAL TIME ZONE] = timestamp '2020-10-25 02:30:00+02:00';
