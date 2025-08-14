@@ -1,0 +1,1 @@
+/*[-unconvertible RS-246433 CREATE INDEX idx_personnel ON CLUSTER personnel;]*/

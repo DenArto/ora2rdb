@@ -1423,7 +1423,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 .orElse(null);
 
         if (index == null) {
-            delete(ctx);
+//            delete(ctx);
             return;
         }
 
