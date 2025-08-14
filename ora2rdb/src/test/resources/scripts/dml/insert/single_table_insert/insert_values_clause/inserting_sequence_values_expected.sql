@@ -1,2 +1,2 @@
 INSERT INTO departments
-VALUES  (NEXT VALUE FOR departments_seq, 'Entertainment', 162, 1400);
+VALUES  (NEXT VALUE FOR DEPARTMENTS_SEQ, 'Entertainment', 162, 1400);

@@ -749,7 +749,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (ctx.HEXTORAW() != null)
             replace(ctx.TO_DATE(), "HEX_DECODE");
 
-        if(ctx.RAWTOHEX() != null)
+        if (ctx.RAWTOHEX() != null)
             replace(ctx.TO_DATE(), "HEX_ENCODE");
     }
 
@@ -1066,6 +1066,13 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
         }
         if (ctx.id_expression().size() > 1) {
+
+            // convert <seq_name>.NEXTVAL
+            if (Ora2rdb.getRealName(getRuleText(ctx.id_expression(1))).equals("NEXTVAL")){
+                replace(ctx, "NEXT VALUE FOR " + Ora2rdb.getRealName(getRuleText(ctx.id_expression(0))));
+                return;
+            }
+
             for (Id_expressionContext id_expr_ctx : ctx.id_expression()) {
                 String id = getRewriterText(id_expr_ctx);
 
@@ -1073,7 +1080,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(id_expr_ctx, id.substring(1));
                 String name = Ora2rdb.getRealName(getRuleText(ctx.id_expression(0)));
 
-                // convert methods of associative array
+                    // convert methods of associative array
                 if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
                     // COUNT
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
@@ -1597,11 +1604,25 @@ public class RewritingListener extends PlSqlParserBaseListener {
             deleteSPACESRight(sequence_name_ctx.id_expression(1));
             sequence_name = getRuleText(sequence_name_ctx.id_expression(1));
         } else {
-            deleteSPACESRight(sequence_name_ctx.id_expression(0));
+//            deleteSPACESRight(sequence_name_ctx.id_expression(0));
             sequence_name = getRuleText(sequence_name_ctx.id_expression(0));
         }
 
+        if (ctx.ddl_sharing_clause() != null){
+            delete(ctx.ddl_sharing_clause());
+            deleteSPACESLeft(ctx.ddl_sharing_clause());
+        }
+
         for (Sequence_specContext sequence_spec_ctx : ctx.sequence_spec()) {
+            if (sequence_spec_ctx.INCREMENT() != null) {
+                if (sequence_spec_ctx.MINUS_SIGN() != null)
+                    insertBefore(sequence_spec_ctx.INCREMENT(), " START WITH -1 ");
+                continue;
+            }
+            if (sequence_spec_ctx.MINVALUE() != null) {
+                replace(sequence_spec_ctx.MINVALUE(), "START WITH ");
+                continue;
+            }
             deleteSPACESLeft(sequence_spec_ctx);
             delete(sequence_spec_ctx);
         }
@@ -2369,7 +2390,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(ctx.schema_object_name());
             delete(ctx.PERIOD());
         }
-        if(ctx.invoker_rights_clause() != null){
+        if (ctx.invoker_rights_clause() != null) {
             replace(ctx.invoker_rights_clause().AUTHID(), "SQL SECURITY");
         }
         if (ctx.AS() != null) {
@@ -2980,7 +3001,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                 if (stmt.PARENT() != null)
                     deleteCtx = false;
             }
-            if (deleteCtx){
+            if (deleteCtx) {
                 delete(ctx);
                 deleteSPACESLeft(ctx);
             }
@@ -3904,21 +3925,21 @@ public class RewritingListener extends PlSqlParserBaseListener {
     @Override
     public void exitInsert_statement(Insert_statementContext ctx) {
 
-
-        Values_clauseContext valuesClause = Finder.getFirstRuleContext(ctx, Values_clauseContext.class);
-        if (valuesClause != null && valuesClause.expressions_() != null) {
-            for (ExpressionContext expression : Finder.getAllRuleContexts(valuesClause, ExpressionContext.class)) {
-                General_element_partContext generalElementPart = Finder.getFirstRuleContext(expression, General_element_partContext.class);
-                if (generalElementPart != null) {
-                    if (generalElementPart.id_expression().size() <= 2
-                            && Ora2rdb.getRealName(generalElementPart.id_expression(generalElementPart.id_expression().size() - 1).getText()).equals("NEXTVAL")) {
-                        insertBefore(expression, "NEXT VALUE FOR ");
-                        delete(generalElementPart.id_expression(1));
-                        delete(generalElementPart.PERIOD(generalElementPart.PERIOD().size() - 1));
-                    }
-                }
-            }
-        }
+//
+//        Values_clauseContext valuesClause = Finder.getFirstRuleContext(ctx, Values_clauseContext.class);
+//        if (valuesClause != null && valuesClause.expressions_() != null) {
+//            for (ExpressionContext expression : Finder.getAllRuleContexts(valuesClause, ExpressionContext.class)) {
+//                General_element_partContext generalElementPart = Finder.getFirstRuleContext(expression, General_element_partContext.class);
+//                if (generalElementPart != null) {
+//                    if (generalElementPart.id_expression().size() <= 2
+//                            && Ora2rdb.getRealName(generalElementPart.id_expression(generalElementPart.id_expression().size() - 1).getText()).equals("NEXTVAL")) {
+//                        insertBefore(expression, "NEXT VALUE FOR ");
+//                        delete(generalElementPart.id_expression(1));
+//                        delete(generalElementPart.PERIOD(generalElementPart.PERIOD().size() - 1));
+//                    }
+//                }
+//            }
+//        }
     }
 
     @Override

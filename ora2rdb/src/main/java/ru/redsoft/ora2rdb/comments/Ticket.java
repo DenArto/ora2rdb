@@ -130,6 +130,8 @@ public enum Ticket {
     , HIERARCHICAL_QUERY                        (246313)
     , HIERARCHICAL_QUERY_PSEUDOCOLUMNS          (246310)
 
+    , SEQUENCE_CURRVAL                          (246219)
+
     , BITMAP_INDEX                              (246430)
     , CREATE_INDEX                              (246433)
 
