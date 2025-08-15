@@ -200,6 +200,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (tableProperties.NOROWDEPENDENCIES() != null)
                 currentBlock.peek().addUnconvertableBlock(tableProperties.NOROWDEPENDENCIES(), Ticket.CREATE_TABLE_ROWDEPENDENCIES);
         }
+
+        Object_tableContext objectTableContext = Finder.getFirstRuleContext(ctx, Object_tableContext.class);
+        if(objectTableContext != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CREATE_OBJECT_TABLE);
+        }
+
     }
 
     @Override
@@ -1269,6 +1275,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .filter(columnBasedUpdateSet -> columnBasedUpdateSet.paren_column_list() != null)
                 .forEach(columnBasedUpdateSet ->
                         currentBlock.peek().addUnconvertableBlock(columnBasedUpdateSet, Ticket.UPDATE_MULTICOLUMN));
+
+
+        Update_set_clauseContext updateSetClause = Finder.getFirstRuleContext(ctx, Update_set_clauseContext.class);
+        if(updateSetClause != null && updateSetClause.VALUE() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.UPDATE_AN_OBJECT_TABLE);
+        }
     }
 
     @Override
