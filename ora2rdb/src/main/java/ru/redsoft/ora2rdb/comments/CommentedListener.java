@@ -485,7 +485,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterCreate_package(Create_packageContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
-        if(ctx.accessible_by_clause() != null)
+        if (ctx.accessible_by_clause() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(), Ticket.ACCESSIBLE_BY_CLAUSE);
 
         ctx.package_obj_spec().stream()
@@ -532,7 +532,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
-        if (ctx.AS() != null )
+        if (ctx.AS() != null)
             currentBlock.push(new CommentedBlock(ctx, ctx.AS(), ctx.BEGIN(), ctx.END()));
         else
             currentBlock.push(new CommentedBlock(ctx, ctx.IS(), ctx.BEGIN(), ctx.END()));
@@ -541,7 +541,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .filter(obj -> obj.variable_declaration() != null && obj.variable_declaration().CONSTANT() == null)
                 .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_VARIABLE_INTO_PAC));
 
-        if(ctx.BEGIN() != null){
+        if (ctx.BEGIN() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx.BEGIN(), ctx.END(), Ticket.PACKAGE_INIT_BLOCK);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -762,14 +762,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterCreate_index(Create_indexContext ctx) {
         currentBlock.push(new CommentedBlock(ctx));
 
-        if(ctx.bitmap_join_index_clause() != null)
+        if (ctx.bitmap_join_index_clause() != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.BITMAP_INDEX);
-        else if(ctx.table_index_clause() == null)
+        else if (ctx.table_index_clause() == null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CREATE_INDEX);
 
-        if(ctx.MULTIVALUE() != null)
+        if (ctx.MULTIVALUE() != null)
             currentBlock.peek().addUnconvertableBlock(ctx.MULTIVALUE(), Ticket.CREATE_INDEX);
-
 
 
     }
@@ -945,67 +944,81 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (iterator != null) {
                 unconvertableBlock.setBlockStop(iterator.stop);
                 if (iterator.iteration_control().size() >= 2)
-                    unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
+                    currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
+//                    unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
                 for (Iteration_controlContext iterationControl_ctx : iterator.iteration_control()) {
                     if (iterationControl_ctx.stepped_control() != null && iterationControl_ctx.stepped_control().BY() != null)
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
-
-
                 Values_indices_pairs_of_controlContext values_indices_pairs_of_control = Finder.getLastRuleContext(ctx, Values_indices_pairs_of_controlContext.class);
                 if (values_indices_pairs_of_control != null) {
                     if (values_indices_pairs_of_control.VALUES() != null) {
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                         if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
-                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+                            currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
-                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+                            currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
+//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                     } else if (values_indices_pairs_of_control.INDICES() != null) {
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                         if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
-                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+                            currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
-                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+                            currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                     } else if (values_indices_pairs_of_control.PAIRS() != null) {
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                         if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
-                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+                            currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
-                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+                            currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
+//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                     }
                 }
                 Single_expression_controlContext single_expression_control = Finder.getLastRuleContext(ctx, Single_expression_controlContext.class);
                 if (single_expression_control != null) {
-                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+                    currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+//                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
                     if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
                 }
-
                 Stepped_controlContext steppedControl = Finder.getFirstRuleContext(ctx, Stepped_controlContext.class);
                 if (steppedControl != null) {
                     if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null
                             || Finder.getFirstRuleContext(steppedControl.lower_bound(), General_element_partContext.class) != null
                             || Finder.getFirstRuleContext(steppedControl.upper_bound(), General_element_partContext.class) != null) {
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                     }
                     if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
             }
             Cursor_loop_paramContext cursorLoopParam = Finder.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
             if (cursorLoopParam != null) {
-                unconvertableBlock.setBlockStop(cursorLoopParam.stop);
+//                unconvertableBlock.setBlockStop(cursorLoopParam.stop);
                 if (cursorLoopParam.DOUBLE_PERIOD() != null) {
                     if (Finder.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
                             || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
-                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
+                        currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), cursorLoopParam.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
+//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
                 if (cursorLoopParam.select_statement() != null &&
                         Finder.getParentRuleContext(ctx, Anonymous_blockContext.class) != null)
-                    unconvertableBlock.addTicketNumber(Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
+                    currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), cursorLoopParam.stop, Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
+//                unconvertableBlock.addTicketNumber(Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
             }
 
-            currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
+//            currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
         }
     }
 
@@ -1465,55 +1478,55 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterConversion_function(Conversion_functionContext ctx) {
-        if(ctx.ASCIISTR() != null
-        || ctx.BIN_TO_NUM() != null
-        || ctx.CHARTOROWID() != null
-        || ctx.COMPOSE() != null
-        || ctx.CONVERT() != null
-        || ctx.DECOMPOSE() != null
-        || ctx.NUMTODSINTERVAL() != null
-        || ctx.NUMTOYMINTERVAL() != null
-        || ctx.RAWTONHEX() != null
-        || ctx.ROWIDTOCHAR() != null
-        || ctx.ROWIDTONCHAR() != null
-        || ctx.SCN_TO_TIMESTAMP() != null
-        || ctx.TIMESTAMP_TO_SCN() != null
-        || ctx.TREAT() != null
-        || ctx.UNISTR() != null
-        || ctx.VALIDATE_CONVERSION() != null
-        || ctx.ASCIISTR() != null
-        || ctx.ASCIISTR() != null
-        || ctx.TO_BINARY_DOUBLE() != null
-        || ctx.TO_BINARY_FLOAT() != null
-        || ctx.TO_BLOB() != null
-        || ctx.TO_CHAR() != null
-        || ctx.TO_CLOB() != null
-        || ctx.TO_DATE() != null
-        || ctx.TO_DSINTERVAL() != null
-        || ctx.TO_LOB() != null
-        || ctx.TO_MULTI_BYTE() != null
-        || ctx.TO_NCHAR() != null
-        || ctx.TO_NCLOB() != null
-        || ctx.TO_NUMBER() != null && ctx.format != null
-        || ctx.TO_SINGLE_BYTE() != null
-        || ctx.TO_TIMESTAMP() != null
-        || ctx.TO_TIMESTAMP_TZ() != null
-        || ctx.TO_YMINTERVAL() != null
-        || ctx.CAST() != null
-        ){
+        if (ctx.ASCIISTR() != null
+                || ctx.BIN_TO_NUM() != null
+                || ctx.CHARTOROWID() != null
+                || ctx.COMPOSE() != null
+                || ctx.CONVERT() != null
+                || ctx.DECOMPOSE() != null
+                || ctx.NUMTODSINTERVAL() != null
+                || ctx.NUMTOYMINTERVAL() != null
+                || ctx.RAWTONHEX() != null
+                || ctx.ROWIDTOCHAR() != null
+                || ctx.ROWIDTONCHAR() != null
+                || ctx.SCN_TO_TIMESTAMP() != null
+                || ctx.TIMESTAMP_TO_SCN() != null
+                || ctx.TREAT() != null
+                || ctx.UNISTR() != null
+                || ctx.VALIDATE_CONVERSION() != null
+                || ctx.ASCIISTR() != null
+                || ctx.ASCIISTR() != null
+                || ctx.TO_BINARY_DOUBLE() != null
+                || ctx.TO_BINARY_FLOAT() != null
+                || ctx.TO_BLOB() != null
+                || ctx.TO_CHAR() != null
+                || ctx.TO_CLOB() != null
+                || ctx.TO_DATE() != null
+                || ctx.TO_DSINTERVAL() != null
+                || ctx.TO_LOB() != null
+                || ctx.TO_MULTI_BYTE() != null
+                || ctx.TO_NCHAR() != null
+                || ctx.TO_NCLOB() != null
+                || ctx.TO_NUMBER() != null && ctx.format != null
+                || ctx.TO_SINGLE_BYTE() != null
+                || ctx.TO_TIMESTAMP() != null
+                || ctx.TO_TIMESTAMP_TZ() != null
+                || ctx.TO_YMINTERVAL() != null
+                || ctx.CAST() != null
+        ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CONVERT_FUNCTION);
         }
 
         Default_on_conversion_error_clauseContext defaultOnConversionError = Finder.getFirstRuleContext(ctx, Default_on_conversion_error_clauseContext.class);
-        if(defaultOnConversionError != null)
+        if (defaultOnConversionError != null)
             currentBlock.peek().addUnconvertableBlock(defaultOnConversionError, Ticket.DEFAULT_ON_CONVERSION_ERROR);
-        if(ctx.nls != null)
+        if (ctx.nls != null)
             currentBlock.peek().addUnconvertableBlock(defaultOnConversionError, Ticket.CONVERT_FUNCTION);
     }
 
     @Override
     public void enterDatetime_function(Datetime_functionContext ctx) {
-        if(ctx.ADD_MONTHS() != null
+        if (ctx.ADD_MONTHS() != null
                 || ctx.DBTIMEZONE() != null
                 || ctx.EXTRACT() != null
                 || ctx.FROM_TZ() != null
@@ -1524,10 +1537,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.SESSIONTIMEZONE() != null
                 || ctx.SYS_EXTRACT_UTC() != null
                 || ctx.TZ_OFFSET() != null
-        ){
+        ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.DATETIME_FUNCTION);
         }
     }
+
     @Override
     public void enterOther_function(Other_functionContext ctx) {
         if (ctx.XMLELEMENT() != null
@@ -1566,12 +1580,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
     @Override
     public void enterColumn_collation_name(Column_collation_nameContext ctx) {
         ConcatenationContext concatenation = Finder.getParentRuleContext(ctx, ConcatenationContext.class);
-        if(concatenation != null){
+        if (concatenation != null) {
             currentBlock.peek().addUnconvertableBlock(concatenation.COLLATE().getSymbol(), concatenation.column_collation_name().stop, Ticket.COLLATE_OPERATOR);
         }
     }
 
-    @Override public void enterHierarchical_query_clause(PlSqlParser.Hierarchical_query_clauseContext ctx) {
+    @Override
+    public void enterHierarchical_query_clause(PlSqlParser.Hierarchical_query_clauseContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx, Ticket.HIERARCHICAL_QUERY);
 
     }
@@ -1580,7 +1595,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
     public void enterHierarchical_pseudocolumn(Hierarchical_pseudocolumnContext ctx) {
         currentBlock.peek().addUnconvertableBlock(ctx, Ticket.HIERARCHICAL_QUERY_PSEUDOCOLUMNS);
     }
-
 
 
 }
