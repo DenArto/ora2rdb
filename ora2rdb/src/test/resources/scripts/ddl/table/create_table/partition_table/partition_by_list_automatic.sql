@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE sales_auto_list
 (
    salesman_id   NUMBER(5),

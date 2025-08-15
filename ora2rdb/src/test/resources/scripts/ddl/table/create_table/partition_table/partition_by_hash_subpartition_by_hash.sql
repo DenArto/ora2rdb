@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE departments_courses_hash (
              department_id NUMBER(4) NOT NULL,
              department_name VARCHAR2(30),

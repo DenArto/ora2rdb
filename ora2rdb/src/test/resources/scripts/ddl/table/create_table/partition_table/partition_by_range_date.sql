@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE sales
   ( prod_id       NUMBER(6)
   , cust_id       NUMBER

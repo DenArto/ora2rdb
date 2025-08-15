@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE sales (
     sale_id NUMBER PRIMARY KEY,
     sale_date DATE,

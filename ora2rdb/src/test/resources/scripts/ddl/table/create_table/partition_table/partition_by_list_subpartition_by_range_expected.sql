@@ -1,12 +1,22 @@
-/*CREATE TABLE accounts
-( id             NUMERIC(34, 8)
-, account_number NUMERIC(34, 8)
-, customer_id    NUMERIC(34, 8)
-, balance        NUMERIC(34, 8)
-, branch_id      NUMERIC(34, 8)
+/*Found error(s) in file while parsing
+Error at line 14:2 - no viable alternative at input 'CREATE TABLE accounts\n( id             NUMBER\n, account_number NUMBER\n, customer_id    NUMBER\n, balance        NUMBER\n, branch_id      NUMBER\n, region         VARCHAR(2)\n, status         VARCHAR2(1)\n)\nPARTITION BY LIST (region)\nSUBPARTITION BY RANGE (balance)\n( PARTITION p_northwest VALUES ('OR', 'WA')\n  ('
+*/
+
+
+
+/*
+Error at line 14:2 - no viable alternative at input 'CREATE TABLE accounts\n( id             NUMBER\n, account_number NUMBER\n, customer_id    NUMBER\n, balance        NUMBER\n, branch_id      NUMBER\n, region         VARCHAR(2)\n, status         VARCHAR2(1)\n)\nPARTITION BY LIST (region)\nSUBPARTITION BY RANGE (balance)\n( PARTITION p_northwest VALUES ('OR', 'WA')\n  ('
+-- RS-243163
+CREATE TABLE accounts
+( id             NUMBER
+, account_number NUMBER
+, customer_id    NUMBER
+, balance        NUMBER
+, branch_id      NUMBER
 , region         VARCHAR(2)
-, status         VARCHAR(1)
-) [-unconvertible PARTITION BY LIST (region)
+, status         VARCHAR2(1)
+)
+PARTITION BY LIST (region)
 SUBPARTITION BY RANGE (balance)
 ( PARTITION p_northwest VALUES ('OR', 'WA')
   ( SUBPARTITION p_nw_low VALUES LESS THAN (1000)
@@ -44,4 +54,5 @@ SUBPARTITION BY RANGE (balance)
   , SUBPARTITION p_sc_high VALUES LESS THAN (100000)
   , SUBPARTITION p_sc_extraordinary VALUES LESS THAN (MAXVALUE)
   )
-) ENABLE ROW MOVEMENT];*/
+) ENABLE ROW MOVEMENT;
+*/

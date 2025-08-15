@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE sales(acct_no NUMBER(5),
                    acct_name CHAR(30),
                    amount_of_sale NUMBER(6),

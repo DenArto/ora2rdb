@@ -1,4 +1,3 @@
---skip RS-243163
 CREATE SHARDED TABLE orders (
     order_id NUMBER NOT NULL,
     cust_id NUMBER NOT NULL,
