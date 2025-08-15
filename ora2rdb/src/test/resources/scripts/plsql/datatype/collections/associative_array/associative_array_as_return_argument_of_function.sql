@@ -1,4 +1,3 @@
---skip
 -- https://docs.oracle.com/en/database/oracle/oracle-database/21/lnpls/plsql-collections-and-records.html#GUID-8060F01F-B53B-48D4-9239-7EA8461C2170:~:text=Example%206%2D2%20Function%20Returns%20Associative%20Array%20Indexed%20by%20PLS_INTEGER
 DECLARE
 TYPE sum_multiples IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER;
@@ -22,6 +21,6 @@ END get_sum_multiples;
 BEGIN
   DBMS_OUTPUT.PUT_LINE (
     'Sum of the first ' || TO_CHAR(n) || ' multiples of ' ||
-    TO_CHAR(m) || ' is ' || TO_CHAR(get_sum_multiples (m, sn)(n))  -- вызов из функции и получение n-го элемента
+    TO_CHAR(m) || ' is ' || TO_CHAR(get_sum_multiples (m, sn)(n))  -- calling from a function and getting the nth element
   );
 END;
