@@ -135,6 +135,8 @@ public enum Ticket {
     , BITMAP_INDEX                              (246430)
     , CREATE_INDEX                              (246433)
 
+    , OVERLOAD_STATEMENT                        (246918)
+
     ;
 
 
