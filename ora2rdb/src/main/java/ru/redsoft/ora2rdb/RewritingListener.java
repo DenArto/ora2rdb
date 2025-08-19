@@ -751,6 +751,43 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
         if (ctx.RAWTOHEX() != null)
             replace(ctx.TO_DATE(), "HEX_ENCODE");
+
+        if (ctx.CAST() != null) {
+            Native_datatype_elementContext nativeDatatypeElementContext = Finder.getFirstRuleContext(ctx, Native_datatype_elementContext.class);
+            if (nativeDatatypeElementContext != null) {
+                switch (Ora2rdb.getRealName(getRuleText(nativeDatatypeElementContext))) {
+                    case "BINARY_DOUBLE":
+                    case "CHAR":
+                    case "INTEGER":
+                    case "BINARY_FLOAT":
+                    case "NCHAR":
+                    case "NUMBER":
+                    case "NVARCHAR2":
+                    case "RAW":
+                    case "VARCHAR2":
+                        break;
+                    case "DATE":
+                    case "TIMESTAMP":
+                        if (ctx.concatenation() != null) {
+                            String var_name = Ora2rdb.getRealName(getRuleText(ctx.concatenation()));
+                            if (current_plsql_block != null) {
+                                String var_type = current_plsql_block.getVariableTypeByName(var_name);
+                                if (var_type != null && var_type.startsWith("VARCHAR2")
+                                        && !ctx.quoted_string().isEmpty())
+                                    insertAfter(ctx.type_spec(), " FORMAT " + getRuleText(ctx.quoted_string(0)));
+                            }
+                        }
+                        break;
+                    default: // if  the construction is "-unconvertible"
+                        return;
+                }
+                delete(ctx.default_on_conversion_error_clause());
+                for (Quoted_stringContext q : ctx.quoted_string())
+                    delete(q);
+                for (TerminalNode t : ctx.COMMA())
+                    delete(t);
+            }
+        }
     }
 
     @Override
@@ -1068,7 +1105,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (ctx.id_expression().size() > 1) {
 
             // convert <seq_name>.NEXTVAL
-            if (Ora2rdb.getRealName(getRuleText(ctx.id_expression(1))).equals("NEXTVAL")){
+            if (Ora2rdb.getRealName(getRuleText(ctx.id_expression(1))).equals("NEXTVAL")) {
                 replace(ctx, "NEXT VALUE FOR " + Ora2rdb.getRealName(getRuleText(ctx.id_expression(0))));
                 return;
             }
@@ -1080,7 +1117,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(id_expr_ctx, id.substring(1));
                 String name = Ora2rdb.getRealName(getRuleText(ctx.id_expression(0)));
 
-                    // convert methods of associative array
+                // convert methods of associative array
                 if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
                     // COUNT
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
@@ -1608,7 +1645,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             sequence_name = getRuleText(sequence_name_ctx.id_expression(0));
         }
 
-        if (ctx.ddl_sharing_clause() != null){
+        if (ctx.ddl_sharing_clause() != null) {
             delete(ctx.ddl_sharing_clause());
             deleteSPACESLeft(ctx.ddl_sharing_clause());
         }
@@ -2041,7 +2078,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(inout_node);
 
         if (current_plsql_block != null)
-            current_plsql_block.declareVar(Ora2rdb.getRealName(getRuleText(ctx.parameter_name())));
+            current_plsql_block.declareVar(Ora2rdb.getRealName(getRuleText(ctx.parameter_name())),
+                    Ora2rdb.getRealName(getRuleText(ctx.type_spec())));
 
         if (getRewriterText(ctx).startsWith(":"))
             replace(ctx, getRewriterText(ctx).substring(1));
@@ -2126,7 +2164,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     return;
                 }
 
-                current_plsql_block.declareVar(name);
+                current_plsql_block.declareVar(name, type);
             }
 
             if (ctx.type_spec().PERCENT_ROWTYPE() != null) {
@@ -2298,6 +2336,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
         }
     }
+
 
     @Override
     public void exitId_expression(Id_expressionContext ctx) {

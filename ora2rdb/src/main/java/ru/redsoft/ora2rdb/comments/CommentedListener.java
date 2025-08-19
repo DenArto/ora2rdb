@@ -1294,6 +1294,24 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterConversion_function(Conversion_functionContext ctx) {
+        if (ctx.CAST() != null) {
+            Native_datatype_elementContext nativeDatatypeElementContext = Finder.getFirstRuleContext(ctx, Native_datatype_elementContext.class);
+            if (nativeDatatypeElementContext != null)
+                switch (Ora2rdb.getRealName(getRuleText(nativeDatatypeElementContext))) {
+                    case "BINARY_DOUBLE":
+                    case "CHAR":
+                    case "INTEGER":
+                    case "BINARY_FLOAT":
+                    case "NCHAR":
+                    case "NUMBER":
+                    case "NVARCHAR2":
+                    case "RAW":
+                    case "VARCHAR2":
+                    case "DATE":
+                    case "TIMESTAMP":
+                        return;
+                }
+        }
         if (ctx.ASCIISTR() != null
                 || ctx.BIN_TO_NUM() != null
                 || ctx.CHARTOROWID() != null
@@ -1328,7 +1346,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.TO_TIMESTAMP() != null
                 || ctx.TO_TIMESTAMP_TZ() != null
                 || ctx.TO_YMINTERVAL() != null
-                || ctx.CAST() != null
+                /*|| ctx.CAST() != null*/
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CONVERT_FUNCTION);
         }
