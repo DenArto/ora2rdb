@@ -4,8 +4,8 @@ create table ttt(id INT128);
 insert into ttt values (100);
 
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
 /*
    DECLARE p1 VARCHAR(100);
@@ -19,21 +19,21 @@ BEGIN
   INTO :p2;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p2 AS VARCHAR(100))
+  from RDB$DATABASE
   into :p1;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p1 AS BINARY(8))
-  ]from RDB$DATABASE
+  select CAST(:p1 AS BINARY(8))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select [-unconvertible RS-245838 CAST(:p2 AS BINARY(8))
-  ]from RDB$DATABASE
+  select CAST(:p2 AS BINARY(8))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 */
-END; 
+END;

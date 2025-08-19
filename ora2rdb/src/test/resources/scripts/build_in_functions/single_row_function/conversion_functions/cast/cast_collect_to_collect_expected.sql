@@ -4,6 +4,6 @@
 
 CREATE TABLE states (state_id NUMERIC(34, 8), addresses address_array_t);
 
-/*SELECT [-unconvertible RS-245838 CAST(s.addresses AS address_book_t)]
-  FROM states s 
-  WHERE s.state_id = 111;*/
+SELECT CAST(s.addresses AS address_book_t)
+  FROM states s
+  WHERE s.state_id = 111;
