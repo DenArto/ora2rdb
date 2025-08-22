@@ -10,8 +10,8 @@ EXECUTE BLOCK
 */
 BEGIN
 /* 
-  select [-unconvertible RS-245838 TO_BLOB(:p1, 'JPEG')
-  ]from RDB$DATABASE
+  select TO_BLOB(:p1, 'JPEG')
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;

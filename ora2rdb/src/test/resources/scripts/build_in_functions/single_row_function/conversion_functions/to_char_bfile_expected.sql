@@ -1,17 +1,17 @@
 CREATE EXCEPTION NO_DATA_FOUND
 	'no data found';
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
 /*
    DECLARE p2 [-unconvertible RS-244032 BFILE];
    DECLARE res VARCHAR(100);
 */
 BEGIN
-/* 
-  select UPPER( [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(32765) FORMAT 873))
-  ]from RDB$DATABASE
+/*
+  select CAST(:p2 AS VARCHAR(32765) FORMAT  873)
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;

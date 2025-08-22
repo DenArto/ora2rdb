@@ -1,8 +1,8 @@
 CREATE EXCEPTION NO_DATA_FOUND
 	'no data found';
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
 /*
    DECLARE p1 [-unconvertible RS-244046 INTERVAL DAY TO SECOND] = INTERVAL '1' DAY;
@@ -11,34 +11,34 @@ EXECUTE BLOCK
 */
 BEGIN
 /*
-  select [-unconvertible RS-245838 CAST(:p1)
-  ]from RDB$DATABASE
+  select CAST(:p1)
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select UPPER( [-unconvertible RS-245838 CAST(:p1 AS VARCHAR(32765) FORMAT 'DD'))
-  ]from RDB$DATABASE
+  select CAST(:p1 AS VARCHAR(32765) FORMAT  'DD')
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select UPPER( [-unconvertible RS-245838 CAST(:p1 AS VARCHAR(32765) FORMAT 'DD', 'NLS_DATE_LANGUAGE = american'))
-  ]from RDB$DATABASE
+  select CAST(:p1 AS VARCHAR(32765) FORMAT  'DD' )
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  
-  select [-unconvertible RS-245838 CAST(:p2)
-  ]from RDB$DATABASE
+
+  select CAST(:p2)
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select UPPER( [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(32765) FORMAT 'YYYY'))
-  ]from RDB$DATABASE
+  select CAST(:p2 AS VARCHAR(32765) FORMAT  'YYYY')
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select UPPER( [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(32765) FORMAT 'YYYY', 'NLS_DATE_LANGUAGE = american'))
-  ]from RDB$DATABASE
+  select CAST(:p2 AS VARCHAR(32765) FORMAT  'YYYY' )
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;

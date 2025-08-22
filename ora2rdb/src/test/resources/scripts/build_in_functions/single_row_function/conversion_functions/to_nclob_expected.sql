@@ -1,1 +1,1 @@
-/*select [-unconvertible RS-245838 TO_NCLOB('Hello world!')] from RDB$DATABASE;*/
+select CAST('Hello world!' AS BLOB SUB_TYPE TEXT CHARACTER SET ISO8859_1) from RDB$DATABASE;
