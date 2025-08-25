@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE SHARDED TABLE sales (
     sale_id NUMBER NOT NULL,
     cust_id NUMBER NOT NULL,

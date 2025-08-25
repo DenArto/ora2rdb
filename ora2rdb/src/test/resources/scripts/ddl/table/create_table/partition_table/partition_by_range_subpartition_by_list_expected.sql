@@ -1,7 +1,16 @@
-/*CREATE TABLE sample_regional_sales
-      (deptno NUMERIC(34, 8), item_no VARCHAR(20),
-       txn_date date, txn_amount NUMERIC(34, 8), state VARCHAR(2))
-    [-unconvertible PARTITION BY RANGE (txn_date)
+/*Found error(s) in file while parsing
+Error at line 7:43 - no viable alternative at input 'CREATE TABLE sample_regional_sales\n      (deptno number, item_no varchar2(20),\n       txn_date date, txn_amount number, state varchar2(2))\n  PARTITION BY RANGE (txn_date)\n    SUBPARTITION BY LIST (state)\n      (PARTITION q1_1999 VALUES LESS THAN (TO_DATE'
+*/
+
+
+
+/*
+Error at line 7:43 - no viable alternative at input 'CREATE TABLE sample_regional_sales\n      (deptno number, item_no varchar2(20),\n       txn_date date, txn_amount number, state varchar2(2))\n  PARTITION BY RANGE (txn_date)\n    SUBPARTITION BY LIST (state)\n      (PARTITION q1_1999 VALUES LESS THAN (TO_DATE'
+-- RS-243163
+CREATE TABLE sample_regional_sales
+      (deptno number, item_no varchar2(20),
+       txn_date date, txn_amount number, state varchar2(2))
+  PARTITION BY RANGE (txn_date)
     SUBPARTITION BY LIST (state)
       (PARTITION q1_1999 VALUES LESS THAN (TO_DATE('1-APR-1999','DD-MON-YYYY'))
           TABLESPACE tbs_1
@@ -28,4 +37,5 @@
          ),
        PARTITION q4_1999 VALUES LESS THAN ( TO_DATE('1-JAN-2000','DD-MON-YYYY'))
           TABLESPACE tbs_4
-      )];*/
+      );
+*/

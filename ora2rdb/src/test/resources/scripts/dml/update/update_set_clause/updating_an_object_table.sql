@@ -1,4 +1,3 @@
---skip
 CREATE TABLE people_demo1 OF people_typ;
 
 CREATE TABLE people_demo2 OF people_typ;

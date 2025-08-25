@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE shipments
 ( order_id      NUMBER NOT NULL
 , order_date    DATE NOT NULL

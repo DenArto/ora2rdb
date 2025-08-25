@@ -1,4 +1,4 @@
---skip RS-243163
+-- RS-243163
 CREATE TABLE costs_demo (
    prod_id     NUMBER(6),    time_id     DATE,
    unit_cost   NUMBER(10,2), unit_price  NUMBER(10,2))

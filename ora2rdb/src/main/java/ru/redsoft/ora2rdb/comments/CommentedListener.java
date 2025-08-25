@@ -9,6 +9,7 @@ import ru.redsoft.ora2rdb.StorageInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class CommentedListener extends PlSqlParserBaseListener {
     TokenStreamRewriter rewriter;
@@ -18,6 +19,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
     ArrayList<String> associative_array_types = new ArrayList<>();
     ArrayList<String> nested_array_types = new ArrayList<>();
     ArrayList<String> varray_types = new ArrayList<>();
+
+    ArrayList<ParserRuleContext> global_overload_func_proc = new ArrayList<>();
 
     public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.tokens = tokens;
@@ -87,6 +90,26 @@ public class CommentedListener extends PlSqlParserBaseListener {
             insertBefore(commentedBlock.getStopBodyBlock(), "*/\n");
 
         }
+    }
+
+    @Override
+    public void enterSql_script(Sql_scriptContext ctx) {
+        // collect overload procedures
+        Finder.getAllRuleContextsIntoCtx(ctx, Create_procedure_bodyContext.class).stream()
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_name().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(e -> global_overload_func_proc.add(e));
+        // collect overload functions
+        Finder.getAllRuleContextsIntoCtx(ctx, Create_function_bodyContext.class).stream()
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_name().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(e -> global_overload_func_proc.add(e));
     }
 
     @Override
@@ -177,6 +200,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (tableProperties.NOROWDEPENDENCIES() != null)
                 currentBlock.peek().addUnconvertableBlock(tableProperties.NOROWDEPENDENCIES(), Ticket.CREATE_TABLE_ROWDEPENDENCIES);
         }
+
+        Object_tableContext objectTableContext = Finder.getFirstRuleContext(ctx, Object_tableContext.class);
+        if(objectTableContext != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CREATE_OBJECT_TABLE);
+        }
+
     }
 
     @Override
@@ -216,6 +245,50 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx.PIPELINED(0), Ticket.PIPELINED_FUNCTION);
             currentBlock.peek().setConvertAllBlock(true);
         }
+        // markup override create function
+        if(global_overload_func_proc.contains(ctx)) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OVERLOAD_STATEMENT);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        // markup override procedure specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.procedure_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_spec().identifier().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override procedure implementation
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.procedure_body() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_body().identifier().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.function_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_spec().identifier().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function implementation
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.function_body() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_body().identifier().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
     }
 
     @Override
@@ -236,6 +309,50 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(0), Ticket.ACCESSIBLE_BY_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
+        // markup override create procedure
+        if(global_overload_func_proc.contains(ctx)) {
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OVERLOAD_STATEMENT);
+            currentBlock.peek().setConvertAllBlock(true);
+        }
+        // markup override procedure specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.procedure_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_spec().identifier().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override procedure implementation
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.procedure_body() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_body().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.function_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_spec().identifier().getText())))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function implementation
+        Finder.getAllRuleContextsIntoCtx(ctx, Declare_specContext.class).stream()
+                .filter(e -> e.function_body() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_body().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
     }
 
     @Override
@@ -383,6 +500,26 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .filter(obj -> obj.exception_declaration() != null)
                 .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_EXCEPTION));
 
+        // markup override procedure specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Package_obj_specContext.class).stream()
+                .filter(e -> e.package_procedure_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.package_procedure_spec().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Package_obj_specContext.class).stream()
+                .filter(e -> e.package_function_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.package_function_spec().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
     }
 
     @Override
@@ -416,6 +553,47 @@ public class CommentedListener extends PlSqlParserBaseListener {
         ctx.package_obj_body().stream()
                 .filter(obj -> obj.exception_declaration() != null)
                 .forEach(obj -> currentBlock.peek().addUnconvertableBlock(obj, Ticket.DECLARE_EXCEPTION));
+
+
+        // markup override procedure specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Package_obj_bodyContext.class).stream()
+                .filter(e -> e.procedure_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_spec().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override procedure implementation
+        Finder.getAllRuleContextsIntoCtx(ctx, Package_obj_bodyContext.class).stream()
+                .filter(e -> e.procedure_body() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.procedure_body().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function specification
+        Finder.getAllRuleContextsIntoCtx(ctx, Package_obj_bodyContext.class).stream()
+                .filter(e -> e.function_spec() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_spec().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
+
+        // markup override function implementation
+        Finder.getAllRuleContextsIntoCtx(ctx, Package_obj_bodyContext.class).stream()
+                .filter(e -> e.function_body() != null)
+                .collect(Collectors.groupingBy(
+                        e -> Ora2rdb.getRealName(e.function_body().identifier().getText()), Collectors.toList()))
+                .values().stream()
+                .filter(group -> group.size() >1)
+                .flatMap(List::stream)
+                .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
 
     }
@@ -1110,6 +1288,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .filter(columnBasedUpdateSet -> columnBasedUpdateSet.paren_column_list() != null)
                 .forEach(columnBasedUpdateSet ->
                         currentBlock.peek().addUnconvertableBlock(columnBasedUpdateSet, Ticket.UPDATE_MULTICOLUMN));
+
+
+        Update_set_clauseContext updateSetClause = Finder.getFirstRuleContext(ctx, Update_set_clauseContext.class);
+        if(updateSetClause != null && updateSetClause.VALUE() != null){
+            currentBlock.peek().addUnconvertableBlock(ctx, Ticket.UPDATE_AN_OBJECT_TABLE);
+        }
     }
 
     @Override

@@ -62,6 +62,7 @@ public enum Ticket {
     , UPDATE_FROM_USING                         (242233)
     , UPDATE_PARTITION_SUBPARTITION             (242238)
     , UPDATE_MULTICOLUMN                        (242240)
+    , UPDATE_AN_OBJECT_TABLE                    (247119)
 
     , DELETE_FROM_SUBQUERY                      (242279)
     , DELETE_PARTITION_SUBPARTITION             (242280)
@@ -92,6 +93,7 @@ public enum Ticket {
     , CREATE_SHARDED_TABLE                      (243395)
     , TABLE_PARTITION_CLAUSES                   (243394)
     , CREATE_TABLE_ROWDEPENDENCIES              (243409)
+    , CREATE_OBJECT_TABLE                       (247116)
 
     , KEEP_CLAUSE                               (244696)
     , WINDOW_GROUPS_EXCLUDE                     (244675)
@@ -134,6 +136,8 @@ public enum Ticket {
 
     , BITMAP_INDEX                              (246430)
     , CREATE_INDEX                              (246433)
+
+    , OVERLOAD_STATEMENT                        (246918)
 
     ;
 

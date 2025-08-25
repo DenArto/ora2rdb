@@ -114,6 +114,35 @@ public class Finder {
         }
     }
 
+    public static <T extends ParseTree> List<T> getAllRuleContextsIntoCtx(ParseTree ctx, Class<T> ruleContext) {
+        List<T> result = new ArrayList<>();
+        getAllRuleContextsIntoCtx(ctx, ruleContext, ctx, result);
+        return result;
+    }
+
+    private static <T extends ParseTree> void getAllRuleContextsIntoCtx(ParseTree ctx, Class<T> ruleContext, ParseTree startContext, List<T> result) {
+        if (ctx instanceof ErrorNode)
+            return;
+
+        if (ruleContext.isInstance(ctx)) {
+            result.add(ruleContext.cast(ctx));
+            return;
+        }
+        if (ctx instanceof TerminalNode)
+            return;
+
+        if (ctx.getClass().equals(startContext.getClass()) && ctx != startContext)
+            return;
+
+        if (ctx instanceof RuleNode) {
+            RuleNode r = (RuleNode) ctx;
+            int n = r.getChildCount();
+            for (int i = 0; i < n; i++) {
+                getAllRuleContextsIntoCtx(r.getChild(i), ruleContext, startContext, result);
+            }
+        }
+    }
+
     public static <T extends ParseTree> T getParentRuleContext(ParseTree ctx, Class<T> ruleContext){
         if (ctx instanceof ErrorNode)
             return null;
