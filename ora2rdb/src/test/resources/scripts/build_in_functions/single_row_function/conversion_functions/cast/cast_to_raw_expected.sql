@@ -1,19 +1,15 @@
 CREATE EXCEPTION NO_DATA_FOUND
 	'no data found';
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
-/*
    DECLARE p1 CHAR(10) = '48656C6C6F';
    DECLARE res BINARY(56);
-*/
 BEGIN
-/*
-  select [-unconvertible RS-245838 CAST(:p1 AS BINARY(56))
-  ]from RDB$DATABASE
+  select CAST(:p1 AS BINARY(56))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-*/
 END;

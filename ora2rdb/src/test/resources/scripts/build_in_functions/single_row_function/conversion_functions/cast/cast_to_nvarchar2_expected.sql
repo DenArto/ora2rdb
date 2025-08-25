@@ -1,10 +1,9 @@
 CREATE EXCEPTION NO_DATA_FOUND
 	'no data found';
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
-/*
    DECLARE p1 DOUBLE PRECISION = 123.45;
    DECLARE p2 FLOAT = 123.45;
    DECLARE p3 VARCHAR(6) = 'hello';
@@ -12,68 +11,64 @@ EXECUTE BLOCK
    DECLARE p5 TIMESTAMP =  date '2011-11-03';
    DECLARE p6 TIMESTAMP = LOCALTIMESTAMP;
    DECLARE p7 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
-   DECLARE p11 BINARY(56) = utl_raw.cast_to_raw('hello');
+   DECLARE p11 BINARY(56) = 'hello';
    DECLARE res VARCHAR(100);
-*/
 BEGIN
-/*
-  select [-unconvertible RS-245838 CAST(:p1 AS VARCHAR(100))
-  ]from RDB$DATABASE
-  into :res;
-  IF (ROW_COUNT = 0) THEN
-  	EXCEPTION NO_DATA_FOUND;
-  
-  select [-unconvertible RS-245838 CAST(:p2 AS VARCHAR(100))
-  ]from RDB$DATABASE
-  into :res;
-  IF (ROW_COUNT = 0) THEN
-  	EXCEPTION NO_DATA_FOUND;
-    
-  select [-unconvertible RS-245838 CAST(:p3 AS VARCHAR(100))
-  ]from RDB$DATABASE
-  into :res;
-  IF (ROW_COUNT = 0) THEN
-  	EXCEPTION NO_DATA_FOUND;
-  
-  select [-unconvertible RS-245838 CAST(:p4 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p1 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p5 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p2 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p6 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p3 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p7 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p4 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p11 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p5 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-*/
+
+  select CAST(:p6 AS VARCHAR(100))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p7 AS VARCHAR(100))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p11 AS VARCHAR(100))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;
-
 create table ttt(id INT128);
 
 insert into ttt values (100);
 
 
-EXECUTE BLOCK 
- AS 
+EXECUTE BLOCK
+ AS
 
 /*
    DECLARE p8 [-unconvertible RS-244046 TIMESTAMP WITH LOCAL TIME ZONE] = timestamp '2020-10-25 02:30:00+02:00';
@@ -85,20 +80,20 @@ EXECUTE BLOCK
 */
 BEGIN
 /*
-  select [-unconvertible RS-245838 CAST(:p8 AS VARCHAR(100))
-  ]from RDB$DATABASE
-  into :res;
-  IF (ROW_COUNT = 0) THEN
-  	EXCEPTION NO_DATA_FOUND;
-  
-  select [-unconvertible RS-245838 CAST(:p9 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p8 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p10 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p9 AS VARCHAR(100))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p10 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
@@ -115,13 +110,13 @@ BEGIN
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
 
-  select [-unconvertible RS-245838 CAST(:p12 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p12 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select [-unconvertible RS-245838 CAST(:p13 AS VARCHAR(100))
-  ]from RDB$DATABASE
+  select CAST(:p13 AS VARCHAR(100))
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;

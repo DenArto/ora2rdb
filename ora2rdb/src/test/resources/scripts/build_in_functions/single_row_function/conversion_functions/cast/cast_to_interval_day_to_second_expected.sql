@@ -1,19 +1,19 @@
 CREATE EXCEPTION NO_DATA_FOUND
 	'no data found';
 
-/*EXECUTE BLOCK 
- AS 
+/*EXECUTE BLOCK
+ AS
 
    DECLARE p1 VARCHAR(100) = '2 05:30:00';
    DECLARE res [-unconvertible RS-244046 INTERVAL DAY TO SECOND];
 BEGIN
-  select [-unconvertible RS-245838 CAST(:p1 AS [-unconvertible RS-244046 INTERVAL DAY TO SECOND])
-  ]from RDB$DATABASE
+  select CAST(:p1 AS [-unconvertible RS-244046 INTERVAL DAY TO SECOND])
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;
-  select [-unconvertible RS-245838 CAST(:p1 AS [-unconvertible RS-244046 INTERVAL DAY TO SECOND] [-unconvertible RS-245741 DEFAULT NULL ON CONVERSION ERROR])
-  ]from RDB$DATABASE
+  select CAST(:p1 AS [-unconvertible RS-244046 INTERVAL DAY TO SECOND] [-unconvertible RS-245741 DEFAULT NULL ON CONVERSION ERROR])
+  from RDB$DATABASE
   into :res;
   IF (ROW_COUNT = 0) THEN
   	EXCEPTION NO_DATA_FOUND;

@@ -1,9 +1,8 @@
+EXECUTE BLOCK
+ AS
 
-EXECUTE BLOCK 
- AS 
-
-   DECLARE raw_col BINARY(10) = utl_raw.cast_to_raw('hello');
+   DECLARE raw_col BINARY(10) = 'hello';
    DECLARE res VARCHAR(100);
 BEGIN
-  res = RAWTOHEX(:raw_col);
+  res = HEX_ENCODE(:raw_col);
 END;

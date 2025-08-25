@@ -1478,6 +1478,34 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterConversion_function(Conversion_functionContext ctx) {
+        if (ctx.CAST() != null) {
+            Native_datatype_elementContext nativeDatatypeElementContext = Finder.getFirstRuleContext(ctx, Native_datatype_elementContext.class);
+            if (nativeDatatypeElementContext != null)
+                switch (Ora2rdb.getRealName(getRuleText(nativeDatatypeElementContext))) {
+                    case "BINARY_DOUBLE":
+                    case "CHAR":
+                    case "INTEGER":
+                    case "BINARY_FLOAT":
+                    case "NCHAR":
+                    case "NUMBER":
+                    case "NVARCHAR2":
+                    case "RAW":
+                    case "VARCHAR2":
+                    case "DATE":
+                    case "TIMESTAMP":
+                        return;
+                }
+        }
+        if (ctx.TO_BINARY_DOUBLE() != null || ctx.TO_BINARY_FLOAT() != null || ctx.TO_DATE() != null
+                || ctx.TO_TIMESTAMP() != null || ctx.TO_TIMESTAMP_TZ() != null)
+            return;
+
+        if (ctx.TO_NUMBER() != null) {
+            if (ctx.format != null)
+                currentBlock.peek().addUnconvertableBlock(ctx.format, Ticket.CONVERT_FUNCTION);
+            return;
+        }
+
         if (ctx.ASCIISTR() != null
                 || ctx.BIN_TO_NUM() != null
                 || ctx.CHARTOROWID() != null
@@ -1486,7 +1514,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.DECOMPOSE() != null
                 || ctx.NUMTODSINTERVAL() != null
                 || ctx.NUMTOYMINTERVAL() != null
-                || ctx.RAWTONHEX() != null
+                /*|| ctx.RAWTONHEX() != null*/
                 || ctx.ROWIDTOCHAR() != null
                 || ctx.ROWIDTONCHAR() != null
                 || ctx.SCN_TO_TIMESTAMP() != null
@@ -1496,23 +1524,23 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.VALIDATE_CONVERSION() != null
                 || ctx.ASCIISTR() != null
                 || ctx.ASCIISTR() != null
-                || ctx.TO_BINARY_DOUBLE() != null
-                || ctx.TO_BINARY_FLOAT() != null
-                || ctx.TO_BLOB() != null
-                || ctx.TO_CHAR() != null
-                || ctx.TO_CLOB() != null
-                || ctx.TO_DATE() != null
+                /*|| ctx.TO_BINARY_DOUBLE() != null*/
+                /*|| ctx.TO_BINARY_FLOAT() != null*/
+                /*|| ctx.TO_BLOB() != null*/
+                /*|| ctx.TO_CHAR() != null*/
+                /*|| ctx.TO_CLOB() != null*/
+                /*|| ctx.TO_DATE() != null*/
                 || ctx.TO_DSINTERVAL() != null
                 || ctx.TO_LOB() != null
                 || ctx.TO_MULTI_BYTE() != null
-                || ctx.TO_NCHAR() != null
-                || ctx.TO_NCLOB() != null
-                || ctx.TO_NUMBER() != null && ctx.format != null
+                /*|| ctx.TO_NCHAR() != null*/
+                /*|| ctx.TO_NCLOB() != null*/
+                /*|| ctx.TO_NUMBER() != null && ctx.format != null*/
                 || ctx.TO_SINGLE_BYTE() != null
-                || ctx.TO_TIMESTAMP() != null
-                || ctx.TO_TIMESTAMP_TZ() != null
+                /*|| ctx.TO_TIMESTAMP() != null*/
+                /*|| ctx.TO_TIMESTAMP_TZ() != null*/
                 || ctx.TO_YMINTERVAL() != null
-                || ctx.CAST() != null
+            /*|| ctx.CAST() != null*/
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CONVERT_FUNCTION);
         }

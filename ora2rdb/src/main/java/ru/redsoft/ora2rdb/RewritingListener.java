@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import ru.redsoft.ora2rdb.PlSqlParser.*;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class RewritingListener extends PlSqlParserBaseListener {
@@ -724,21 +726,86 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     @Override
     public void exitConversion_function(Conversion_functionContext ctx) {
-
         if (ctx.TO_CHAR() != null) {
-            replace(ctx.TO_CHAR(), "CAST");
-            if (ctx.COMMA(0) != null) {
-                insertBefore(ctx, "UPPER( ");
-                replace(ctx.COMMA(0), " AS VARCHAR(32765) FORMAT");
-                replace(ctx, getRewriterText(ctx) + ")");
+            if (ctx.table_element() != null) {
+                String var_name = Ora2rdb.getRealName(getRuleText(ctx.table_element()));
+                String var_type = null;
+                if (current_plsql_block != null)
+                    var_type = current_plsql_block.getVariableTypeByName(var_name);
+                if (var_type != null) {
+                    if (var_type.equals("BLOB") || var_type.startsWith("NCHAR")
+                            || var_type.startsWith("NVARCHAR2") || var_type.equals("CLOB")
+                            || var_type.equals("NCLOB"))
+                        replace(ctx, "CAST(" + getRewriterText(ctx.table_element()) + " AS VARCHAR)");
+                    else if (var_type.equals("DATE") || var_type.startsWith("TIMESTAMP")) {
+                        if (ctx.expression().isEmpty())
+                            replace(ctx, "CAST(" + getRewriterText(ctx.table_element()) + " AS VARCHAR)");
+                        else {
+                            replace(ctx, "CAST(" + getRewriterText(ctx.table_element()) + " AS VARCHAR" +
+                                    " FORMAT " + getRewriterText(ctx.expression(0)) + ")");
+                        }
+                    } else if (var_type.startsWith("NUMBER") || var_type.startsWith("BINARY_FLOAT")
+                            || var_type.startsWith("BINARY_DOUBLE")) {
+                        if (ctx.second_expr != null)
+                            insertBefore(ctx, "\n--CAST function used format " + getRuleText(ctx.second_expr) +
+                                    " ,which is not supported in RDB\n");
+                        replace(ctx, "CAST(" + getRewriterText(ctx.table_element()) + " AS VARCHAR)");
+                    } else {
+                        replace(ctx.TO_CHAR(), "CAST");
+                        if (ctx.COMMA(0) != null) {
+                            insertAfter(ctx.COMMA(0), " AS VARCHAR(32765) FORMAT ");
+                            for (TerminalNode t : ctx.COMMA())
+                                delete(t);
+                            delete(ctx.nls);
+                            replace(ctx, getRewriterText(ctx));
+                        } else {
+                            insertAfter(ctx.first_expr, " AS VARCHAR(32765)");
+                        }
+                    }
+                } else {
+                    replace(ctx.TO_CHAR(), "CAST");
+                    if (ctx.COMMA(0) != null) {
+                        insertAfter(ctx.COMMA(0), " AS VARCHAR(32765) FORMAT ");
+                        for (TerminalNode t : ctx.COMMA())
+                            delete(t);
+                        delete(ctx.nls);
+                        replace(ctx, getRewriterText(ctx));
+                    } else {
+                        insertAfter(ctx.first_expr, " AS VARCHAR(32765)");
+                    }
+                }
             } else {
-                insertAfter(ctx.expression(0), " AS VARCHAR(32765)");
+                replace(ctx.TO_CHAR(), "CAST");
+                if (ctx.COMMA(0) != null) {
+                    if (Finder.getFirstRuleContext(ctx, NumericContext.class) != null && ctx.second_expr != null) {
+                        insertBefore(ctx, "\n-- TO_CHAR function used format " + getRuleText(ctx.second_expr) +
+                                " ,which is not supported in RDB\n");
+                        insertAfter(ctx.first_expr, " AS VARCHAR(32765)");
+                        delete(ctx.second_expr);
+                    } else
+                        insertAfter(ctx.COMMA(0), " AS VARCHAR(32765) FORMAT ");
+
+                    for (TerminalNode t : ctx.COMMA())
+                        delete(t);
+                    delete(ctx.nls);
+                    replace(ctx, getRewriterText(ctx));
+                } else {
+                    insertAfter(ctx.first_expr, " AS VARCHAR(32765)");
+                }
             }
         }
 
-        if (ctx.TO_NUMBER() != null) {
-            replace(ctx.TO_NUMBER(), "CAST");
-            insertBefore(ctx.RIGHT_PAREN(ctx.RIGHT_PAREN().size() - 1), " AS NUMERIC)");
+        if (ctx.TO_NCHAR() != null) {
+            replace(ctx.TO_NCHAR(), "CAST");
+            insertBefore(ctx.RIGHT_PAREN(ctx.RIGHT_PAREN().size() - 1), " AS NCHAR VARYING(32765) ");
+            if (Finder.getFirstRuleContext(ctx, NumericContext.class) != null && ctx.second_expr != null) {
+                insertBefore(ctx, "\n-- TO_NCHAR function used format " + getRuleText(ctx.second_expr) +
+                        " ,which is not supported in RDB\n");
+            }
+            for (ExpressionContext expr : ctx.expression())
+                delete(expr);
+            for (TerminalNode t : ctx.COMMA())
+                delete(t);
         }
 
 //        if (ctx.TO_DATE() != null) {
@@ -747,10 +814,164 @@ public class RewritingListener extends PlSqlParserBaseListener {
 //        }
 
         if (ctx.HEXTORAW() != null)
-            replace(ctx.TO_DATE(), "HEX_DECODE");
+            replace(ctx.HEXTORAW(), "HEX_DECODE");
 
         if (ctx.RAWTOHEX() != null)
-            replace(ctx.TO_DATE(), "HEX_ENCODE");
+            replace(ctx.RAWTOHEX(), "HEX_ENCODE");
+
+        if (ctx.RAWTONHEX() != null) {
+            replace(ctx.RAWTONHEX(), "HEX_ENCODE");
+            insertBefore(ctx.RAWTONHEX(), "CAST(");
+            insertAfter(ctx, " AS NCHAR VARYING(32765))");
+        }
+
+        if (ctx.TO_BINARY_DOUBLE() != null) {
+            replace(ctx, "CAST(" + getRewriterText(ctx.concatenation()) + " AS DECFLOAT(34))");
+        }
+
+        if (ctx.TO_BINARY_FLOAT() != null) {
+            replace(ctx, "CAST(" + getRewriterText(ctx.concatenation()) + " AS DECFLOAT(16))");
+        }
+
+        if (ctx.TO_NUMBER() != null) {
+            replace(ctx.TO_NUMBER(), "CAST");
+            insertAfter(ctx.concatenation(), " AS NUMERIC(34,8) ");
+
+            for (TerminalNode t : ctx.COMMA())
+                delete(t);
+
+            delete(ctx.default_on_conversion_error_clause());
+            deleteSPACESAbut(ctx.default_on_conversion_error_clause());
+            delete(ctx.nls);
+            deleteSPACESAbut(ctx.nls);
+        }
+
+        if (ctx.TO_BLOB() != null) {
+            String var_name = Ora2rdb.getRealName(getRuleText(ctx.expression(0)));
+            if (current_plsql_block != null) {
+                String var_type = current_plsql_block.getVariableTypeByName(var_name);
+                if (var_type != null)
+                    if (var_type.startsWith("RAW") || var_type.matches("LONG\\s*RAW"))
+                        replace(ctx, "CAST(" + getRewriterText(ctx.expression(0)) + " AS BLOB)");
+            }
+        }
+
+        if (ctx.TO_CLOB() != null) {
+            String var_name = Ora2rdb.getRealName(getRuleText(ctx.expression(0)));
+            if (current_plsql_block != null) {
+                String var_type = current_plsql_block.getVariableTypeByName(var_name);
+                if (var_type != null && var_type.equals("BFILE"))
+                    return;
+            }
+            replace(ctx.TO_CLOB(), "CAST");
+            for (int i = 0; i < ctx.expression().size(); i++) {
+                if (i == 0)
+                    continue;
+                delete(ctx.expression(i));
+            }
+            for (TerminalNode t : ctx.COMMA())
+                delete(t);
+            insertAfter(ctx.expression(0), " AS BLOB SUB_TYPE TEXT");
+        }
+
+        if (ctx.TO_NCLOB() != null) {
+            replace(ctx.TO_NCLOB(), "CAST");
+            insertAfter(ctx.expression(0), " AS BLOB SUB_TYPE TEXT CHARACTER SET ISO8859_1 ");
+        }
+
+        if (ctx.TO_DATE() != null) {
+            replace(ctx.TO_DATE(), "CAST");
+            insertAfter(ctx.TO_DATE(), "(CAST");
+            if (ctx.format != null) {
+                insertBefore(ctx.format, " AS TIMESTAMP FORMAT ");
+            } else {
+                insertBefore(ctx.RIGHT_PAREN(ctx.RIGHT_PAREN().size() - 1), " AS TIMESTAMP");
+            }
+            insertAfter(ctx, " AS DATE) ");
+            for (TerminalNode t : ctx.COMMA())
+                delete(t);
+            delete(ctx.default_on_conversion_error_clause());
+            deleteSPACESAbut(ctx.default_on_conversion_error_clause());
+            delete(ctx.nls);
+            deleteSPACESAbut(ctx.nls);
+        }
+
+        if (ctx.TO_TIMESTAMP() != null) {
+            replace(ctx.TO_TIMESTAMP(), "CAST");
+            insertAfter(ctx.concatenation(), " AS TIMESTAMP ");
+            if (ctx.format != null)
+                insertBefore(ctx.format, " FORMAT ");
+
+            for (TerminalNode t : ctx.COMMA())
+                delete(t);
+            delete(ctx.default_on_conversion_error_clause());
+            deleteSPACESAbut(ctx.default_on_conversion_error_clause());
+            delete(ctx.nls);
+            deleteSPACESAbut(ctx.nls);
+        }
+
+        if (ctx.TO_TIMESTAMP_TZ() != null) {
+            replace(ctx.TO_TIMESTAMP_TZ(), "CAST");
+            insertAfter(ctx.concatenation(), " AS TIMESTAMP WITH TIME ZONE ");
+            if (ctx.format != null)
+                insertBefore(ctx.format, " FORMAT ");
+
+            for (TerminalNode t : ctx.COMMA())
+                delete(t);
+            delete(ctx.default_on_conversion_error_clause());
+            deleteSPACESAbut(ctx.default_on_conversion_error_clause());
+            delete(ctx.nls);
+            deleteSPACESAbut(ctx.nls);
+        }
+
+        if (ctx.CAST() != null) {
+            Native_datatype_elementContext nativeDatatypeElementContext = Finder.getFirstRuleContext(ctx, Native_datatype_elementContext.class);
+            if (nativeDatatypeElementContext != null) {
+                switch (Ora2rdb.getRealName(getRuleText(nativeDatatypeElementContext))) {
+                    case "BINARY_DOUBLE":
+                    case "CHAR":
+                    case "INTEGER":
+                    case "BINARY_FLOAT":
+                    case "NCHAR":
+                    case "NUMBER":
+                    case "NVARCHAR2":
+                    case "RAW":
+                    case "VARCHAR2":
+                        break;
+                    case "DATE":
+                    case "TIMESTAMP":
+                        if (ctx.concatenation() != null) {
+                            String var_name = Ora2rdb.getRealName(getRuleText(ctx.concatenation()));
+                            if (current_plsql_block != null) {
+                                String var_type = current_plsql_block.getVariableTypeByName(var_name);
+                                if (var_type != null && var_type.startsWith("VARCHAR2")
+                                        && !ctx.quoted_string().isEmpty())
+                                    insertAfter(ctx.type_spec(), " FORMAT " + getRewriterText(ctx.quoted_string(0)));
+                            }
+                        }
+                        break;
+                    default: // markup if  the construction is "-unconvertible"
+                        return;
+                }
+                delete(ctx.default_on_conversion_error_clause());
+                for (Quoted_stringContext q : ctx.quoted_string())
+                    delete(q);
+                for (TerminalNode t : ctx.COMMA())
+                    delete(t);
+            }
+        }
+
+
+    }
+
+    @Override
+    public void exitQuoted_string(Quoted_stringContext ctx) {
+        // markup replace HH24:MI:SSxFF to HH24:MI:SS.FF9
+        String newFormatString = getRuleText(ctx);
+        newFormatString = newFormatString.replaceAll("xFF", ".FF9");
+        newFormatString = newFormatString.replaceAll("(?i)\\.FF(?!\\d)", ".FF4");
+
+        replace(ctx, newFormatString);
     }
 
     @Override
@@ -1067,11 +1288,18 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
         if (ctx.id_expression().size() > 1) {
 
-            // convert <seq_name>.NEXTVAL
-            if (Ora2rdb.getRealName(getRuleText(ctx.id_expression(1))).equals("NEXTVAL")){
+            // markup convert <seq_name>.NEXTVAL
+            if (Ora2rdb.getRealName(getRuleText(ctx.id_expression(1))).equals("NEXTVAL")) {
                 replace(ctx, "NEXT VALUE FOR " + Ora2rdb.getRealName(getRuleText(ctx.id_expression(0))));
                 return;
             }
+
+            //markup convert utl_raw.cast_to_raw(<argument>) (for example in build_in_functions/single_row_function/conversion_functions/rawtonhex.sql)
+            if (Ora2rdb.getRealName(getRuleText(ctx)).startsWith("UTL_RAW.CAST_TO_RAW"))
+                if (ctx.function_argument() != null && !ctx.function_argument().argument().isEmpty()) {
+                    replace(ctx, getRuleText(ctx.function_argument().argument(0)));
+                    return;
+                }
 
             for (Id_expressionContext id_expr_ctx : ctx.id_expression()) {
                 String id = getRewriterText(id_expr_ctx);
@@ -1080,7 +1308,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     replace(id_expr_ctx, id.substring(1));
                 String name = Ora2rdb.getRealName(getRuleText(ctx.id_expression(0)));
 
-                    // convert methods of associative array
+                // markup convert methods of associative array
                 if (current_plsql_block != null && current_plsql_block.array_to_table.containsKey(name)) {
                     // COUNT
                     if (id_expr_ctx.regular_id() != null && id_expr_ctx.regular_id().non_reserved_keywords_pre12c() != null
@@ -1608,7 +1836,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             sequence_name = getRuleText(sequence_name_ctx.id_expression(0));
         }
 
-        if (ctx.ddl_sharing_clause() != null){
+        if (ctx.ddl_sharing_clause() != null) {
             delete(ctx.ddl_sharing_clause());
             deleteSPACESLeft(ctx.ddl_sharing_clause());
         }
@@ -2041,7 +2269,8 @@ public class RewritingListener extends PlSqlParserBaseListener {
             delete(inout_node);
 
         if (current_plsql_block != null)
-            current_plsql_block.declareVar(Ora2rdb.getRealName(getRuleText(ctx.parameter_name())));
+            current_plsql_block.declareVar(Ora2rdb.getRealName(getRuleText(ctx.parameter_name())),
+                    Ora2rdb.getRealName(getRuleText(ctx.type_spec())));
 
         if (getRewriterText(ctx).startsWith(":"))
             replace(ctx, getRewriterText(ctx).substring(1));
@@ -2126,7 +2355,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
                     return;
                 }
 
-                current_plsql_block.declareVar(name);
+                current_plsql_block.declareVar(name, type);
             }
 
             if (ctx.type_spec().PERCENT_ROWTYPE() != null) {
@@ -2298,6 +2527,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
         }
     }
+
 
     @Override
     public void exitId_expression(Id_expressionContext ctx) {
