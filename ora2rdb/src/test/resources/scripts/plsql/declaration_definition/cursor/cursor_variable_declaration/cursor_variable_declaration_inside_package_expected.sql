@@ -1,58 +1,53 @@
-
-
-
+-- Объявление внутри заголовка пакета
 /*CREATE PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
     [-unconvertible RS-233552 DECLARE cur CURSOR FOR
     (SELECT * FROM employees);]
      DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
-  END;*/
-
+END;*/
 
 
 CREATE PACKAGE BODY BOOK_INFO
 AS BEGIN
 
-  END;
-
+END;
+-- Объявление курсора в заголовке пакета , а переменной внутри тела пакета
 /*CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
     [-unconvertible RS-233552 DECLARE cur CURSOR FOR
 (SELECT * FROM employees);]
 
-  END;*/
-
+END;*/
 
 
 /*RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
      DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
-  END;*/
+END;*/
 
 
+-- Объявление курсора и переменной в теле пакета
 CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
 
-  END;
-
+END;
 
 /*RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
     [-unconvertible RS-233552 DECLARE cur CURSOR FOR
 (SELECT * FROM employees);]
  DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
-  END;*/
+END;*/
 
-
+-- Объявление в функции в пакете
 CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION TEST_F RETURNS BOOLEAN;
-  END;
-
+END;
 
 RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
@@ -67,4 +62,4 @@ AS BEGIN
         RETURN TRUE;
     END
 
-  END;
+END;

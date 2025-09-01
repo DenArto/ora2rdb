@@ -1,12 +1,11 @@
 /*Found error(s) in file while parsing
-Error at line 11:41 - no viable alternative at input 'CREATE TABLE shipments\n( order_id      NUMBER NOT NULL\n, order_date    DATE NOT NULL\n, delivery_date DATE NOT NULL\n, customer_id   NUMBER NOT NULL\n, sales_amount  NUMBER NOT NULL\n)\nPARTITION BY RANGE (order_date)\nSUBPARTITION BY RANGE (delivery_date)\n( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE'
+Error at line 10:41 - no viable alternative at input 'CREATE TABLE shipments\n( order_id      NUMBER NOT NULL\n, order_date    DATE NOT NULL\n, delivery_date DATE NOT NULL\n, customer_id   NUMBER NOT NULL\n, sales_amount  NUMBER NOT NULL\n)\nPARTITION BY RANGE (order_date)\nSUBPARTITION BY RANGE (delivery_date)\n( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE'
 */
 
-
+-- RS-243163
 
 /*
-Error at line 11:41 - no viable alternative at input 'CREATE TABLE shipments\n( order_id      NUMBER NOT NULL\n, order_date    DATE NOT NULL\n, delivery_date DATE NOT NULL\n, customer_id   NUMBER NOT NULL\n, sales_amount  NUMBER NOT NULL\n)\nPARTITION BY RANGE (order_date)\nSUBPARTITION BY RANGE (delivery_date)\n( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE'
--- RS-243163
+Error at line 10:41 - no viable alternative at input 'CREATE TABLE shipments\n( order_id      NUMBER NOT NULL\n, order_date    DATE NOT NULL\n, delivery_date DATE NOT NULL\n, customer_id   NUMBER NOT NULL\n, sales_amount  NUMBER NOT NULL\n)\nPARTITION BY RANGE (order_date)\nSUBPARTITION BY RANGE (delivery_date)\n( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE'
 CREATE TABLE shipments
 ( order_id      NUMBER NOT NULL
 , order_date    DATE NOT NULL

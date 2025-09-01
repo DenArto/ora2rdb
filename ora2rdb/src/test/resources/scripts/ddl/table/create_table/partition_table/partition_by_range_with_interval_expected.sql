@@ -1,12 +1,11 @@
 /*Found error(s) in file while parsing
-Error at line 12:42 - no viable alternative at input 'CREATE TABLE sales (\n    sale_id NUMBER PRIMARY KEY,\n    sale_date DATE,\n    amount NUMBER,\n    customer_id NUMBER\n)\nPARTITION BY RANGE (sale_date)\nINTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))\nSTORE IN (tb1)\n(\n    PARTITION p_initial VALUES LESS THAN (TO_DATE'
+Error at line 11:42 - no viable alternative at input 'CREATE TABLE sales (\n    sale_id NUMBER PRIMARY KEY,\n    sale_date DATE,\n    amount NUMBER,\n    customer_id NUMBER\n)\nPARTITION BY RANGE (sale_date)\nINTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))\nSTORE IN (tb1)\n(\n    PARTITION p_initial VALUES LESS THAN (TO_DATE'
 */
 
-
+-- RS-243163
 
 /*
-Error at line 12:42 - no viable alternative at input 'CREATE TABLE sales (\n    sale_id NUMBER PRIMARY KEY,\n    sale_date DATE,\n    amount NUMBER,\n    customer_id NUMBER\n)\nPARTITION BY RANGE (sale_date)\nINTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))\nSTORE IN (tb1)\n(\n    PARTITION p_initial VALUES LESS THAN (TO_DATE'
--- RS-243163
+Error at line 11:42 - no viable alternative at input 'CREATE TABLE sales (\n    sale_id NUMBER PRIMARY KEY,\n    sale_date DATE,\n    amount NUMBER,\n    customer_id NUMBER\n)\nPARTITION BY RANGE (sale_date)\nINTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))\nSTORE IN (tb1)\n(\n    PARTITION p_initial VALUES LESS THAN (TO_DATE'
 CREATE TABLE sales (
     sale_id NUMBER PRIMARY KEY,
     sale_date DATE,

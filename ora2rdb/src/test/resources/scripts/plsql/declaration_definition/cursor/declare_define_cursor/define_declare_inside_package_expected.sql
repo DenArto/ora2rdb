@@ -1,12 +1,9 @@
-
-
-
+-- инициализация внутри PACKAGE и объявление внутри PACKAGE BODY
 /*CREATE PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
     [-unconvertible RS-233552 DECLARE BOOKS_CUR  ;]
-  END;*/
-
+END;*/
 
 
 /*CREATE PACKAGE BODY BOOK_INFO
@@ -16,15 +13,15 @@ AS BEGIN
     CURSOR FOR
     (SELECT *
     FROM BOOKS);]
-  END;*/
+END;*/
 
 
+-- инициализация и объявление внутри PACKAGE BODY
 CREATE PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
 
-  END;
-
+END;
 
 /*RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
@@ -34,9 +31,9 @@ AS BEGIN
         CURSOR FOR
     (SELECT *
     FROM BOOKS);]
-  END;*/
+END;*/
 
-
+-- инициализация и объявление внутри PACKAGE
 /*CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -46,21 +43,21 @@ AS BEGIN
             CURSOR FOR
     (SELECT *
     FROM BOOKS);]
-  END;*/
-
+END;*/
 
 
 CREATE PACKAGE BODY BOOK_INFO
 AS BEGIN
 
-  END;
+END;
+
+-- объявление и инициализация в функции внутри пакета
 
 CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION TEST_F RETURNS BOOLEAN;
-  END;
-
+END;
 
 RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
@@ -77,4 +74,4 @@ AS BEGIN
 
     RETURN TRUE;
     END
-  END;
+END;

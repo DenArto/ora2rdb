@@ -10,7 +10,6 @@ CREATE GLOBAL TEMPORARY TABLE S (
 EXECUTE BLOCK
  AS
 
-/*
 --TYPE sum_multiples IS TABLE OF INTEGER INDEX BY INTEGER;
    DECLARE n  INTEGER = 5;   -- number of multiples to sum for display
    DECLARE sn INTEGER = 10;  -- number of multiples to sum
@@ -33,12 +32,9 @@ RETURN s;
 */
 END
 
-*/
 BEGIN
-/*
   RDB$TRACE_MSG (
-    'Sum of the first ' || [-unconvertible RS-245838 CAST(:n)] || ' multiples of ' ||
-    [-unconvertible RS-245838 CAST(:m)] || ' is ' || [-unconvertible RS-245838 CAST(get_sum_multiples (:m, :sn)(:n) AS VARCHAR(32765))]  -- calling from a function and getting the nth element
+    'Sum of the first ' || CAST(:n) || ' multiples of ' ||
+    CAST(:m) || ' is ' || CAST(get_sum_multiples (:m, :sn)(:n) AS VARCHAR(32765))  -- calling from a function and getting the nth element
   , TRUE);
-*/
 END;

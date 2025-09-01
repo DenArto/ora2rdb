@@ -20,7 +20,7 @@ AS
         PROCEDURE_NAME(in_value);
     END;
 END CALLING_PACKAGE;
-----------------------------------------------
+
 CREATE PACKAGE CALLING_PACKAGE
 AS
     PROCEDURE PROCEDURE_NAME_IN_PACKAGE;

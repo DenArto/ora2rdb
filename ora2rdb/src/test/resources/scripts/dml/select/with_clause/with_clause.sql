@@ -1,4 +1,3 @@
---skip
 WITH
     dept_costs AS (
         SELECT department_name, SUM(salary) dept_total

@@ -1,12 +1,11 @@
 /*Found error(s) in file while parsing
-Error at line 7:43 - no viable alternative at input 'CREATE TABLE sample_regional_sales\n      (deptno number, item_no varchar2(20),\n       txn_date date, txn_amount number, state varchar2(2))\n  PARTITION BY RANGE (txn_date)\n    SUBPARTITION BY LIST (state)\n      (PARTITION q1_1999 VALUES LESS THAN (TO_DATE'
+Error at line 6:43 - no viable alternative at input 'CREATE TABLE sample_regional_sales\n      (deptno number, item_no varchar2(20),\n       txn_date date, txn_amount number, state varchar2(2))\n  PARTITION BY RANGE (txn_date)\n    SUBPARTITION BY LIST (state)\n      (PARTITION q1_1999 VALUES LESS THAN (TO_DATE'
 */
 
-
+-- RS-243163
 
 /*
-Error at line 7:43 - no viable alternative at input 'CREATE TABLE sample_regional_sales\n      (deptno number, item_no varchar2(20),\n       txn_date date, txn_amount number, state varchar2(2))\n  PARTITION BY RANGE (txn_date)\n    SUBPARTITION BY LIST (state)\n      (PARTITION q1_1999 VALUES LESS THAN (TO_DATE'
--- RS-243163
+Error at line 6:43 - no viable alternative at input 'CREATE TABLE sample_regional_sales\n      (deptno number, item_no varchar2(20),\n       txn_date date, txn_amount number, state varchar2(2))\n  PARTITION BY RANGE (txn_date)\n    SUBPARTITION BY LIST (state)\n      (PARTITION q1_1999 VALUES LESS THAN (TO_DATE'
 CREATE TABLE sample_regional_sales
       (deptno number, item_no varchar2(20),
        txn_date date, txn_amount number, state varchar2(2))

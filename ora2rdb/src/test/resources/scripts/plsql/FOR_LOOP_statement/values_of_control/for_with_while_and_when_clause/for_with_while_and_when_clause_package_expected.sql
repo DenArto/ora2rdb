@@ -1,19 +1,14 @@
-
-
-
 CREATE OR ALTER PACKAGE Pack_For_With_While_and_When
-
-SQL SECURITY DEFINER
-AS BEGIN  
+ SQL SECURITY DEFINER
+AS BEGIN
    FUNCTION PF_For_With_While_and_When
-   RETURNS VARCHAR(100);  
-   PROCEDURE PP_For_With_While_and_When;   
-  END;
-
-
+   RETURNS VARCHAR(100);
+   PROCEDURE PP_For_With_While_and_When;
+END;
+/* Тело пакета */
 
 RECREATE   PACKAGE BODY Pack_For_With_While_and_When
-AS BEGIN  
+AS BEGIN
    FUNCTION PF_For_With_While_and_When
    RETURNS VARCHAR(100)
    AS
@@ -30,7 +25,7 @@ BEGIN
      END LOOP
      RETURN summa;
    */
-END  
+END
 
    PROCEDURE PP_For_With_While_and_When
    AS
@@ -46,5 +41,5 @@ BEGIN
        summa = :summa || i;
      END LOOP
    */
-END  
-  END; 
+END
+END;
