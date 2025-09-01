@@ -9,6 +9,7 @@ import ru.redsoft.ora2rdb.StorageInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CommentedListener extends PlSqlParserBaseListener {
@@ -22,7 +23,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
     static ArrayList<String> nested_array_types = new ArrayList<>();
     static ArrayList<String> varray_types = new ArrayList<>();
 
-    static ArrayList<ParserRuleContext> global_overload_func_proc = new ArrayList<>();
+    static ArrayList<String> global_overload_func_proc = new ArrayList<>();
 
     /*public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.tokens = tokens;
@@ -104,7 +105,18 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterSql_script(Sql_scriptContext ctx) {
-        // collect overload procedures
+
+        if (global_overload_func_proc.isEmpty())
+            StorageInfo.stored_blocks_list.stream()
+                    .filter(e ->  e instanceof StoredFunction || e instanceof StoredProcedure)
+                    .collect(Collectors.groupingBy(
+                            e -> Ora2rdb.getRealName(e.getName())))
+                    .values().stream()
+                    .filter(group -> group.size() > 1)
+                    .flatMap(List::stream)
+                    .forEach(e -> global_overload_func_proc.add(e.getName()));
+
+       /* // collect overload procedures
         Finder.getAllRuleContextsIntoCtx(ctx, Create_procedure_bodyContext.class).stream()
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_name().getText())))
@@ -119,7 +131,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .values().stream()
                 .filter(group -> group.size() >1)
                 .flatMap(List::stream)
-                .forEach(e -> global_overload_func_proc.add(e));
+                .forEach(e -> global_overload_func_proc.add(e.));
+        */
     }
 
 
@@ -258,7 +271,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().setConvertAllBlock(true);
         }
         // markup override create function
-        if(global_overload_func_proc.contains(ctx)) {
+        String function_name = Ora2rdb.getRealName(getRuleText(ctx.function_name()));
+        if(global_overload_func_proc.contains(function_name)) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OVERLOAD_STATEMENT);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -321,8 +335,9 @@ public class CommentedListener extends PlSqlParserBaseListener {
             currentBlock.peek().addUnconvertableBlock(ctx.accessible_by_clause(0), Ticket.ACCESSIBLE_BY_CLAUSE);
             currentBlock.peek().setConvertAllBlock(true);
         }
+        String procedure_name = Ora2rdb.getRealName(getRuleText(ctx.procedure_name()));
         // markup override create procedure
-        if(global_overload_func_proc.contains(ctx)) {
+        if(global_overload_func_proc.contains(procedure_name)) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OVERLOAD_STATEMENT);
             currentBlock.peek().setConvertAllBlock(true);
         }

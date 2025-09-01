@@ -18,7 +18,7 @@ public class Ora2rdb {
     static TokenStreamRewriter rewriter;
     private static CommonTokenStream tokens;
     final static String errorMessage = "Found error(s) in file while parsing\n";
-    final static String exceptionMessage = "Found exception(s) during the conversion\n Please contact to fix it\n";
+    final static String exceptionMessage = "Found exception(s) during the conversion. Please contact to fix it\n";
     private final static String packageBodyStart = "CREATE OR REPLACE PACKAGE BODY package_for_parse IS";
     private final static String packageEnd = "END package_for_parse;";
     private final static String packageStart = "CREATE OR REPLACE PACKAGE package_for_parse IS";
