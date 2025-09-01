@@ -5,7 +5,6 @@ AS BEGIN
    RETURNS VARCHAR(100);
    PROCEDURE PP_For_With_While_and_When;
 END;
-/* Тело пакета */
 
 RECREATE   PACKAGE BODY Pack_For_With_While_and_When
 AS BEGIN

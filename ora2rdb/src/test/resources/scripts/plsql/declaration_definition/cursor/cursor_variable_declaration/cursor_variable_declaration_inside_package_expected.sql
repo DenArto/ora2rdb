@@ -1,4 +1,4 @@
--- Объявление внутри заголовка пакета
+
 /*CREATE PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -12,7 +12,7 @@ CREATE PACKAGE BODY BOOK_INFO
 AS BEGIN
 
 END;
--- Объявление курсора в заголовке пакета , а переменной внутри тела пакета
+
 /*CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -28,7 +28,6 @@ AS BEGIN
 END;*/
 
 
--- Объявление курсора и переменной в теле пакета
 CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -42,7 +41,7 @@ AS BEGIN
  DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
 END;*/
 
--- Объявление в функции в пакете
+
 CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN

@@ -5,7 +5,7 @@ AS
    PROCEDURE PP_Explicit_Index; 
 END; 
 
-/* Тело пакета */
+
 CREATE OR REPLACE PACKAGE BODY Pack_Explicit_Index
 AS 
    FUNCTION PF_Explicit_Index

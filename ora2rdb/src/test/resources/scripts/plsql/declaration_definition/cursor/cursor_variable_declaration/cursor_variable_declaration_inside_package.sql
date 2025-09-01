@@ -1,4 +1,4 @@
--- Объявление внутри заголовка пакета
+
 CREATE PACKAGE BOOK_INFO
 IS
     CURSOR cur IS
@@ -11,7 +11,7 @@ IS
 
 END;
 
--- Объявление курсора в заголовке пакета , а переменной внутри тела пакета
+
 CREATE OR REPLACE PACKAGE BOOK_INFO
 IS
     CURSOR cur IS
@@ -25,7 +25,6 @@ IS
 END;
 
 
--- Объявление курсора и переменной в теле пакета
 CREATE OR REPLACE PACKAGE BOOK_INFO
 IS
 
@@ -38,7 +37,6 @@ SELECT * FROM employees;
 cur_rec cur%ROWTYPE;
 END;
 
--- Объявление в функции в пакете
 CREATE OR REPLACE PACKAGE BOOK_INFO
 IS
     FUNCTION TEST_F RETURN BOOLEAN;

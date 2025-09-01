@@ -5,7 +5,7 @@ AS BEGIN
    RETURNS NUMERIC(34, 8);
    PROCEDURE PP_Explicit_Index;
 END;
-/* Тело пакета */
+
 
 RECREATE   PACKAGE BODY Pack_Explicit_Index
 AS BEGIN
