@@ -1,4 +1,4 @@
--- инициализация внутри PACKAGE и объявление внутри PACKAGE BODY
+
 /*CREATE PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -16,7 +16,7 @@ AS BEGIN
 END;*/
 
 
--- инициализация и объявление внутри PACKAGE BODY
+
 CREATE PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -33,7 +33,6 @@ AS BEGIN
     FROM BOOKS);]
 END;*/
 
--- инициализация и объявление внутри PACKAGE
 /*CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER
 AS BEGIN
@@ -51,7 +50,7 @@ AS BEGIN
 
 END;
 
--- объявление и инициализация в функции внутри пакета
+
 
 CREATE OR ALTER PACKAGE BOOK_INFO
  SQL SECURITY DEFINER

@@ -35,7 +35,6 @@ public class SqlCodeParser {
     }
 
     private final static String whiteSpaceRegex = "[\\s\\n]+";
-    private final static String pragmaDeclarationRegex = "(?i)(?s)\\n*\\s*PRAGMA\\s*\\n*(SERIALLY_REUSABLE|AUTONOMOUS_TRANSACTION|EXCEPTION_INIT|INLINE|RESTRICT_REFERENCES).*?";
     private final static String createDDLTriggerRegex = "(?i)(?s)(create\\s*or\\s*(ALTER|ANALYZE|ASSOCIATE STATISTICS|AUDIT|COMMENT|DISASSOCIATE STATISTICS|DROP|GRANT|NOAUDIT|RENAME|REVOKE|TRUNCATE|DDL).*?)|(create\\s*on.*?)";
     private final static String alterDDLTriggerRegex = "(?i)(?s)(alter\\s*or\\s*(CREATE|ANALYZE|ASSOCIATE STATISTICS|AUDIT|COMMENT|DISASSOCIATE STATISTICS|DROP|GRANT|NOAUDIT|RENAME|REVOKE|TRUNCATE|DDL).*?)|(alter\\s*on.*?)";
 
@@ -275,7 +274,7 @@ public class SqlCodeParser {
         return blocksInPackage;
     }
 
-    public String[] findLastIndexOfEndSubstring(String input) {
+    /*public String[] findLastIndexOfEndSubstring(String input) {
         String[] patterns = {" END ", " END;", " end ", " end;"};
         int lastIndex = -1;
 
@@ -293,5 +292,5 @@ public class SqlCodeParser {
         } else {
             return new String[]{input, ""};
         }
-    }
+    }*/
 }
