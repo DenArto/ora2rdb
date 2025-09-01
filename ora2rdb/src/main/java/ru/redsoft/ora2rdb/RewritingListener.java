@@ -5,44 +5,56 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import ru.redsoft.ora2rdb.PlSqlParser.*;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class RewritingListener extends PlSqlParserBaseListener {
+    private static final RewritingListener INSTANCE = new RewritingListener();
 
     static final int SPACES_TYPE = PlSqlLexer.SPACES;
 
     TokenStreamRewriter rewriter;
     CommonTokenStream tokens;
 
-    Stack<StoredBlock> storedBlocksStack = new Stack<>();
-    String current_package_name = null;
+    static Stack<StoredBlock> storedBlocksStack = new Stack<>();
+    static String current_package_name = null;
 
-    View current_view;
-    PLSQLBlock current_plsql_block;
+    static View current_view;
+    static PLSQLBlock current_plsql_block;
 
-    ArrayList<Create_sequenceContext> sequences = new ArrayList<Create_sequenceContext>();
-    ArrayList<Create_tableContext> tables = new ArrayList<Create_tableContext>();
-    ArrayList<Comment_on_tableContext> comments = new ArrayList<Comment_on_tableContext>();
-    ArrayList<Alter_tableContext> alter_tables = new ArrayList<Alter_tableContext>();
-    ArrayList<Create_indexContext> create_indexes = new ArrayList<Create_indexContext>();
-    ArrayList<Create_function_bodyContext> create_functions = new ArrayList<Create_function_bodyContext>();
-    ArrayList<Create_procedure_bodyContext> create_procedures = new ArrayList<Create_procedure_bodyContext>();
-    ArrayList<Create_triggerContext> create_triggers = new ArrayList<Create_triggerContext>();
-    ArrayList<Alter_triggerContext> alter_triggers = new ArrayList<Alter_triggerContext>();
+    static ArrayList<Create_sequenceContext> sequences = new ArrayList<Create_sequenceContext>();
+    static ArrayList<Create_tableContext> tables = new ArrayList<Create_tableContext>();
+    static ArrayList<Comment_on_tableContext> comments = new ArrayList<Comment_on_tableContext>();
+    static ArrayList<Alter_tableContext> alter_tables = new ArrayList<Alter_tableContext>();
+    static ArrayList<Create_indexContext> create_indexes = new ArrayList<Create_indexContext>();
+    static ArrayList<Create_function_bodyContext> create_functions = new ArrayList<Create_function_bodyContext>();
+    static ArrayList<Create_procedure_bodyContext> create_procedures = new ArrayList<Create_procedure_bodyContext>();
+    static ArrayList<Create_triggerContext> create_triggers = new ArrayList<Create_triggerContext>();
+    static ArrayList<Alter_triggerContext> alter_triggers = new ArrayList<Alter_triggerContext>();
 
-    ArrayList<String> create_temporary_tables = new ArrayList<String>();
-    ArrayList<String> loop_index_names = new ArrayList<String>();
-    TreeMap<String, String> loop_rec_name_and_cursor_name = new TreeMap<>();
-    TreeMap<String, String> rowtype_rec_name_and_select_statement = new TreeMap<>();
-    TreeMap<String, String> loop_for_in_collection = new TreeMap<>();
-    TreeMap<String, String> exceptions = new TreeMap<>();
-    StoredAnonymousBlock currentAnonymousBlock = null;
+    static ArrayList<String> create_temporary_tables = new ArrayList<String>();
+    static ArrayList<String> loop_index_names = new ArrayList<String>();
+    static TreeMap<String, String> loop_rec_name_and_cursor_name = new TreeMap<>();
+    static TreeMap<String, String> rowtype_rec_name_and_select_statement = new TreeMap<>();
+    static TreeMap<String, String> loop_for_in_collection = new TreeMap<>();
+    static TreeMap<String, String> exceptions = new TreeMap<>();
+    static StoredAnonymousBlock currentAnonymousBlock = null;
 
-    public RewritingListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+    /*public RewritingListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.rewriter = rewriter;
         this.tokens = tokens;
+    }*/
+
+    private RewritingListener() {
+    }
+
+    public static RewritingListener getInstance(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+        INSTANCE.rewriter = rewriter;
+        INSTANCE.tokens = tokens;
+        return INSTANCE;
+    }
+
+    public static RewritingListener getInstance() {
+        return INSTANCE;
     }
 
     public String getText() {
@@ -317,14 +329,21 @@ public class RewritingListener extends PlSqlParserBaseListener {
     }
 
 
-    @Override
+    public String addExceptions() {
+        StringBuilder ex = new StringBuilder();
+        for (Map.Entry<String, String> entry : exceptions.entrySet())
+            ex.append("CREATE EXCEPTION ").append(entry.getKey()).append("\n\t").append("'").append(entry.getValue()).append("';").append("\n");
+        return ex.toString();
+    }
+
+    /*@Override
     public void exitSql_script(Sql_scriptContext ctx) {
         for (TerminalNode solid : ctx.SOLIDUS())
             delete(solid);
         if (!Ora2rdb.reorder)
             for (Map.Entry<String, String> entry : exceptions.entrySet())
                 insertBefore(ctx, "CREATE EXCEPTION " + entry.getKey() + "\n\t" + "'" + entry.getValue() + "';" + "\n");
-    }
+    }*/
 
     @Override
     public void exitSet_command(Set_commandContext ctx) {
@@ -2050,7 +2069,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 //        replace(ctx.SEMICOLON(), "^");
         StoredFunction currentFunction = (StoredFunction) storedBlocksStack.peek();
         String getWhiteSpace = getIndentation(ctx) + "  ";
-        if (currentFunction.containOutParameters()) {
+        if (currentFunction != null && currentFunction.containOutParameters()) {
             replace(ctx.FUNCTION(), "PROCEDURE");
             replace(ctx.RETURN(), "\nRETURNS ( RET_VAL");
 
@@ -2076,7 +2095,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             replace(ctx.RETURN(), "RETURNS");
         }
 
-        if (currentFunction.containFunctionCallWithOutParameters()) {
+        if (currentFunction != null && currentFunction.containFunctionCallWithOutParameters()) {
             StringBuilder declare_ret_val = new StringBuilder();
             currentFunction.getCalledFunctions().stream()
                     .filter(StoredFunction::containOutParameters)
@@ -2156,7 +2175,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         if (storedBlocksStack.peek() instanceof StoredFunction) {
             StoredFunction currentFunction = (StoredFunction) storedBlocksStack.peek();
 
-            if (currentFunction.containOutParameters()) {
+            if (currentFunction != null && currentFunction.containOutParameters()) {
                 replace(ctx.FUNCTION(), "DECLARE PROCEDURE");
                 replace(ctx.RETURN(), "\nRETURNS ( RET_VAL");
 
@@ -2183,7 +2202,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
             }
             delete(ctx.SEMICOLON());
 
-            if (currentFunction.containFunctionCallWithOutParameters()) {
+            if (currentFunction != null && currentFunction.containFunctionCallWithOutParameters()) {
                 StringBuilder declare_ret_val = new StringBuilder();
                 currentFunction.getCalledFunctions().stream()
                         .filter(StoredBlock::containOutParameters)
@@ -2767,7 +2786,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
         String getWhiteSpace = getIndentation(ctx) + "  ";
         StoredProcedure currentProcedure = (StoredProcedure) storedBlocksStack.peek();
-        if (currentProcedure.containOutParameters()) {
+        if (currentProcedure != null && currentProcedure.containOutParameters()) {
             StringBuilder return_parameters = new StringBuilder();
             StringBuilder equating_parameters = new StringBuilder("\n");
             return_parameters.append(getWhiteSpace).append("RETURNS( ");
@@ -2801,7 +2820,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
 
-        if (currentProcedure.containFunctionCallWithOutParameters()) {
+        if (currentProcedure != null && currentProcedure.containFunctionCallWithOutParameters()) {
             StringBuilder declare_ret_val = new StringBuilder();
             currentProcedure.getCalledFunctions().stream()
                     .filter(StoredFunction::containOutParameters)
@@ -2875,7 +2894,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 //        String procedure_name = currentProcedure.getName();//todo
         String getWhiteSpace = getIndentation(ctx) + "  ";
 
-        if (currentProcedure.containOutParameters()) {
+        if (currentProcedure != null && currentProcedure.containOutParameters()) {
             StringBuilder return_parameters = new StringBuilder();
             StringBuilder equating_parameters = new StringBuilder('\n');
             return_parameters.append(getWhiteSpace).append("RETURNS( ");
@@ -2906,7 +2925,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
         }
 
 
-        if (currentProcedure.containFunctionCallWithOutParameters()) {
+        if (currentProcedure != null && currentProcedure.containFunctionCallWithOutParameters()) {
             StringBuilder declare_ret_val = new StringBuilder();
             currentProcedure.getCalledFunctions().stream()
                     .filter(StoredFunction::containOutParameters)
@@ -4239,6 +4258,32 @@ public class RewritingListener extends PlSqlParserBaseListener {
             default:
                 return null;
         }
+    }
+
+    public static void clearInfo() {
+        storedBlocksStack.clear();
+        current_package_name = null;
+        current_view = null;
+        current_plsql_block = null;
+
+        sequences.clear();
+        tables.clear();
+        comments.clear();
+        alter_tables.clear();
+        create_indexes.clear();
+        create_functions.clear();
+        create_procedures.clear();
+        create_triggers.clear();
+        alter_triggers.clear();
+
+        create_temporary_tables.clear();
+        loop_index_names.clear();
+        loop_rec_name_and_cursor_name.clear();
+        rowtype_rec_name_and_select_statement.clear();
+        loop_for_in_collection.clear();
+        exceptions.clear();
+
+        currentAnonymousBlock = null;
     }
 
 }

@@ -12,19 +12,29 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CommentedListener extends PlSqlParserBaseListener {
+    private static final CommentedListener INSTANCE = new CommentedListener();
+
     TokenStreamRewriter rewriter;
     CommonTokenStream tokens;
-    Stack<CommentedBlock> currentBlock = new Stack<>();
+    static Stack<CommentedBlock> currentBlock = new Stack<>();
 
-    ArrayList<String> associative_array_types = new ArrayList<>();
-    ArrayList<String> nested_array_types = new ArrayList<>();
-    ArrayList<String> varray_types = new ArrayList<>();
+    static ArrayList<String> associative_array_types = new ArrayList<>();
+    static ArrayList<String> nested_array_types = new ArrayList<>();
+    static ArrayList<String> varray_types = new ArrayList<>();
 
-    ArrayList<ParserRuleContext> global_overload_func_proc = new ArrayList<>();
+    static ArrayList<ParserRuleContext> global_overload_func_proc = new ArrayList<>();
 
-    public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+    /*public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         this.tokens = tokens;
         this.rewriter = rewriter;
+    }*/
+
+    private CommentedListener(){}
+
+    public static CommentedListener getInstance(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
+        INSTANCE.rewriter = rewriter;
+        INSTANCE.tokens = tokens;
+        return INSTANCE;
     }
 
     void insertBefore(Token token, Object text) {
@@ -112,11 +122,13 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .forEach(e -> global_overload_func_proc.add(e));
     }
 
+
     @Override
     public void exitSql_script(Sql_scriptContext ctx) {
         for (CommentedBlock commentedBlock : StorageInfo.commentedBlockList) {
             commentUnconvertibleBlock(commentedBlock);
         }
+        StorageInfo.commentedBlockList.clear();
     }
 
     @Override
@@ -1625,4 +1637,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
 
+    public static void clearInfo(){
+        currentBlock.clear();
+        associative_array_types.clear();
+        nested_array_types.clear();
+        varray_types.clear();
+        global_overload_func_proc.clear();
+    }
 }
