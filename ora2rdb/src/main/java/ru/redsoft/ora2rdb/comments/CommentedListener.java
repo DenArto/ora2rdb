@@ -9,7 +9,6 @@ import ru.redsoft.ora2rdb.StorageInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CommentedListener extends PlSqlParserBaseListener {
@@ -78,8 +77,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (!unconvertableBlock.blockIsReady())
                 continue;
             StringBuilder ticketNumbers = new StringBuilder();
-            for (int ticket : unconvertableBlock.getTicketNumbersList())
+            for (int ticket : unconvertableBlock.getTicketNumbersList()) {
                 ticketNumbers.append("RS-").append(ticket).append(" ");
+                StorageInfo.unconvertibleConstructionsStatistic.addTicket(ticket);
+            }
             insertBefore(unconvertableBlock.getBlockStart(), "[-unconvertible " + ticketNumbers);
             insertAfter(unconvertableBlock.getBlockStop(), "]");
         }

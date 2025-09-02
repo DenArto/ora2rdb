@@ -1,6 +1,7 @@
 package ru.redsoft.ora2rdb;
 
 import ru.redsoft.ora2rdb.comments.*;
+import ru.redsoft.ora2rdb.statistic.UnconvertibleConstructionsStatistic;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ public class StorageInfo {
     public static TreeMap<String, View> views = new TreeMap<String, View>();
     public static TreeMap<String, TreeMap<String, String>> types_of_column = new TreeMap<>();
     public static ArrayList<CommentedBlock> commentedBlockList = new ArrayList<>();
+    public static UnconvertibleConstructionsStatistic unconvertibleConstructionsStatistic = new UnconvertibleConstructionsStatistic();
 
 
     public static void clearInfo() {
@@ -27,5 +29,6 @@ public class StorageInfo {
         views.clear();
         types_of_column.clear();
         commentedBlockList.clear();
+        unconvertibleConstructionsStatistic.clear();
     }
 }
