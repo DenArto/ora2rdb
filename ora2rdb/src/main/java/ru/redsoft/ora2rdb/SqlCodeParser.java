@@ -9,16 +9,19 @@ import java.util.*;
 public class SqlCodeParser {
     List<String> sqlQueries = new ArrayList<>();
     StringBuilder currentBlock = new StringBuilder();
-    List<String> splittedInput = new ArrayList<>();
-    Map<Integer, List<String>> blocksInPackage = new HashMap<>();
-    /*Integer beginEndCount = Integer.MIN_VALUE;
-    Integer startOfPackage = -1;
-    Integer endOfPackage = -1;
-    Integer startOfPackageBody = -1;
-    Integer endOfPackageBody = -1;
-    Integer indexOfPackageBlock = -1;
-    boolean inCaseStatement = false;
-    boolean insidePackage = false;*/
+    List<String> splitInput = new ArrayList<>();
+
+    Map<String, List<String>> blocksInPackageBody = new HashMap<>();
+    StringBuilder currentBlockInsidePackage = new StringBuilder();
+    Map<Integer, String> packageBlockNumber = new HashMap<>();  // Integer - number of block in sqlQueries, String - name of package
+
+    Map<String, List<String>> packageDeclaration = new HashMap<>();
+
+    boolean insidePackageDeclaration = false;
+    boolean insidePackageBody = false;
+
+    String currentPackageName = null;
+    String currentPackageBodyName = null;
     private static final Set<Character> ALLOWED_CHARACTERS;
 
     static {
@@ -37,42 +40,141 @@ public class SqlCodeParser {
     private final static String whiteSpaceRegex = "[\\s\\n]+";
     private final static String createDDLTriggerRegex = "(?i)(?s)(create\\s*or\\s*(ALTER|ANALYZE|ASSOCIATE STATISTICS|AUDIT|COMMENT|DISASSOCIATE STATISTICS|DROP|GRANT|NOAUDIT|RENAME|REVOKE|TRUNCATE|DDL).*?)|(create\\s*on.*?)";
     private final static String alterDDLTriggerRegex = "(?i)(?s)(alter\\s*or\\s*(CREATE|ANALYZE|ASSOCIATE STATISTICS|AUDIT|COMMENT|DISASSOCIATE STATISTICS|DROP|GRANT|NOAUDIT|RENAME|REVOKE|TRUNCATE|DDL).*?)|(alter\\s*on.*?)";
-
+    private final static String createPackageBodyNotPackageRegex = "(?i)(?s)create\\s*(or\\s*replace\\s*)?\\s*(EDITIONABLE|NONEDITIONABLE)?\\s*package\\s*body.*?";
+    private final static String createPackageRegex = "(?i)(?s)create\\s*(or\\s*replace\\s*)?\\s*(EDITIONABLE|NONEDITIONABLE)?\\s*package.*?";
 
     List<String> splitMetadataIntoBlocks(InputStream inputStream) {
-        splittedInput = fromStreamToString(inputStream);
-        String triggerDDLEvent;
-        for (int i = 0; i < splittedInput.size(); i++) {
-            if (splittedInput.get(i).isEmpty()) {
+        splitInput = fromStreamToString(inputStream);
+        String stringToParse;
+        for (int i = 0; i < splitInput.size(); i++) {
+            if (splitInput.get(i).isEmpty()) {
                 continue;
             }
-            if (checkIfQuoteOrCommentOrWhiteSpace(splittedInput.get(i))) {
-                currentBlock.append(splittedInput.get(i));
+            if (checkIfQuoteOrCommentOrWhiteSpace(splitInput.get(i))) {
+                currentBlock.append(splitInput.get(i));
+                if (insidePackageBody)
+                    currentBlockInsidePackage.append(splitInput.get(i));
                 continue;
             }
 
-            if ((isWordValid(splittedInput.get(i), "CREATE")) || isWordValid(splittedInput.get(i), "ALTER")) {
-                triggerDDLEvent = getTextToParse(i, i + 6).toUpperCase();
-                if (triggerDDLEvent.matches(createDDLTriggerRegex) || triggerDDLEvent.matches(alterDDLTriggerRegex)) {
-                    currentBlock.append(splittedInput.get(i));
+            if (isWordValid(splitInput.get(i), "CREATE") || isWordValid(splitInput.get(i), "ALTER")) {
+                stringToParse = getTextToParse(i, i + 6).toUpperCase();
+                if (stringToParse.matches(createDDLTriggerRegex) || stringToParse.matches(alterDDLTriggerRegex)) {
+                    currentBlock.append(splitInput.get(i));
                     continue;
                 }
+
+                // grant create or grant alter
+                String grantRegex = getTextToParseReverse(i - 1, i);
+                if (grantRegex.matches("(?i)(?s)grant\\s*(create|alter).*?")) {
+                    currentBlock.append(splitInput.get(i));
+                    continue;
+                }
+
+                currentPackageName = null;
+                if (stringToParse.matches(createPackageRegex))
+                    insidePackageDeclaration = !stringToParse.contains("BODY");
+
+                if (insidePackageBody) {
+                    if (blocksInPackageBody.containsKey(currentPackageBodyName))
+                        blocksInPackageBody.get(currentPackageBodyName).add(currentBlockInsidePackage.toString());
+                    currentPackageBodyName = null;
+                    currentBlockInsidePackage = new StringBuilder();
+                }
+                insidePackageBody = stringToParse.matches(createPackageBodyNotPackageRegex);
+                if (insidePackageBody)
+                    currentBlockInsidePackage.append(splitInput.get(i));
+
                 sqlQueries.add(currentBlock.toString());
                 currentBlock.setLength(0);
-                currentBlock.append(splittedInput.get(i));
+                currentBlock.append(splitInput.get(i));
                 continue;
             }
 
-            currentBlock.append(splittedInput.get(i));
+
+            if (insidePackageDeclaration) {
+                if (isWordValid(splitInput.get(i), "IS") || isWordValid(splitInput.get(i), "AS")) {
+                    if (currentPackageName == null) {
+                        currentPackageName = findPreviousWord(i);
+                        if (currentPackageName != null)
+                            packageDeclaration.put(currentPackageName, new ArrayList<>());
+                    }
+                }
+
+                if (isWordValid(splitInput.get(i), "FUNCTION") || isWordValid(splitInput.get(i), "PROCEDURE")) {
+                    if (currentPackageName != null) {
+                        packageDeclaration.get(currentPackageName).add(findNextWord(i));
+                    }
+                }
+            }
+
+            currentBlock.append(splitInput.get(i));
+
+            if (insidePackageBody) {
+                if (isWordValid(splitInput.get(i), "IS") || isWordValid(splitInput.get(i), "AS")) {
+                    if (currentPackageBodyName == null) {
+                        currentPackageBodyName = findPreviousWord(i);
+                        if (currentPackageBodyName != null) {
+                            currentBlockInsidePackage.append(splitInput.get(i));
+                            if (blocksInPackageBody.containsKey(currentPackageBodyName)) {
+                                blocksInPackageBody.get(currentPackageBodyName).clear();
+                                updatePackageBlockNumber(currentPackageBodyName);
+                            }
+                            blocksInPackageBody.computeIfAbsent(currentPackageBodyName, k -> new ArrayList<>()).add(currentBlockInsidePackage.toString());
+
+                            packageBlockNumber.put(sqlQueries.size(), currentPackageBodyName);
+                        }
+                        currentBlockInsidePackage.setLength(0);
+                        continue;
+                    }
+                }
+                if (isWordValid(splitInput.get(i), "FUNCTION") || isWordValid(splitInput.get(i), "PROCEDURE")) {
+                    String functionProcedureName = findNextWord(i);
+                    if (packageDeclaration.containsKey(currentPackageBodyName))
+                        if (packageDeclaration.get(currentPackageBodyName).contains(functionProcedureName)) {
+                            blocksInPackageBody.computeIfAbsent(currentPackageBodyName, k -> new ArrayList<>()).add(currentBlockInsidePackage.toString());
+                            currentBlockInsidePackage.setLength(0);
+                        }
+                }
+                currentBlockInsidePackage.append(splitInput.get(i));
+            }
 
         }
 
         if (currentBlock.length() != 0) {
             sqlQueries.add(currentBlock.toString());
         }
+        if (currentBlockInsidePackage.length() != 0)
+            blocksInPackageBody.computeIfAbsent(currentPackageBodyName, k -> new ArrayList<>()).add(currentBlockInsidePackage.toString());
 
 
         return sqlQueries;
+    }
+
+    private void updatePackageBlockNumber(String currentPackageBodyName) {
+        packageBlockNumber.entrySet().removeIf(entry -> entry.getValue().equals(currentPackageBodyName));
+    }
+
+    private String findPreviousWord(int id) {
+        while (id > 0) {
+            id--;
+            if (checkIfQuoteOrCommentOrWhiteSpace(splitInput.get(id))) {
+                continue;
+            }
+            return splitInput.get(id).toUpperCase();
+        }
+        return null;
+    }
+
+    private String findNextWord(int id) {
+        while (id < splitInput.size()) {
+            id++;
+            if (checkIfQuoteOrCommentOrWhiteSpace(splitInput.get(id))) {
+                continue;
+            }
+            return splitInput.get(id).toUpperCase();
+        }
+        return null;
     }
 
     private boolean isWordValid(String inputWord, String pattern) {
@@ -102,21 +204,38 @@ public class SqlCodeParser {
     }
 
     private boolean checkIfQuoteOrCommentOrWhiteSpace(String el) {
-        return el.startsWith("'") || el.startsWith("--") || el.startsWith("/*") || el.matches(whiteSpaceRegex);
+        return el.startsWith("'") || el.startsWith("--") || el.startsWith("/*") || el.matches(whiteSpaceRegex)
+                || el.isEmpty();
     }
 
     private String getTextToParse(int start, int end) {
         StringBuilder command = new StringBuilder();
         start = Math.max(start, 0);
-        end = Math.min(end, splittedInput.size() - 1);
+        end = Math.min(end, splitInput.size() - 1);
         while (start <= end) {
-            if (!checkIfQuoteOrCommentOrWhiteSpace(splittedInput.get(start))) {
-                command.append(splittedInput.get(start));
+            if (!checkIfQuoteOrCommentOrWhiteSpace(splitInput.get(start))) {
+                command.append(splitInput.get(start));
             } else {
-                if (end < splittedInput.size() - 1)
+                if (end < splitInput.size() - 1)
                     end++;
             }
             start++;
+        }
+        return command.toString();
+    }
+
+    private String getTextToParseReverse(int start, int end) {
+        StringBuilder command = new StringBuilder();
+        start = Math.max(start, 0);
+        end = Math.min(end, splitInput.size() - 1);
+        while (start <= end) {
+            if (!checkIfQuoteOrCommentOrWhiteSpace(splitInput.get(end))) {
+                command.insert(0, splitInput.get(end));
+            } else {
+                if (start > 0)
+                    start--;
+            }
+            end--;
         }
         return command.toString();
     }
@@ -270,8 +389,12 @@ public class SqlCodeParser {
         return words;
     }
 
-    public Map<Integer, List<String>> getBlocksInPackage() {
-        return blocksInPackage;
+    public Map<String, List<String>> getBlocksInPackageBody() {
+        return blocksInPackageBody;
+    }
+
+    public Map<Integer, String> getPackageBlockNumber() {
+        return packageBlockNumber;
     }
 
     /*public String[] findLastIndexOfEndSubstring(String input) {
