@@ -6,11 +6,18 @@ import java.util.stream.Collectors;
 import ru.redsoft.ora2rdb.PlSqlParser.*;
 
 public class ScanListener extends PlSqlParserBaseListener {
-    Stack<StoredBlock> storedBlocksStack = new Stack<>();
-    String currentProcedureName;
-    String current_package_name = null;
-    StoredTrigger current_trigger = null;
-    String current_cursor_declaration = null;
+    private static final ScanListener INSTANCE = new ScanListener();
+
+    static Stack<StoredBlock> storedBlocksStack = new Stack<>();
+    static String currentProcedureName;
+    static String current_package_name = null;
+
+    private ScanListener() {
+    }
+
+    public static ScanListener getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
@@ -550,5 +557,11 @@ public class ScanListener extends PlSqlParserBaseListener {
             }
         }
         return type;
+    }
+
+    public static void clearInfo(){
+        storedBlocksStack.clear();
+        currentProcedureName = null;
+        current_package_name = null;
     }
 }

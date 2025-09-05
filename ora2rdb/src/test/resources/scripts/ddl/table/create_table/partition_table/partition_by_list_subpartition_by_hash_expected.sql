@@ -1,12 +1,11 @@
 /*Found error(s) in file while parsing
-Error at line 14:1 - no viable alternative at input 'CREATE TABLE accounts\n( id             NUMBER\n , account_number NUMBER\n , customer_id    NUMBER\n , balance        NUMBER\n , branch_id      NUMBER\n , region         VARCHAR(2)\n , status         VARCHAR2(1)\n)\nPARTITION BY LIST (region)\nSUBPARTITION BY HASH (customer_id) SUBPARTITIONS 8\n( PARTITION p_northwest VALUES ('OR', 'WA')\n ,'
+Error at line 13:1 - no viable alternative at input 'CREATE TABLE accounts\n( id             NUMBER\n , account_number NUMBER\n , customer_id    NUMBER\n , balance        NUMBER\n , branch_id      NUMBER\n , region         VARCHAR(2)\n , status         VARCHAR2(1)\n)\nPARTITION BY LIST (region)\nSUBPARTITION BY HASH (customer_id) SUBPARTITIONS 8\n( PARTITION p_northwest VALUES ('OR', 'WA')\n ,'
 */
 
-
+-- RS-243163
 
 /*
-Error at line 14:1 - no viable alternative at input 'CREATE TABLE accounts\n( id             NUMBER\n , account_number NUMBER\n , customer_id    NUMBER\n , balance        NUMBER\n , branch_id      NUMBER\n , region         VARCHAR(2)\n , status         VARCHAR2(1)\n)\nPARTITION BY LIST (region)\nSUBPARTITION BY HASH (customer_id) SUBPARTITIONS 8\n( PARTITION p_northwest VALUES ('OR', 'WA')\n ,'
--- RS-243163
+Error at line 13:1 - no viable alternative at input 'CREATE TABLE accounts\n( id             NUMBER\n , account_number NUMBER\n , customer_id    NUMBER\n , balance        NUMBER\n , branch_id      NUMBER\n , region         VARCHAR(2)\n , status         VARCHAR2(1)\n)\nPARTITION BY LIST (region)\nSUBPARTITION BY HASH (customer_id) SUBPARTITIONS 8\n( PARTITION p_northwest VALUES ('OR', 'WA')\n ,'
 CREATE TABLE accounts
 ( id             NUMBER
  , account_number NUMBER

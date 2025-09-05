@@ -1,4 +1,4 @@
--- инициализация внутри PACKAGE и объявление внутри PACKAGE BODY
+
 CREATE PACKAGE BOOK_INFO
 IS
     CURSOR BOOKS_CUR RETURN BOOKS%ROWTYPE;
@@ -13,8 +13,6 @@ IS
     FROM BOOKS;
 END;
 
-
--- инициализация и объявление внутри PACKAGE BODY
 CREATE PACKAGE BOOK_INFO
 IS
 
@@ -30,7 +28,6 @@ IS
     FROM BOOKS;
 END;
 
--- инициализация и объявление внутри PACKAGE
 CREATE OR REPLACE PACKAGE BOOK_INFO
 IS
     CURSOR BOOKS_CUR RETURN BOOKS%ROWTYPE;
@@ -46,8 +43,6 @@ IS
 
 END;
 
-
--- объявление и инициализация в функции внутри пакета
 
 CREATE OR REPLACE PACKAGE BOOK_INFO
 IS

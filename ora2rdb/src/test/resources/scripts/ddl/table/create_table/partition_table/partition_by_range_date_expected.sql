@@ -1,12 +1,11 @@
 /*Found error(s) in file while parsing
-Error at line 9:34 - no viable alternative at input 'CREATE TABLE sales\n  ( prod_id       NUMBER(6)\n  , cust_id       NUMBER\n  , time_id       DATE\n  )\n STORAGE (INITIAL 100K NEXT 50K) LOGGING\n PARTITION BY RANGE (time_id)\n ( PARTITION s1 VALUES LESS THAN (TO_DATE'
+Error at line 8:34 - no viable alternative at input 'CREATE TABLE sales\n  ( prod_id       NUMBER(6)\n  , cust_id       NUMBER\n  , time_id       DATE\n  )\n STORAGE (INITIAL 100K NEXT 50K) LOGGING\n PARTITION BY RANGE (time_id)\n ( PARTITION s1 VALUES LESS THAN (TO_DATE'
 */
 
-
+-- RS-243163
 
 /*
-Error at line 9:34 - no viable alternative at input 'CREATE TABLE sales\n  ( prod_id       NUMBER(6)\n  , cust_id       NUMBER\n  , time_id       DATE\n  )\n STORAGE (INITIAL 100K NEXT 50K) LOGGING\n PARTITION BY RANGE (time_id)\n ( PARTITION s1 VALUES LESS THAN (TO_DATE'
--- RS-243163
+Error at line 8:34 - no viable alternative at input 'CREATE TABLE sales\n  ( prod_id       NUMBER(6)\n  , cust_id       NUMBER\n  , time_id       DATE\n  )\n STORAGE (INITIAL 100K NEXT 50K) LOGGING\n PARTITION BY RANGE (time_id)\n ( PARTITION s1 VALUES LESS THAN (TO_DATE'
 CREATE TABLE sales
   ( prod_id       NUMBER(6)
   , cust_id       NUMBER

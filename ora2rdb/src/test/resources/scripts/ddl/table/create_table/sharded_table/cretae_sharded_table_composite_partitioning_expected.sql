@@ -1,12 +1,11 @@
 /*Found error(s) in file while parsing
-Error at line 11:16 - no viable alternative at input 'CREATE SHARDED TABLE sales (\n    sale_id NUMBER NOT NULL,\n    cust_id NUMBER NOT NULL,\n    sale_date DATE,\n    product_id NUMBER,\n    quantity NUMBER,\n    amount NUMBER(12,2)\n)\nPARTITION BY RANGE (sale_date)\nSUBPARTITION BY CONSISTENT'
+Error at line 10:16 - no viable alternative at input 'CREATE SHARDED TABLE sales (\n    sale_id NUMBER NOT NULL,\n    cust_id NUMBER NOT NULL,\n    sale_date DATE,\n    product_id NUMBER,\n    quantity NUMBER,\n    amount NUMBER(12,2)\n)\nPARTITION BY RANGE (sale_date)\nSUBPARTITION BY CONSISTENT'
 */
 
-
+-- RS-243163
 
 /*
-Error at line 11:16 - no viable alternative at input 'CREATE SHARDED TABLE sales (\n    sale_id NUMBER NOT NULL,\n    cust_id NUMBER NOT NULL,\n    sale_date DATE,\n    product_id NUMBER,\n    quantity NUMBER,\n    amount NUMBER(12,2)\n)\nPARTITION BY RANGE (sale_date)\nSUBPARTITION BY CONSISTENT'
--- RS-243163
+Error at line 10:16 - no viable alternative at input 'CREATE SHARDED TABLE sales (\n    sale_id NUMBER NOT NULL,\n    cust_id NUMBER NOT NULL,\n    sale_date DATE,\n    product_id NUMBER,\n    quantity NUMBER,\n    amount NUMBER(12,2)\n)\nPARTITION BY RANGE (sale_date)\nSUBPARTITION BY CONSISTENT'
 CREATE SHARDED TABLE sales (
     sale_id NUMBER NOT NULL,
     cust_id NUMBER NOT NULL,

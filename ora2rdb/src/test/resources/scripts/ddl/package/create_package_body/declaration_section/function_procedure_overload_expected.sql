@@ -1,7 +1,5 @@
 
 
-
-
 /*RECREATE   PACKAGE BODY PACKAGE_OVERLOAD AS BEGIN
 
     PROCEDURE Out_Screen1(NM  NUMERIC(34, 8));
@@ -37,14 +35,10 @@
     END ]
 
     [-unconvertible RS-246918 FUNCTION Add_One_Num(M  NUMERIC(34, 8), K  VARCHAR) RETURNS VARCHAR(32765) AS
-/*
          DECLARE v_result VARCHAR(4000);
-    */
-BEGIN
-/*
-        v_result = [-unconvertible RS-245838 CAST(:M)] || :K;
+    BEGIN
+        v_result = CAST(:M AS VARCHAR) || :K;
         RETURN v_result;
-    */
-END ]
+    END ]
 
-  END ;*/
+END ;*/
