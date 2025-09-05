@@ -165,6 +165,7 @@ public class Ora2rdb {
         }
 
         block = parsedBlock + "\n" + block + "\n" + "*/";
+        RewritingListener.blocksWithErrorsAndExceptions.add(block);
         return block;
     }
 
@@ -221,6 +222,8 @@ public class Ora2rdb {
                         + "*/\n";
                 singleBlock = deleteMultiLineComment(singleBlock);
                 singleBlock = message + "/*" + singleBlock + "*/";
+
+                RewritingListener.blocksWithErrorsAndExceptions.add(singleBlock);
                 exceptions.append(e.getMessage()).append("\n");
             }
             blocksAfterScan.add(singleBlock);
@@ -248,6 +251,8 @@ public class Ora2rdb {
                 String message = "/*This SQL statement was not converted due to an exception. Please contact to fix it." + e.getMessage()
                         + "*/\n";
                 singleBlock = deleteMultiLineComment(singleBlock);
+
+                RewritingListener.blocksWithErrorsAndExceptions.add(singleBlock);
                 scriptAfterConversion.append(message).append("/*").append(singleBlock).append("*/").append("\n");
                 exceptions.append(e.getMessage()).append("\n");
             }
