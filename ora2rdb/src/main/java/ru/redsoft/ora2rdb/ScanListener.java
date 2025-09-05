@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import ru.redsoft.ora2rdb.PlSqlParser.*;
-import ru.redsoft.ora2rdb.comments.CommentedListener;
 
 public class ScanListener extends PlSqlParserBaseListener {
     private static final ScanListener INSTANCE = new ScanListener();
@@ -12,9 +11,6 @@ public class ScanListener extends PlSqlParserBaseListener {
     static Stack<StoredBlock> storedBlocksStack = new Stack<>();
     static String currentProcedureName;
     static String current_package_name = null;
-    /*StoredTrigger current_trigger = null;
-    String current_cursor_declaration = null;*/
-
 
     private ScanListener() {
     }

@@ -22,14 +22,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
     static ArrayList<String> nested_array_types = new ArrayList<>();
     static ArrayList<String> varray_types = new ArrayList<>();
 
-    static ArrayList<String> global_overload_func_proc = new ArrayList<>();
+    static ArrayList<String> global_overload_func = new ArrayList<>();
+    static ArrayList<String> global_overload_proc = new ArrayList<>();
 
-    /*public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
-        this.tokens = tokens;
-        this.rewriter = rewriter;
-    }*/
-
-    private CommentedListener(){}
+    private CommentedListener() {
+    }
 
     public static CommentedListener getInstance(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
         INSTANCE.rewriter = rewriter;
@@ -61,11 +58,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
         return tokens.getText(ctx);
     }
 
-    void commentBlock(int start_tok_idx, int stop_tok_idx) {
-        rewriter.insertBefore(start_tok_idx, "/*");
-        rewriter.insertAfter(stop_tok_idx, "*/");
+    void commentBlock(Token start_tok_idx, Token stop_tok_idx) {
+        rewriter.insertBefore(start_tok_idx.getTokenIndex(), "/*");
+        rewriter.insertAfter(stop_tok_idx.getTokenIndex(), "*/");
 
-        List<Token> multi_line_comments = tokens.getTokens(start_tok_idx, stop_tok_idx, PlSqlLexer.MULTI_LINE_COMMENT);
+        List<Token> multi_line_comments = tokens.getTokens(start_tok_idx.getTokenIndex(), stop_tok_idx.getTokenIndex(),
+                PlSqlLexer.MULTI_LINE_COMMENT);
 
         if (multi_line_comments != null)
             for (Token tok : multi_line_comments)
@@ -85,15 +83,14 @@ public class CommentedListener extends PlSqlParserBaseListener {
             insertAfter(unconvertableBlock.getBlockStop(), "]");
         }
         if (commentedBlock.isConvertAllBlock()) {
-            commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
-                    , commentedBlock.getParentContext().stop.getTokenIndex());
+            commentBlock(commentedBlock.getParentContext().start
+                    , commentedBlock.getParentContext().stop);
 
         } else if (commentedBlock.getStartDeclareBlock() == null
                 || commentedBlock.getStartBodyBlock() == null
                 || commentedBlock.getStopBodyBlock() == null) {
-
-            commentBlock(commentedBlock.getParentContext().start.getTokenIndex()
-                    , commentedBlock.getParentContext().stop.getTokenIndex());
+            commentBlock(commentedBlock.getParentContext().start
+                    , commentedBlock.getParentContext().stop);
         } else {
             insertAfter(commentedBlock.getStartDeclareBlock(), "\n/*");
             insertBefore(commentedBlock.getStartBodyBlock(), "*/\n");
@@ -106,34 +103,25 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterSql_script(Sql_scriptContext ctx) {
-
-        if (global_overload_func_proc.isEmpty())
+        if (global_overload_func.isEmpty())
             StorageInfo.stored_blocks_list.stream()
-                    .filter(e ->  e instanceof StoredFunction || e instanceof StoredProcedure)
+                    .filter(e -> e instanceof StoredFunction)
                     .collect(Collectors.groupingBy(
                             e -> Ora2rdb.getRealName(e.getName())))
                     .values().stream()
                     .filter(group -> group.size() > 1)
                     .flatMap(List::stream)
-                    .forEach(e -> global_overload_func_proc.add(e.getName()));
+                    .forEach(e -> global_overload_func.add(e.getName()));
 
-       /* // collect overload procedures
-        Finder.getAllRuleContextsIntoCtx(ctx, Create_procedure_bodyContext.class).stream()
-                .collect(Collectors.groupingBy(
-                        e -> Ora2rdb.getRealName(e.procedure_name().getText())))
-                .values().stream()
-                .filter(group -> group.size() >1)
-                .flatMap(List::stream)
-                .forEach(e -> global_overload_func_proc.add(e));
-        // collect overload functions
-        Finder.getAllRuleContextsIntoCtx(ctx, Create_function_bodyContext.class).stream()
-                .collect(Collectors.groupingBy(
-                        e -> Ora2rdb.getRealName(e.function_name().getText())))
-                .values().stream()
-                .filter(group -> group.size() >1)
-                .flatMap(List::stream)
-                .forEach(e -> global_overload_func_proc.add(e.));
-        */
+        if (global_overload_proc.isEmpty())
+            StorageInfo.stored_blocks_list.stream()
+                    .filter(e -> e instanceof StoredProcedure)
+                    .collect(Collectors.groupingBy(
+                            e -> Ora2rdb.getRealName(e.getName())))
+                    .values().stream()
+                    .filter(group -> group.size() > 1)
+                    .flatMap(List::stream)
+                    .forEach(e -> global_overload_proc.add(e.getName()));
     }
 
 
@@ -228,10 +216,8 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
 
         Object_tableContext objectTableContext = Finder.getFirstRuleContext(ctx, Object_tableContext.class);
-        if(objectTableContext != null){
+        if (objectTableContext != null)
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CREATE_OBJECT_TABLE);
-        }
-
     }
 
     @Override
@@ -273,7 +259,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
         // markup override create function
         String function_name = Ora2rdb.getRealName(getRuleText(ctx.function_name()));
-        if(global_overload_func_proc.contains(function_name)) {
+        if (global_overload_func.contains(function_name)) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OVERLOAD_STATEMENT);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -283,7 +269,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_spec().identifier().getText())))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -293,7 +279,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_body().identifier().getText())))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -303,7 +289,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.function_spec().identifier().getText())))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -313,7 +299,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.function_body().identifier().getText())))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
     }
@@ -338,7 +324,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
         }
         String procedure_name = Ora2rdb.getRealName(getRuleText(ctx.procedure_name()));
         // markup override create procedure
-        if(global_overload_func_proc.contains(procedure_name)) {
+        if (global_overload_proc.contains(procedure_name)) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.OVERLOAD_STATEMENT);
             currentBlock.peek().setConvertAllBlock(true);
         }
@@ -348,7 +334,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_spec().identifier().getText())))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -358,7 +344,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_body().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -368,7 +354,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.function_spec().identifier().getText())))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -378,7 +364,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.function_body().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
     }
@@ -534,7 +520,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.package_procedure_spec().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -544,7 +530,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.package_function_spec().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -589,7 +575,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_spec().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -599,7 +585,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.procedure_body().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -609,7 +595,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.function_spec().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -619,7 +605,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 .collect(Collectors.groupingBy(
                         e -> Ora2rdb.getRealName(e.function_body().identifier().getText()), Collectors.toList()))
                 .values().stream()
-                .filter(group -> group.size() >1)
+                .filter(group -> group.size() > 1)
                 .flatMap(List::stream)
                 .forEach(pac_odj -> currentBlock.peek().addUnconvertableBlock(pac_odj, Ticket.OVERLOAD_STATEMENT));
 
@@ -973,50 +959,37 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 unconvertableBlock.setBlockStop(iterator.stop);
                 if (iterator.iteration_control().size() >= 2)
                     currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
-//                    unconvertableBlock.addTicketNumber(Ticket.FOR_WITH_SET_ITERATOR_CONTROLS);
                 for (Iteration_controlContext iterationControl_ctx : iterator.iteration_control()) {
                     if (iterationControl_ctx.stepped_control() != null && iterationControl_ctx.stepped_control().BY() != null)
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
                 Values_indices_pairs_of_controlContext values_indices_pairs_of_control = Finder.getLastRuleContext(ctx, Values_indices_pairs_of_controlContext.class);
                 if (values_indices_pairs_of_control != null) {
                     if (values_indices_pairs_of_control.VALUES() != null) {
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                         if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
                             currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
-//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                             currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_VALUES_OF_CONTROL);
-//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_VALUES_OF_CONTROL);
                     } else if (values_indices_pairs_of_control.INDICES() != null) {
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                         if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
                             currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
-//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                             currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_INDICES_OF_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_INDICES_OF_CONTROL);
                     } else if (values_indices_pairs_of_control.PAIRS() != null) {
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                         if (Finder.getFirstRuleContext(ctx, Pred_clause_seqContext.class) != null)
                             currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
-//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                         if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                             currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
-//                            unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_PAIRS_OF_CONTROL);
                     }
                 }
                 Single_expression_controlContext single_expression_control = Finder.getLastRuleContext(ctx, Single_expression_controlContext.class);
                 if (single_expression_control != null) {
                     currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
-//                    unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
                     if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_SINGLE_EXPRESSION_CONTROL);
                 }
                 Stepped_controlContext steppedControl = Finder.getFirstRuleContext(ctx, Stepped_controlContext.class);
                 if (steppedControl != null) {
@@ -1024,29 +997,22 @@ public class CommentedListener extends PlSqlParserBaseListener {
                             || Finder.getFirstRuleContext(steppedControl.lower_bound(), General_element_partContext.class) != null
                             || Finder.getFirstRuleContext(steppedControl.upper_bound(), General_element_partContext.class) != null) {
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                     }
                     if (iterator.IMMUTABLE(0) != null || iterator.MUTABLE(0) != null)
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), iterator.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
             }
             Cursor_loop_paramContext cursorLoopParam = Finder.getFirstRuleContext(ctx, Cursor_loop_paramContext.class);
             if (cursorLoopParam != null) {
-//                unconvertableBlock.setBlockStop(cursorLoopParam.stop);
                 if (cursorLoopParam.DOUBLE_PERIOD() != null) {
                     if (Finder.getFirstRuleContext(cursorLoopParam.lower_bound(), General_element_partContext.class) != null
                             || Finder.getFirstRuleContext(cursorLoopParam.upper_bound(), General_element_partContext.class) != null)
                         currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), cursorLoopParam.stop, Ticket.FOR_LOOP_STEPPED_CONTROL);
-//                        unconvertableBlock.addTicketNumber(Ticket.FOR_LOOP_STEPPED_CONTROL);
                 }
                 if (cursorLoopParam.select_statement() != null &&
                         Finder.getParentRuleContext(ctx, Anonymous_blockContext.class) != null)
                     currentBlock.peek().addUnconvertableBlock(ctx.FOR().getSymbol(), cursorLoopParam.stop, Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
-//                unconvertableBlock.addTicketNumber(Ticket.CURSOR_FOR_LOOP_IN_ANONYMOUS_BLOCK);
             }
-
-//            currentBlock.peek().addUnconvertableBlock(unconvertableBlock);
         }
     }
 
@@ -1059,9 +1025,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterGeneral_element_part(General_element_partContext ctx) {
-//        if (labelLoopArea.empty())
-//            return;
-
         for (Id_expressionContext id : ctx.id_expression()) {
             if (!labelLoopArea.empty())
                 if (Ora2rdb.getRealName(id.getText()).equals(labelLoopArea.peek()))
@@ -1319,7 +1282,7 @@ public class CommentedListener extends PlSqlParserBaseListener {
 
 
         Update_set_clauseContext updateSetClause = Finder.getFirstRuleContext(ctx, Update_set_clauseContext.class);
-        if(updateSetClause != null && updateSetClause.VALUE() != null){
+        if (updateSetClause != null && updateSetClause.VALUE() != null) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.UPDATE_AN_OBJECT_TABLE);
         }
     }
@@ -1542,7 +1505,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.DECOMPOSE() != null
                 || ctx.NUMTODSINTERVAL() != null
                 || ctx.NUMTOYMINTERVAL() != null
-                /*|| ctx.RAWTONHEX() != null*/
                 || ctx.ROWIDTOCHAR() != null
                 || ctx.ROWIDTONCHAR() != null
                 || ctx.SCN_TO_TIMESTAMP() != null
@@ -1552,23 +1514,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.VALIDATE_CONVERSION() != null
                 || ctx.ASCIISTR() != null
                 || ctx.ASCIISTR() != null
-                /*|| ctx.TO_BINARY_DOUBLE() != null*/
-                /*|| ctx.TO_BINARY_FLOAT() != null*/
-                /*|| ctx.TO_BLOB() != null*/
-                /*|| ctx.TO_CHAR() != null*/
-                /*|| ctx.TO_CLOB() != null*/
-                /*|| ctx.TO_DATE() != null*/
                 || ctx.TO_DSINTERVAL() != null
                 || ctx.TO_LOB() != null
                 || ctx.TO_MULTI_BYTE() != null
-                /*|| ctx.TO_NCHAR() != null*/
-                /*|| ctx.TO_NCLOB() != null*/
-                /*|| ctx.TO_NUMBER() != null && ctx.format != null*/
                 || ctx.TO_SINGLE_BYTE() != null
-                /*|| ctx.TO_TIMESTAMP() != null*/
-                /*|| ctx.TO_TIMESTAMP_TZ() != null*/
                 || ctx.TO_YMINTERVAL() != null
-            /*|| ctx.CAST() != null*/
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CONVERT_FUNCTION);
         }
@@ -1653,11 +1603,12 @@ public class CommentedListener extends PlSqlParserBaseListener {
     }
 
 
-    public static void clearInfo(){
+    public static void clearInfo() {
         currentBlock.clear();
         associative_array_types.clear();
         nested_array_types.clear();
         varray_types.clear();
-        global_overload_func_proc.clear();
+        global_overload_func.clear();
+        global_overload_proc.clear();
     }
 }
