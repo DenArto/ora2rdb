@@ -396,24 +396,4 @@ public class SqlCodeParser {
     public Map<Integer, String> getPackageBlockNumber() {
         return packageBlockNumber;
     }
-
-    /*public String[] findLastIndexOfEndSubstring(String input) {
-        String[] patterns = {" END ", " END;", " end ", " end;"};
-        int lastIndex = -1;
-
-        for (String pattern : patterns) {
-            int index = input.lastIndexOf(pattern);
-            if (index > lastIndex) {
-                lastIndex = index;
-            }
-        }
-
-        if (lastIndex != -1) {
-            String firstPart = input.substring(0, lastIndex);
-            String secondPart = input.substring(lastIndex);
-            return new String[]{firstPart, secondPart};
-        } else {
-            return new String[]{input, ""};
-        }
-    }*/
 }
