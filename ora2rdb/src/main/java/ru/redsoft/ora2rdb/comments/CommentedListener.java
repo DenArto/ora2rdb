@@ -25,11 +25,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
     static ArrayList<String> global_overload_func = new ArrayList<>();
     static ArrayList<String> global_overload_proc = new ArrayList<>();
 
-    /*public CommentedListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
-        this.tokens = tokens;
-        this.rewriter = rewriter;
-    }*/
-
     private CommentedListener() {
     }
 
@@ -1508,7 +1503,6 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.DECOMPOSE() != null
                 || ctx.NUMTODSINTERVAL() != null
                 || ctx.NUMTOYMINTERVAL() != null
-                /*|| ctx.RAWTONHEX() != null*/
                 || ctx.ROWIDTOCHAR() != null
                 || ctx.ROWIDTONCHAR() != null
                 || ctx.SCN_TO_TIMESTAMP() != null
@@ -1518,23 +1512,11 @@ public class CommentedListener extends PlSqlParserBaseListener {
                 || ctx.VALIDATE_CONVERSION() != null
                 || ctx.ASCIISTR() != null
                 || ctx.ASCIISTR() != null
-                /*|| ctx.TO_BINARY_DOUBLE() != null*/
-                /*|| ctx.TO_BINARY_FLOAT() != null*/
-                /*|| ctx.TO_BLOB() != null*/
-                /*|| ctx.TO_CHAR() != null*/
-                /*|| ctx.TO_CLOB() != null*/
-                /*|| ctx.TO_DATE() != null*/
                 || ctx.TO_DSINTERVAL() != null
                 || ctx.TO_LOB() != null
                 || ctx.TO_MULTI_BYTE() != null
-                /*|| ctx.TO_NCHAR() != null*/
-                /*|| ctx.TO_NCLOB() != null*/
-                /*|| ctx.TO_NUMBER() != null && ctx.format != null*/
                 || ctx.TO_SINGLE_BYTE() != null
-                /*|| ctx.TO_TIMESTAMP() != null*/
-                /*|| ctx.TO_TIMESTAMP_TZ() != null*/
                 || ctx.TO_YMINTERVAL() != null
-            /*|| ctx.CAST() != null*/
         ) {
             currentBlock.peek().addUnconvertableBlock(ctx, Ticket.CONVERT_FUNCTION);
         }

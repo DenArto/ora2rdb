@@ -41,11 +41,6 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
     static List<String> blocksWithErrorsAndExceptions = new ArrayList<>();
 
-    /*public RewritingListener(CommonTokenStream tokens, TokenStreamRewriter rewriter) {
-        this.rewriter = rewriter;
-        this.tokens = tokens;
-    }*/
-
     private RewritingListener() {
     }
 
@@ -3730,7 +3725,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
 
         // two insertAfter to convert cursor%ROWCOUNT in for in <cursor>
         insertAfter(ctx.seq_of_statements(), "\n" + indentation + "\tFETCH " + cursorName + " INTO " + recName + ";\n"
-                + indentation /*+ "END"*/);
+                + indentation);
         insertAfter(getNextToken(ctx.seq_of_statements().stop), "END");
 
         insertAfter(ctx, "\n" + indentation + "CLOSE " + cursorName + ";\n");
