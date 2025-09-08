@@ -9,7 +9,7 @@ RETURNS INTEGER
 */
 BEGIN
 /*
-  [-unconvertible RS-239328 RS-238757 FOR power IN 2, REPEAT power*2 WHEN [-unconvertible RS-245388 MOD(power, 32)]= 0]
+  [-unconvertible RS-238757 RS-239328 FOR power IN 2, REPEAT power*2 WHEN [-unconvertible RS-245388 MOD(power, 32)]= 0] 
   LOOP
     if (power > 64) then
     BEGIN LEAVE;

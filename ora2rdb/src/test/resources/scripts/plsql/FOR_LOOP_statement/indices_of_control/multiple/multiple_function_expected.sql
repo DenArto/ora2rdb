@@ -13,7 +13,7 @@ RETURNS INTEGER
 */
 BEGIN
 /*
-   [-unconvertible RS-239328 RS-238757 RS-238745 FOR i IN INDICES OF vec1, INDICES OF vec2, 100]
+   [-unconvertible RS-238745 RS-238757 RS-239328 FOR i IN INDICES OF vec1, INDICES OF vec2, 100]
    LOOP
      summa = :summa + i;
    END LOOP
