@@ -294,13 +294,21 @@ public class Ora2rdb {
             }
         }
 
-        if(statistic){
-            if(stdout)
-                scriptAfterConversion.append("\n\n\n" + StorageInfo.unconvertibleConstructionsStatistic.getStatistic());
-            else
-                scriptAfterConversion.insert(0, StorageInfo.unconvertibleConstructionsStatistic.getStatistic() + "\n\n\n");
+        StringBuilder outputScript = new StringBuilder();
+        if(reorder){
+            outputScript.append(converter.getText());
+        }else{
+            outputScript.append(scriptAfterConversion.toString());
         }
-        printStream.print(scriptAfterConversion);
+
+        if (statistic) {
+            if (stdout)
+                outputScript.append("\n\n")
+                        .append(StorageInfo.unconvertibleConstructionsStatistic.getUnconvertibleConstructionsStatistic());
+            else
+                outputScript.insert(0, StorageInfo.unconvertibleConstructionsStatistic.getUnconvertibleConstructionsStatistic() + "\n\n");
+        }
+        printStream.print(outputScript);
         clear();
     }
 }

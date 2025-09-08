@@ -11,39 +11,39 @@ import java.util.List;
 public class UnconvertableBlock {
     private Token start;
     private Token stop;
-    private HashSet<Integer> ticketNumbers = new HashSet<Integer>();
+    private HashSet<Ticket> ticketSet = new HashSet<Ticket>();
 
     public boolean blockIsReady() {
-        return start != null && stop != null && !ticketNumbers.isEmpty();
+        return start != null && stop != null && !ticketSet.isEmpty();
     }
 
     public UnconvertableBlock() {
     }
 
-    public UnconvertableBlock(ParserRuleContext ctx, Integer ticketNumber) {
+    public UnconvertableBlock(ParserRuleContext ctx, Ticket ticket) {
         this.start = ctx.getStart();
         this.stop = ctx.getStop();
-        this.ticketNumbers.add(ticketNumber);
+        this.ticketSet.add(ticket);
     }
 
     public UnconvertableBlock(ParserRuleContext ctx) {
         this(ctx, null);
     }
 
-    public UnconvertableBlock(Token start, Token stop, Integer ticketNumber) {
+    public UnconvertableBlock(Token start, Token stop, Ticket ticket) {
         this.start = start;
         this.stop = stop;
-        this.ticketNumbers.add(ticketNumber);
+        this.ticketSet.add(ticket);
     }
 
     public UnconvertableBlock(Token start, Token stop) {
         this(start, stop, null);
     }
 
-    public UnconvertableBlock(TerminalNode term, Integer ticketNumber) {
+    public UnconvertableBlock(TerminalNode term, Ticket ticket) {
         this.start = term.getSymbol();
         this.stop = term.getSymbol();
-        this.ticketNumbers.add(ticketNumber);
+        this.ticketSet.add(ticket);
     }
 
     public Token getBlockStart() {
@@ -72,11 +72,11 @@ public class UnconvertableBlock {
         this.stop = ctx.getStop();
     }
 
-    public List<Integer> getTicketNumbersList() {
-        return new ArrayList<>(this.ticketNumbers);
+    public List<Ticket> getTicketNumbersList() {
+        return new ArrayList<>(this.ticketSet);
     }
 
     public void addTicketNumber(Ticket ticket) {
-        this.ticketNumbers.add(ticket.getTicketCode());
+        this.ticketSet.add(ticket);
     }
 }

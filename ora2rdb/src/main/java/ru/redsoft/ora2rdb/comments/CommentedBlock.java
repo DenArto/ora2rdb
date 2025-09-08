@@ -69,7 +69,7 @@ public class CommentedBlock {
         if(ctx != null) {
             int startIndex = ctx.getStart().getTokenIndex();
             if (!this.unconvertableBlockMap.containsKey(startIndex))
-                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(ctx, ticket.getTicketCode()));
+                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(ctx, ticket));
             else {
                 unconvertableBlockMap.get(startIndex).setBlockStop(ctx.getStop());
                 unconvertableBlockMap.get(startIndex).addTicketNumber(ticket);
@@ -85,7 +85,7 @@ public class CommentedBlock {
         if(start != null && stop != null) {
             int startIndex = start.getTokenIndex();
             if (!this.unconvertableBlockMap.containsKey(startIndex))
-                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(start, stop, ticket.getTicketCode()));
+                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(start, stop, ticket));
             else {
                 unconvertableBlockMap.get(startIndex).setBlockStop(stop);
                 unconvertableBlockMap.get(startIndex).addTicketNumber(ticket);
@@ -97,7 +97,7 @@ public class CommentedBlock {
     public void addUnconvertableBlock(TerminalNode term, Ticket ticket) {
         if(term != null) {
             int startIndex = term.getSymbol().getTokenIndex();
-            this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(term, ticket.getTicketCode()));
+            this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(term, ticket));
 //            this.unconvertableBlockList.add(new UnconvertableBlock(term, ticket.getTicketCode()));
         }
     }
@@ -106,7 +106,7 @@ public class CommentedBlock {
         if (start != null && stop != null) {
             int startIndex = start.getSymbol().getTokenIndex();
             if (!this.unconvertableBlockMap.containsKey(startIndex))
-                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(start.getSymbol(), stop.getSymbol(),ticket.getTicketCode()));
+                this.unconvertableBlockMap.put(startIndex, new UnconvertableBlock(start.getSymbol(), stop.getSymbol(),ticket));
             else {
                 unconvertableBlockMap.get(startIndex).setBlockStop(stop.getSymbol());
                 unconvertableBlockMap.get(startIndex).addTicketNumber(ticket);
