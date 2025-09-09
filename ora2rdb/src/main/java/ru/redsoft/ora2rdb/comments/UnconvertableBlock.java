@@ -5,13 +5,13 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.TreeSet;
 
 public class UnconvertableBlock {
     private Token start;
     private Token stop;
-    private HashSet<Ticket> ticketSet = new HashSet<Ticket>();
+    private TreeSet<Ticket> ticketSet = new TreeSet<Ticket>();
 
     public boolean blockIsReady() {
         return start != null && stop != null && !ticketSet.isEmpty();
