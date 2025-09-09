@@ -9,6 +9,8 @@ import ru.redsoft.ora2rdb.comments.*;
 
 public class Ora2rdb {
     public static boolean reorder = false;
+    public static boolean statistic = false;
+    public static boolean stdout = true;
     private static StringBuilder errors = new StringBuilder();
     private static StringBuilder exceptions = new StringBuilder();
     private static StringBuilder scriptAfterConversion = new StringBuilder();
@@ -48,6 +50,8 @@ public class Ora2rdb {
         errors = new StringBuilder();
         exceptions = new StringBuilder();
         scriptAfterConversion = new StringBuilder();
+        statistic = false;
+        stdout = true;
         blocksAfterScan = new ArrayList<>();
         inputStream = null;
         printStream.close();
@@ -67,6 +71,7 @@ public class Ora2rdb {
                 "                        dependencies. It allows to perform FORCE clause\n" +
                 "                        conversion. Use this option only for scripts which\n" +
                 "                        contain DB metadata.\n" +
+                "    -s                  Output of statistics on non-convertible constructions\n" +
                 "Notes:\n" +
                 "    \"stdin\" may be used as a value of <input_file>.");
     }
@@ -92,6 +97,7 @@ public class Ora2rdb {
                         if (i < args.length - 1) {
                             i++;
                             outputFile = args[i];
+                            stdout = false;
                         } else {
                             System.err.println("Missing argument for option: " + args[i]);
                             printUsage();
@@ -100,6 +106,9 @@ public class Ora2rdb {
                         break;
                     case "-r":
                         reorder = true;
+                        break;
+                    case "-s":
+                        statistic = true;
                         break;
                     default:
                         System.err.println("Unknown option: " + args[i]);
@@ -285,10 +294,21 @@ public class Ora2rdb {
             }
         }
 
-        if (reorder)
-            printStream.print(converter.getText());
-        else
-            printStream.print(scriptAfterConversion);
+        StringBuilder outputScript = new StringBuilder();
+        if(reorder){
+            outputScript.append(converter.getText());
+        }else{
+            outputScript.append(scriptAfterConversion.toString());
+        }
+
+        if (statistic) {
+            if (stdout)
+                outputScript.append("\n\n")
+                        .append(StorageInfo.unconvertibleConstructionsStatistic.getUnconvertibleConstructionsStatistic());
+            else
+                outputScript.insert(0, StorageInfo.unconvertibleConstructionsStatistic.getUnconvertibleConstructionsStatistic() + "\n\n");
+        }
+        printStream.print(outputScript);
         clear();
     }
 }

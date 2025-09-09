@@ -11,7 +11,7 @@ EXECUTE BLOCK
 */
 BEGIN
 /*
-   [-unconvertible RS-239328 RS-238757 RS-238760 FOR i IN VALUES OF vec1, VALUES OF vec2, 'Lily']
+   [-unconvertible RS-238760 RS-238757 RS-239328 FOR i IN VALUES OF vec1, VALUES OF vec2, 'Lily']
    LOOP
      summa = :summa || i;
    END LOOP

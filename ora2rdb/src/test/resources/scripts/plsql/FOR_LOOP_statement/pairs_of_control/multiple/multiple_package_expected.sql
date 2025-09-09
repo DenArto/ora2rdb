@@ -26,7 +26,7 @@ AS BEGIN
    */
 BEGIN
 /*
-     [-unconvertible RS-239328 RS-238756 FOR i, j IN PAIRS OF vec1, PAIRS OF vec2]
+     [-unconvertible RS-238756 RS-239328 FOR i, j IN PAIRS OF vec1, PAIRS OF vec2]
      LOOP
        summa = :summa + i;
      END LOOP
@@ -45,7 +45,7 @@ END
    */
 BEGIN
 /*
-     [-unconvertible RS-239328 RS-238756 FOR i, j IN PAIRS OF vec1, PAIRS OF vec2]
+     [-unconvertible RS-238756 RS-239328 FOR i, j IN PAIRS OF vec1, PAIRS OF vec2]
      LOOP
        summa = :summa + i;
      END LOOP

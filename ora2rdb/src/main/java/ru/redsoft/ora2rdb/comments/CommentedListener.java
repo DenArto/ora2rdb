@@ -75,8 +75,10 @@ public class CommentedListener extends PlSqlParserBaseListener {
             if (!unconvertableBlock.blockIsReady())
                 continue;
             StringBuilder ticketNumbers = new StringBuilder();
-            for (int ticket : unconvertableBlock.getTicketNumbersList())
-                ticketNumbers.append("RS-").append(ticket).append(" ");
+            for (Ticket ticket : unconvertableBlock.getTicketNumbersList()) {
+                ticketNumbers.append("RS-").append(ticket.getTicketCode()).append(" ");
+                StorageInfo.unconvertibleConstructionsStatistic.addTicket(ticket);
+            }
             insertBefore(unconvertableBlock.getBlockStart(), "[-unconvertible " + ticketNumbers);
             insertAfter(unconvertableBlock.getBlockStop(), "]");
         }

@@ -22,7 +22,7 @@ AS BEGIN
    */
 BEGIN
 /*
-     [-unconvertible RS-239328 RS-238758 RS-238757 FOR i IN 1..3 WHEN i < 3, i]
+     [-unconvertible RS-238758 RS-238757 RS-239328 FOR i IN 1..3 WHEN i < 3, i]
      LOOP
        summa = :summa + i;
      END LOOP
@@ -37,7 +37,7 @@ END
    */
 BEGIN
 /*
-     [-unconvertible RS-239328 RS-238758 RS-238757 FOR i IN 1..3 WHEN i < 3, i]
+     [-unconvertible RS-238758 RS-238757 RS-239328 FOR i IN 1..3 WHEN i < 3, i]
      LOOP
        summa = :summa + i;
      END LOOP
