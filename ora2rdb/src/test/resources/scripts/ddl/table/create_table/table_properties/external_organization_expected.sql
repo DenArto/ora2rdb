@@ -1,17 +1,4 @@
 CREATE TABLE external_employees
 (
     department_id  NUMERIC(4)
-)
-[-unconvertible ORGANIZATION EXTERNAL
-(
-    TYPE ORACLE_LOADER
-    DEFAULT DIRECTORY data_dir
-    ACCESS PARAMETERS
-    (
-        RECORDS DELIMITED BY NEWLINE
-        FIELDS TERMINATED BY ','
-        MISSING FIELD VALUES ARE NULL
-    )
-    LOCATION ('employees.csv')
-)
-REJECT LIMIT UNLIMITED];
+);

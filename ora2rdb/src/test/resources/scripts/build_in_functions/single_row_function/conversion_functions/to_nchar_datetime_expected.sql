@@ -1,30 +1,86 @@
-EXECUTE BLOCK 
-AS
-  DECLARE p1 DATE =  date '2011-11-03';
-  DECLARE p2 TIMESTAMP = LOCALTIMESTAMP;
-  DECLARE p3 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
-  DECLARE res NCHAR VARYING(100);
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+EXECUTE BLOCK
+ AS
+
+   DECLARE p1 TIMESTAMP =  date '2011-11-03';
+   DECLARE p2 TIMESTAMP = LOCALTIMESTAMP;
+   DECLARE p3 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
+   DECLARE res VARCHAR(100);
 BEGIN
-  select CAST(:p1 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  select CAST(:p1 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  select CAST(:p1 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  
-  select CAST(:p2 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  select CAST(:p2 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  select CAST(:p2 AS NCHAR VARYING(32765)) from rdb$database into :res;
-    
-  select CAST(:p3 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  select CAST(:p3 AS NCHAR VARYING(32765)) from rdb$database into :res;
-  select CAST(:p3 AS NCHAR VARYING(32765)) from rdb$database into :res;
+  select CAST(:p1 AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1  AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1   AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p2 AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2  AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2   AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p3 AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p3  AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p3   AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;
 
+EXECUTE BLOCK
+ AS
+
 /*
-DECLARE
-  [-unconvertible p4 TIMESTAMP WITH LOCAL TIME ZONE := timestamp '2020-10-25 02:30:00+02:00';]
-  res NVARCHAR2(100);
-BEGIN
-  select [-unconvertible TO_NCHAR(p4)] into res from dual;
-  select [-unconvertible TO_NCHAR(p4, 'DD-MON-YYYY')] into res from dual;
-  select [-unconvertible TO_NCHAR(p4, 'DD-MON-YYYY', 'NLS_DATE_LANGUAGE = american')] into res from dual;
-END;
+   DECLARE p4 [-unconvertible RS-244046 TIMESTAMP WITH LOCAL TIME ZONE] = timestamp '2020-10-25 02:30:00+02:00';
+   DECLARE res VARCHAR(100);
 */
+BEGIN
+/*
+  select CAST(:p4 AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4  AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4   AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+*/
+END;

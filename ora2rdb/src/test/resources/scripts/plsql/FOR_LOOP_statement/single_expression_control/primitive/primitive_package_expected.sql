@@ -1,41 +1,48 @@
-CREATE OR ALTER PACKAGE Pack_Primitive
-AS BEGIN
-   FUNCTION PF_Primitive 
-   RETURNS INTEGER;
-   PROCEDURE PP_Primitive; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Primitive
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Primitive
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Primitive 
+   RETURNS INTEGER;  
+   PROCEDURE PP_Primitive;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Primitive
+AS BEGIN  
    FUNCTION PF_Primitive
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE done CHAR(1) = 'F';
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
-     WHILE (1=1) DO
-     BEGIN
-       i_FOR1 = 1;
-       summa = :summa + i_FOR1;
-       done = 'T';
-       LEAVE;
-     END
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE done CHAR(1) = 'F';
+   */
+BEGIN
+/*
+     [-unconvertible RS-238757 FOR i IN 1] LOOP
+      summa = :summa + i;
+      done = 'T';
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Primitive
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE done CHAR(1) = 'F';
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
-     WHILE (1=1) DO
-     BEGIN
-       i_FOR1 = 1;
-       summa = :summa + i_FOR1;
-       done = 'T';
-       LEAVE;
-     END
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE done CHAR(1) = 'F';
+   */
+BEGIN
+/*
+     [-unconvertible RS-238757 FOR i IN 1] LOOP
+      summa = :summa + i;
+      done = 'T';
+     END LOOP
+   */
+END   
+  END; 

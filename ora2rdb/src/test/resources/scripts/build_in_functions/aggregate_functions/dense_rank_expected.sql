@@ -1,3 +1,3 @@
-SELECT [-unconvertible DENSE_RANK(15500, .05) WITHIN GROUP
-  (ORDER BY salary DESC, commission_pct)] "Dense Rank"
+SELECT DENSE_RANK(15500, .05) WITHIN GROUP
+  (ORDER BY salary DESC NULLS FIRST, commission_pct ASC NULLS LAST) "Dense Rank"
   FROM employees;

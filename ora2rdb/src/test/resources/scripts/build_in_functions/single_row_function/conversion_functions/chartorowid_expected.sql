@@ -1,5 +1,3 @@
-/*
-SELECT last_name
+/*SELECT last_name
   FROM employees
-  WHERE [-unconvertible ROWID] = [-unconvertible CHARTOROWID('AAAFd1AAFAAAABSAA/')];
-*/
+  WHERE RDB$DB_KEY = [-unconvertible RS-245838 CHARTOROWID('AAAFd1AAFAAAABSAA/')];*/

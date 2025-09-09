@@ -1,6 +1,7 @@
-CREATE PROCEDURE P_Grade_meaning1 (degree INTEGER, res OUT CHAR)
+CREATE PROCEDURE P_Grade_meaning1 (degree INTEGER)
 IS
   pass BOOLEAN := FALSE;
+  res CHAR;
 BEGIN
     res := '';
     IF degree >= 10 THEN

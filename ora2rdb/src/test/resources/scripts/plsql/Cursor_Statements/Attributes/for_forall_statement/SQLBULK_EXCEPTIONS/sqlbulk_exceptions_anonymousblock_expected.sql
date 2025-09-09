@@ -1,26 +1,35 @@
+CREATE EXCEPTION BULK_ERRORS
+	'BULK_ERRORS EXCEPTION';
+
 EXECUTE BLOCK
-AS
+ AS
+
 /*
-  bulk_errors EXCEPTION;
-  PRAGMA EXCEPTION_INIT (bulk_errors, -24381);
-  TYPE namelist_t IS TABLE OF VARCHAR2(32767);
-  
-  enames_with_errors namelist_t := namelist_t ('ABC', 'DEF', NULL, /* Фамилия должна быть отлична от NULL */ 
-                                               'LITTLE', RPAD ('BIGBIGGERBIGGEST', 250, 'ABC'), /* Слишком длинное */ 
-                                               'SMITHIE');
+  --bulk_errors EXCEPTION;
+  [-unconvertible RS-239346 TYPE namelist_t IS TABLE OF VARCHAR(32767);]
+
+  [-unconvertible RS-239346 enames_with_errors namelist_t] = [-unconvertible RS-239380 namelist_t ('ABC', 'DEF', NULL,
+                                               'LITTLE', [-unconvertible RS-245294 RPAD ('BIGBIGGERBIGGEST', 250, 'ABC')],
+                                               'SMITHIE')];
+
+  DECLARE VARIABLE indx INTEGER;
 */
 BEGIN
 /*
-  FORALL indx IN enames_with_errors.FIRST .. enames_with_errors.LAST SAVE EXCEPTIONS
-    UPDATE EMPLOYEES SET last_name = enames_with_errors (indx);
-  
-  EXCEPTION
-    WHEN bulk_errors
-    THEN
-      FOR indx IN 1 .. SQL%BULK_EXCEPTIONS.COUNT
-      LOOP
-        DBMS_OUTPUT.PUT_LINE ('Error '|| indx || ' occurred during ' || 'iteration ' || SQL%BULK_EXCEPTIONS (indx).ERROR_INDEX || ' updating name to '|| enames_with_errors (SQL%BULK_EXCEPTIONS (indx).ERROR_INDEX));
-        DBMS_OUTPUT.PUT_LINE ('Oracle error is ' || SQLERRM ( -1 * SQL%BULK_EXCEPTIONS (indx).ERROR_CODE));
-      END LOOP;
+  [-unconvertible RS-240654 FORALL indx IN enames_with_errors.FIRST .. enames_with_errors.LAST SAVE EXCEPTIONS
+    UPDATE EMPLOYEES SET last_name = enames_with_errors (indx)];
+
+  /*EXCEPTION*/
+    WHEN EXCEPTION BULK_ERRORS
+    DO
+      BEGIN
+	      indx = 1;
+      WHILE ( indx <= SQL%BULK_EXCEPTIONS.COUNT) DO
+      BEGIN
+        RDB$TRACE_MSG ('Error '|| :indx || ' occurred during ' || 'iteration ' || SQL%BULK_EXCEPTIONS (:indx).ERROR_INDEX || ' updating name to '|| enames_with_errors (SQL%BULK_EXCEPTIONS (:indx).ERROR_INDEX), TRUE);
+        RDB$TRACE_MSG ('Oracle error is ' || SQLERRM ( -1 * SQL%BULK_EXCEPTIONS (:indx).ERROR_CODE), TRUE);
+      indx = indx + 1;
+      END
+      END
 */
 END;

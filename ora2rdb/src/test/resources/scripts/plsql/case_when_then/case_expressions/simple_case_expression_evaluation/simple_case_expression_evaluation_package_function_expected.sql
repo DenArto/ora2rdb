@@ -2,7 +2,7 @@ CREATE OR ALTER PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION simple_case_function RETURNS VARCHAR(32765);
-END /*PACKAGE_NAME*/;
+END;
 
 RECREATE PACKAGE BODY package_name
 AS BEGIN
@@ -13,9 +13,9 @@ AS BEGIN
         DECLARE status VARCHAR(20);
     BEGIN
         status =
-	        CASE :data_val+5
-		        WHEN 10 THEN 'outlier'
+	        CASE
+		        WHEN :data_val+5 = 10 THEN 'outlier'
 	        END;
         RETURN status;
     END
-END /*PACKAGE_NAME*/;
+END;

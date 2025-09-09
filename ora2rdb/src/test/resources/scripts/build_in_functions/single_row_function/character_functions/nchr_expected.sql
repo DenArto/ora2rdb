@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NCHR(187)] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 NCHR(187)] FROM RDB$DATABASE;*/

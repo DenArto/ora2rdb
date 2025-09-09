@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible SOUNDEX ('smith')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 SOUNDEX ('smith')] FROM RDB$DATABASE;*/

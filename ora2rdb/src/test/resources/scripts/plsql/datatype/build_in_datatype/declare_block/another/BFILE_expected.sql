@@ -1,9 +1,12 @@
-/*
 CREATE PROCEDURE PROCEDURE_NAME
-SQL SECURITY DEFINER
-AS
-  DECLARE var [-unconvertible BFILE];
-BEGIN
 
-END;
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE var [-unconvertible RS-244032 BFILE];
 */
+BEGIN
+/*
+   
+*/
+END;

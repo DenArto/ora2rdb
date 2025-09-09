@@ -1,39 +1,46 @@
-CREATE OR ALTER PACKAGE Pack_Index_With_Label
-AS BEGIN
-   FUNCTION PF_Index_With_Label
-   RETURNS INTEGER;
-   PROCEDURE PP_Index_With_Label; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Index_With_Label
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Index_With_Label
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Index_With_Label
+   RETURNS INTEGER;  
+   PROCEDURE PP_Index_With_Label;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Index_With_Label
+AS BEGIN  
    FUNCTION PF_Index_With_Label
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
      forlabel:
-     WHILE (1=1) DO
-     BEGIN
-       i_FOR1 = 1;
-       summa = :summa + i_FOR1;
-       LEAVE;
-     END
+     [-unconvertible RS-238757 FOR i IN 1] LOOP
+        summa = :summa + [-unconvertible RS-239627 forlabel.i];
+     END LOOP 
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Index_With_Label
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
      forlabel:
-     WHILE (1=1) DO
-     BEGIN
-       i_FOR1 = 1;
-       summa = :summa + i_FOR1;
-       LEAVE;
-     END
-   END
-END; 
+     [-unconvertible RS-238757 FOR i IN 1] LOOP
+        summa = :summa + [-unconvertible RS-239627 forlabel.i];
+     END LOOP 
+   */
+END   
+  END; 

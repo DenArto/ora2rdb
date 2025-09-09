@@ -22,7 +22,7 @@ AS BEGIN
     		appraisal = 'Good';
     	END
     	ELSE BEGIN
-    		EXCEPTION CASE_NOT_FOUND;
+    		appraisal = 'No such grade';
     	END
     END
 END;

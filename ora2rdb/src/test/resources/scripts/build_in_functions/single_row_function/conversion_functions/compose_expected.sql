@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible COMPOSE('o' || UNISTR('\0308'))] FROM DUAL; 
-*/
+/*SELECT [-unconvertible RS-245838 COMPOSE('o' || [-unconvertible RS-245838 UNISTR('\0308')])] FROM RDB$DATABASE;*/ 

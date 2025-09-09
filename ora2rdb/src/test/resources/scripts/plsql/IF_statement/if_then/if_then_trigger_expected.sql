@@ -1,12 +1,14 @@
 CREATE OR ALTER TRIGGER T_Grade_meaning1
   AFTER INSERT
   ON students
+SQL SECURITY DEFINER
 AS
-    DECLARE degree INTEGER;
-    DECLARE pass CHAR(1) = 'F';
-    DECLARE res  CHAR(15) = '';
+
+     DECLARE degree INT128;
+     DECLARE pass CHAR(1) = 'F';
+     DECLARE res  CHAR(15) = '';
 BEGIN
-   degree = NEW.mark;
+   degree = :NEW.mark;
    IF (:degree > 10) THEN
    BEGIN
      res = 'Good';
@@ -16,7 +18,9 @@ BEGIN
    BEGIN
       res = 'Low';
       pass = 'F';
-   END    
+   END
    IF (:degree < 5) THEN
-      res = 'Too low';  
-END /*T_Grade_meaning1*/;
+   BEGIN
+      res = 'Too low';
+   END
+END ;

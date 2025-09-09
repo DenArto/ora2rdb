@@ -1,6 +1,3 @@
-/*
-SELECT [-unconvertible TRANSLATE ('Hello World' USING CHAR_CS)] FROM DUAL;
-*/
-/*
-SELECT [-unconvertible TRANSLATE ('Hello World' USING NCHAR_CS)] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 TRANSLATE ('Hello World' USING CHAR_CS)] FROM RDB$DATABASE;*/
+
+/*SELECT [-unconvertible RS-245294 TRANSLATE ('Hello World' USING NCHAR_CS)] FROM RDB$DATABASE;*/

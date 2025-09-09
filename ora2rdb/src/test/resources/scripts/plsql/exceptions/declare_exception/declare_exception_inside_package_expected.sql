@@ -1,12 +1,15 @@
-CREATE EXCEPTION exc_too_young 'exc_too_young exception';
-CREATE EXCEPTION exc_too_young_2 'exc_too_young_2 exception';
+CREATE EXCEPTION EXC_TOO_YOUNG
+	'EXC_TOO_YOUNG EXCEPTION';
+CREATE EXCEPTION EXC_TOO_YOUNG_2
+	'EXC_TOO_YOUNG_2 EXCEPTION';
+/*CREATE PACKAGE errnums
+ SQL SECURITY DEFINER
+AS BEGIN 
+    --[-unconvertible RS-245963 exc_too_young EXCEPTION;]  
+  END;*/
 
-CREATE PACKAGE errnums
-AS BEGIN
-    /*exc_too_young EXCEPTION;*/
-END;
 
-CREATE PACKAGE BODY errnums
-AS BEGIN
-    /*exc_too_young_2 EXCEPTION;*/
-END;
+/*CREATE PACKAGE BODY errnums
+AS BEGIN 
+    --[-unconvertible RS-245963 exc_too_young_2 EXCEPTION;]  
+  END;*/

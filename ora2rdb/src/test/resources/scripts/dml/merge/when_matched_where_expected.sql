@@ -1,5 +1,5 @@
-MERGE INTO bonuses t
+/*MERGE INTO bonuses t
    USING bonuses2 s
    ON (t.employee_id = s.employee_id)
-    WHEN MATCHED AND s.employee_id < 159
-    THEN UPDATE SET bonus = DEFAULT;
+    WHEN MATCHED THEN UPDATE SET bonus = DEFAULT
+    [-unconvertible RS-242485 WHERE s.employee_id < 159];*/

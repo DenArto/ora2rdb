@@ -1,28 +1,91 @@
-EXECUTE BLOCK 
-AS
-  DECLARE p1 DECFLOAT(16) = 123.45;
-  DECLARE p2 CHAR(6) = '123.45';
-  DECLARE p3 INTEGER = 100;
-  DECLARE p4 NCHAR VARYING(10) = '100';
-  DECLARE res DECFLOAT(34);
-BEGIN
-  select CAST(:p1 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p1 AS DECFLOAT(34)) from rdb$database into :res;
-  
-  select CAST(:p2 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p2 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p2 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p2 AS DECFLOAT(34)) from rdb$database into :res;
-  
-  select CAST(:p3 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p3 AS DECFLOAT(34)) from rdb$database into :res;
-  
-  select CAST(:p4 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p4 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p4 AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST(:p4 AS DECFLOAT(34)) from rdb$database into :res;
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
 
-  select CAST('INF' AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST('-INF' AS DECFLOAT(34)) from rdb$database into :res;
-  select CAST('NaN' AS DECFLOAT(34)) from rdb$database into :res;
+EXECUTE BLOCK
+ AS
+   DECLARE p1 FLOAT = 123.45;
+   DECLARE p2 CHAR(6) = '123.45';
+   DECLARE p3 INT128 = 100;
+   DECLARE p4 VARCHAR(10) = '100';
+   DECLARE res DOUBLE PRECISION;
+BEGIN
+  select CAST(:p1 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p2 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p3 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p3 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p4 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST('INF' AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST('-INF' AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST('NaN' AS DECFLOAT(34))
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;

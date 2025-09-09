@@ -1,3 +1,4 @@
+-- RS-243163
 CREATE TABLE sample_regional_sales
       (deptno number, item_no varchar2(20),
        txn_date date, txn_amount number, state varchar2(2))

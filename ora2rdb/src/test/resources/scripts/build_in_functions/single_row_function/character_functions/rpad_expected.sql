@@ -1,22 +1,10 @@
-CREATE FUNCTION RPAD_CUSTOM (str1 VARCHAR(20), n INTEGER, str2 VARCHAR(20) = ' ') 
-RETURNS VARCHAR(20) 
-AS
-BEGIN
-  IF (str2 || 'R' = 'R' OR str1 || 'R' = 'R') THEN
-    RETURN NULL;
-  IF (n <= 0) THEN
-    RETURN NULL;
-  RETURN RPAD(str1, n, str2);
-END;
-
-
-SELECT RPAD_CUSTOM ('Hello' , 12) FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('World' , 12, ',') FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('Hello' , 12, '') FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('World' , 12, 'abc') FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('Hello' , 12, 'abcdefghij') FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('World' , 2) FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('World' , 2, '') FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('Hello' , 2, ',') FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('World' , 0) FROM RDB$DATABASE;
-SELECT RPAD_CUSTOM ('World' , -1) FROM RDB$DATABASE;
+/*SELECT [-unconvertible RS-245294 RPAD ('Hello' , 12)] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('World' , 12, ',')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('Hello' , 12, '')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('World' , 12, 'abc')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('Hello' , 12, 'abcdefghij')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('World' , 2)] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('World' , 2, '')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('Hello' , 2, ',')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('World' , 0)] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RPAD ('World' , -1)] FROM RDB$DATABASE;*/

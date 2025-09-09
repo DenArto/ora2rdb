@@ -1,7 +1,7 @@
 CREATE OR ALTER PACKAGE PACKAGE_NAME
 SQL SECURITY DEFINER
 AS BEGIN
-/*
-    [-unconvertible TYPE rec_type IS RECORD (id NUMBER, name VARCHAR2(100))];
-*/
-END /*PACKAGE_NAME*/;
+
+    DECLARE TYPE rec_type (id NUMERIC(34, 8), name VARCHAR(100));
+
+END ;

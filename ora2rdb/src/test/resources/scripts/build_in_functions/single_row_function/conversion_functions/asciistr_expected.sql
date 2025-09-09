@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible ASCIISTR('ABÄCDE')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245838 ASCIISTR('AB\00C4CDE')] FROM RDB$DATABASE;*/

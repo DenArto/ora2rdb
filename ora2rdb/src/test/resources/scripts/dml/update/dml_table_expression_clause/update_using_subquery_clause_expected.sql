@@ -1,1 +1,1 @@
-update [-unconvertible (select TITLE from books)] set TITLE = 'C#';
+/*update [-unconvertible RS-242218 (select TITLE from books)] set TITLE = 'C#';*/

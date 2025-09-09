@@ -1,1 +1,1 @@
-select json_arrayagg (option_r [-unconvertible FORMAT JSON] returning varchar(50)) from options;
+select json_arrayagg (option_r FORMAT JSON returning VARCHAR(50)) from options;

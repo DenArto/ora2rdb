@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLS_CHARSET_ID('ja16euc')] FROM DUAL; 
-*/
+/*SELECT [-unconvertible RS-245294 NLS_CHARSET_ID('ja16euc')] FROM RDB$DATABASE;*/

@@ -1,8 +1,20 @@
-EXECUTE BLOCK 
-AS
-  DECLARE p1 BLOB;
-  DECLARE res BLOB SUB_TYPE TEXT;
-BEGIN 
-  select CAST(:p1 AS BLOB SUB_TYPE TEXT) from rdb$database into :res;
-  select CAST(:p1 AS BLOB SUB_TYPE TEXT) from rdb$database into :res;
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+EXECUTE BLOCK
+ AS
+
+   DECLARE p1 BLOB;
+   DECLARE res BLOB SUB_TYPE TEXT;
+BEGIN
+  select CAST(:p1 AS BLOB SUB_TYPE TEXT)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1 AS BLOB SUB_TYPE TEXT  )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;

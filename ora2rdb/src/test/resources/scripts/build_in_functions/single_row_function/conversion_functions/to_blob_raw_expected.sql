@@ -1,10 +1,21 @@
-EXECUTE BLOCK 
-AS
-  DECLARE p1 BINARY(56) = 'hello';
-  DECLARE p2 VARBINARY(32765) = 'world';
-  DECLARE res BLOB;
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+EXECUTE BLOCK
+ AS
+   DECLARE p1 BINARY(56) = 'hello';
+   DECLARE p2  BLOB = 'world';
+   DECLARE res BLOB;
 BEGIN
-  select CAST(:p1 AS BLOB) from rdb$database into :res;
-  
-  select CAST(:p2 AS BLOB) from rdb$database into :res;
+  select CAST(:p1 AS BLOB)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p2 AS BLOB)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;

@@ -1,1 +1,1 @@
--- подумать
+CREATE INDEX po_xmlindex_ix ON po_binxml (OBJECT_VALUE) IN TABLESPACE PRIMARY;

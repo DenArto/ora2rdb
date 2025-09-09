@@ -2,7 +2,9 @@ CREATE OR REPLACE PACKAGE Pack_Grade_meaning7
 AS 
    FUNCTION PF_Grade_meaning7 (score NUMERIC, subject VARCHAR2) 
    RETURN VARCHAR2;
-   PROCEDURE PP_Grade_meaning7 (score NUMERIC, subject VARCHAR2); 
+
+   PROCEDURE PP_Grade_meaning7 (score NUMERIC, subject VARCHAR2);
+
 END Pack_Grade_meaning7; 
 
 CREATE OR REPLACE PACKAGE BODY Pack_Grade_meaning7
@@ -14,21 +16,21 @@ AS
      res  CHAR(15) := '';
    BEGIN
      IF score > 50 THEN
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Информатика' THEN
+        ELSIF subject = 'Computer Science' THEN
             res := 'Good';
             pass := TRUE;
         END IF;
      ELSE
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Poor';
             pass := FALSE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Poor';
             pass := FALSE;
         END IF;
@@ -42,21 +44,21 @@ AS
      res  CHAR(15) := '';
    BEGIN
      IF score > 50 THEN
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Good';
             pass := TRUE;
-        ELSIF subject = 'Информатика' THEN
+        ELSIF subject = 'Computer Science' THEN
             res := 'Good';
             pass := TRUE;
         END IF;
      ELSE
-        IF subject = 'Математика' THEN
+        IF subject = 'Mathematics' THEN
             res := 'Poor';
             pass := FALSE;
-        ELSIF subject = 'Физика' THEN
+        ELSIF subject = 'Physics' THEN
             res := 'Poor';
             pass := FALSE;
         END IF;

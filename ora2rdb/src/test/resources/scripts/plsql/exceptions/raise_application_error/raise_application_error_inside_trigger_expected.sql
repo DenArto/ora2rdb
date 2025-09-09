@@ -1,12 +1,15 @@
-CREATE EXCEPTION invalid_company_id 'invalid_company_id exception';
+CREATE EXCEPTION CUSTOM_EXCEPTION
+	'error';
+CREATE EXCEPTION PAST_DUE
+	'PAST_DUE EXCEPTION';
 
 CREATE TRIGGER T_Grade_meaning1
     AFTER INSERT
     ON EMPLOYEES
-    SQL SECURITY DEFINER
+SQL SECURITY DEFINER
 AS
-    /*past_due  EXCEPTION;*/
-    /*PRAGMA EXCEPTION_INIT (past_due, -20000);*/
+
+    --past_due  EXCEPTION;
 BEGIN
-    EXCEPTION past_due( 'Account past due.');
+    EXCEPTION CUSTOM_EXCEPTION( 'Account past due.');
 END;

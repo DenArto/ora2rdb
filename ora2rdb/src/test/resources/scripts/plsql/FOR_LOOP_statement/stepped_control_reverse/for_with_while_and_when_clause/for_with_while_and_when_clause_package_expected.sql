@@ -1,55 +1,46 @@
-CREATE OR ALTER PACKAGE Pack_For_With_While_and_When
-AS BEGIN
-   FUNCTION PF_For_With_While_and_When
-   RETURNS INTEGER;
-   PROCEDURE PP_For_With_While_and_When; 
-END; 
 
-RECREATE PACKAGE BODY Pack_For_With_While_and_When
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_For_With_While_and_When
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_For_With_While_and_When
+   RETURNS INTEGER;  
+   PROCEDURE PP_For_With_While_and_When;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_For_With_While_and_When
+AS BEGIN  
    FUNCTION PF_For_With_While_and_When
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 10;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-       IF (NOT(i_FOR1 > 5)) THEN LEAVE;
-       IF (NOT (i_FOR1 != 8)) THEN                       
-       BEGIN 
-         i_FOR1 = i_FOR1 - 1; 
-         CONTINUE;
-       END
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238758 FOR i IN REVERSE 1..10 WHILE i > 5 WHEN i != 8]
+     LOOP
+      summa = :summa + i;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_For_With_While_and_When
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 10;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-       IF (NOT(i_FOR1 > 5)) THEN LEAVE;
-       IF (NOT (i_FOR1 != 8)) THEN                       
-       BEGIN 
-         i_FOR1 = i_FOR1 - 1; 
-         CONTINUE;
-       END
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238758 FOR i IN REVERSE 1..10 WHILE i > 5 WHEN i != 8]
+     LOOP
+      summa = :summa + i;
+     END LOOP
+   */
+END   
+  END;

@@ -1,3 +1,4 @@
+-- RS-243163
 CREATE TABLE sales_by_region (item# INTEGER, qty INTEGER,
              store_name VARCHAR(30), state_code VARCHAR(2),
              sale_date DATE)

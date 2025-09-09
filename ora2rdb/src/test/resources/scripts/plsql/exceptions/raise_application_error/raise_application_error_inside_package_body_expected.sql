@@ -1,17 +1,22 @@
-CREATE EXCEPTION past_due 'past_due exception';
-
+CREATE EXCEPTION CUSTOM_EXCEPTION
+	'error';
+CREATE EXCEPTION PAST_DUE
+	'PAST_DUE EXCEPTION';
 CREATE OR ALTER PACKAGE errnums
+ SQL SECURITY DEFINER
 AS BEGIN
     PROCEDURE PP_Grade_meaning1;
 END;
 
-RECREATE PACKAGE BODY errnums
+
+/*RECREATE   PACKAGE BODY errnums
 AS BEGIN
-    /*past_due  EXCEPTION;*/
-    /*PRAGMA EXCEPTION_INIT (past_due, -20000);*/
+    --[-unconvertible RS-245963 past_due  EXCEPTION;]                       -- declare exception
+
+
     PROCEDURE PP_Grade_meaning1
-        AS
+    AS
     BEGIN
-        EXCEPTION past_due( 'Account past due.');
+        EXCEPTION CUSTOM_EXCEPTION( 'Account past due.');
     END
-END;
+END;*/

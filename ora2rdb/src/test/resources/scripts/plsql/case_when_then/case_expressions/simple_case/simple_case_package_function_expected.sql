@@ -2,7 +2,7 @@ CREATE OR ALTER PACKAGE package_name
 SQL SECURITY DEFINER
 AS BEGIN
    FUNCTION simple_case_function RETURNS VARCHAR(32765);
-END /*PACKAGE_NAME*/;
+END;
 
 RECREATE PACKAGE BODY package_name
 AS BEGIN
@@ -13,10 +13,10 @@ AS BEGIN
        DECLARE appraisal VARCHAR(20);
    BEGIN
         appraisal =
-          CASE :grade
-            WHEN NULL THEN 'No grade assigned'
-            WHEN 'A' THEN 'Excellent'
+          CASE
+            WHEN :grade IS NULL THEN 'No grade assigned'
+            WHEN :grade = 'A' THEN 'Excellent'
           END;
       RETURN appraisal;
    END
-END /*PACKAGE_NAME*/;
+END;

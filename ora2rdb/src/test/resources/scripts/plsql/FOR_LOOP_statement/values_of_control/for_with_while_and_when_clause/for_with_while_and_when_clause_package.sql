@@ -5,7 +5,7 @@ AS
    PROCEDURE PP_For_With_While_and_When; 
 END; 
 
-/* Тело пакета */
+
 CREATE OR REPLACE PACKAGE BODY Pack_For_With_While_and_When
 AS 
    FUNCTION PF_For_With_While_and_When

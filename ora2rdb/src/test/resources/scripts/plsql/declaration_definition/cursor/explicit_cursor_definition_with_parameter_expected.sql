@@ -1,11 +1,11 @@
-/*ERROR: RED DATABASE DOES NOT SUPPORT CURSOR WITH PARAMETER*/
 CREATE FUNCTION function_name
-RETURN BOOLEAN
-AS
+    RETURNS BOOLEAN
+ SQL SECURITY DEFINER
+ AS
 /*
-    [-unconvertible CURSOR cursor_name(input_parameter IN VARCHAR2) IS
-    SELECT * FROM employees
-    WHERE first_name = input_parameter];
+    [-unconvertible RS-241342 DECLARE cursor_name(input_parameter IN VARCHAR(32765)) CURSOR FOR
+        (SELECT * FROM employees
+        WHERE first_name = input_parameter);]
 */
 BEGIN
 /*

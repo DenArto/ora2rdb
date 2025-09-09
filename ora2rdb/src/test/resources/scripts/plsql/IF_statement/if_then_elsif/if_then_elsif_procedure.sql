@@ -1,6 +1,7 @@
-CREATE PROCEDURE P_Grade_meaning3(grade CHAR, res OUT CHAR)
+CREATE PROCEDURE P_Grade_meaning3(grade CHAR)
 IS
   pass BOOLEAN := FALSE;
+  res CHAR;
 BEGIN
     res := '';
     IF grade = 'A' THEN

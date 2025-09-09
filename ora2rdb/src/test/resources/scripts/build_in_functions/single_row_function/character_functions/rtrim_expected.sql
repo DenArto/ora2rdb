@@ -1,23 +1,5 @@
-CREATE FUNCTION RTRIM_CUSTOM (str1 VARCHAR(150), str2 VARCHAR(150) = ' ') 
-RETURNS VARCHAR(150) 
-AS
-  DECLARE current_char CHAR(1);
-BEGIN
-  IF (str2 || 'R' = 'R' OR str1 || 'R' = 'R') THEN
-    RETURN NULL;
-  WHILE ( CHAR_LENGTH(str1) > 0) DO
-  BEGIN
-    current_char = RIGHT(str1, 1);
-    IF (POSITION(current_char IN str2) > 0 ) THEN
-      str1 = SUBSTRING(str1 FROM 1 FOR CHAR_LENGTH(str1) - 1);
-    ELSE RETURN str1;
-  END
-  RETURN str1;
-END;
-
-
-SELECT RTRIM_CUSTOM('<=====>BROWNING<=====>', '<>=') FROM RDB$DATABASE;
-SELECT RTRIM_CUSTOM('<=====><=====>', '<>=') FROM RDB$DATABASE;
-SELECT RTRIM_CUSTOM('  _ hello _  ') FROM RDB$DATABASE;
-SELECT RTRIM_CUSTOM('hello', '') FROM RDB$DATABASE;
-SELECT RTRIM_CUSTOM('', 'hello') FROM RDB$DATABASE;
+/*SELECT [-unconvertible RS-245294 RTRIM('<=====>BROWNING<=====>', '<>=')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RTRIM('<=====><=====>', '<>=')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RTRIM('  _ hello _  ')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RTRIM('hello', '')] FROM RDB$DATABASE;*/
+/*SELECT [-unconvertible RS-245294 RTRIM('', 'hello')] FROM RDB$DATABASE;*/

@@ -1,12 +1,19 @@
+
 CREATE PROCEDURE P_Primitive_Repeat
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
-  WHILE (1=1) DO
-  BEGIN
-    i_FOR1 = 1;
-    if (summa > 10) then LEAVE;
-    summa = :summa + i_FOR1;
-  END
+/*
+  [-unconvertible RS-238757 FOR i IN REPEAT 1]
+  LOOP
+      if (:summa > 10) then
+      BEGIN LEAVE;
+      END
+      summa = :summa + i;
+  END LOOP
+*/
 END; 

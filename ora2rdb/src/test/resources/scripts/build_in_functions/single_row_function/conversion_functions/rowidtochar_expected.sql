@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible ROWIDTOCHAR(ROWID)] FROM employees;
-*/
+/*SELECT [-unconvertible RS-245838 ROWIDTOCHAR(RDB$DB_KEY)] FROM employees;*/

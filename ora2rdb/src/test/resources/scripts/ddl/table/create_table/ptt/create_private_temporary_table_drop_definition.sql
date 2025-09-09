@@ -3,4 +3,4 @@ CREATE PRIVATE TEMPORARY TABLE ora$temp_employees (
     first_name VARCHAR2(50),
     last_name VARCHAR2(50),
     department_id NUMBER
-) ON COMMIT DELETE DEFINITION;
+) ON COMMIT DROP DEFINITION;

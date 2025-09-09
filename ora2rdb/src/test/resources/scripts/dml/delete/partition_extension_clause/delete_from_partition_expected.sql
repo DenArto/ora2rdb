@@ -1,1 +1,1 @@
-DELETE FROM books [-unconvertible PARTITION (books_medium)];
+/*DELETE FROM books [-unconvertible RS-242280 PARTITION (books_medium)];*/

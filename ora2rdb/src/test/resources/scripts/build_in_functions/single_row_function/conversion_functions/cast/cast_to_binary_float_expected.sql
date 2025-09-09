@@ -1,24 +1,76 @@
-EXECUTE BLOCK 
-AS
-  DECLARE p1 DECFLOAT(34) = 123.45;
-  DECLARE p2 CHAR(6) = '123.45';
-  DECLARE p3 INTEGER = 100;
-  DECLARE p4 NCHAR VARYING(10) = '100';
-  DECLARE res DECFLOAT(16);
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+EXECUTE BLOCK
+ AS
+
+   DECLARE p1 DOUBLE PRECISION = 123.45;
+   DECLARE p2 CHAR(6) = '123.45';
+   DECLARE p3 INT128 = 100;
+   DECLARE p4 VARCHAR(10) = '100';
+   DECLARE res FLOAT;
 BEGIN
-  select CAST(:p1 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p1 AS DECFLOAT(16)) from rdb$database into :res;
-  
-  select CAST(:p2 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p2 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p2 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p2 AS DECFLOAT(16)) from rdb$database into :res;
-  
-  select CAST(:p3 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p3 AS DECFLOAT(16)) from rdb$database into :res;
-  
-  select CAST(:p4 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p4 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p4 AS DECFLOAT(16)) from rdb$database into :res;
-  select CAST(:p4 AS DECFLOAT(16)) from rdb$database into :res;
+  select CAST(:p1 AS FLOAT)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1 AS FLOAT )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p2 AS FLOAT)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS FLOAT )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS FLOAT )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS FLOAT  )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p3 AS FLOAT)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p3 AS FLOAT )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p4 AS FLOAT)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS FLOAT )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS FLOAT )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS FLOAT  )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;

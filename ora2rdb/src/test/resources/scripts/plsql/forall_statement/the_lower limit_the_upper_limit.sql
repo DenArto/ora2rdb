@@ -7,9 +7,9 @@ DECLARE
 
     TYPE patient_names_t IS TABLE OF hmo_coverage.denial%TYPE;
 
-   l_denials   denials_t
+   l_denials denials_t
                   := denials_t ('TOO SICK', 'TOO POOR', 'COMPLAINS TOO MUCH');
-   l_names     patient_names_t
+   l_names patient_names_t
                     := patient_names_t ('John Lovecanal', 'Sally Works2Jobs');
 BEGIN
    FORALL indx IN l_denials.FIRST .. l_denials.LAST

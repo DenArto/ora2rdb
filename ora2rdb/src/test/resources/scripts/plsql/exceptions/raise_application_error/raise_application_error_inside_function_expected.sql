@@ -1,12 +1,16 @@
-CREATE EXCEPTION past_due 'past_due exception';
+CREATE EXCEPTION CUSTOM_EXCEPTION
+	'error';
+CREATE EXCEPTION PAST_DUE
+	'PAST_DUE EXCEPTION';
+
 
 CREATE FUNCTION test_f
     RETURNS BOOLEAN
-    SQL SECURITY DEFINER
-AS
-    /*past_due  EXCEPTION;*/
-    /*PRAGMA EXCEPTION_INIT (past_due, -20000);*/
+
+ SQL SECURITY DEFINER
+ AS
+        --past_due  EXCEPTION;
 BEGIN
-    EXCEPTION past_due( 'Account past due.');
+    EXCEPTION CUSTOM_EXCEPTION( 'Account past due.');
 RETURN TRUE;
 END;

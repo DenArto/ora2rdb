@@ -21,6 +21,6 @@ END get_sum_multiples;
 BEGIN
   DBMS_OUTPUT.PUT_LINE (
     'Sum of the first ' || TO_CHAR(n) || ' multiples of ' ||
-    TO_CHAR(m) || ' is ' || TO_CHAR(get_sum_multiples (m, sn)(n))  -- вызов из функции и получение n-го элемента
+    TO_CHAR(m) || ' is ' || TO_CHAR(get_sum_multiples (m, sn)(n))  -- calling from a function and getting the nth element
   );
 END;

@@ -11,8 +11,8 @@ AS
       PRAGMA EXCEPTION_INIT (bulk_errors, -24381);
       TYPE namelist_t IS TABLE OF VARCHAR2(32767);
       
-      enames_with_errors namelist_t := namelist_t ('ABC', 'DEF', NULL, /* Фамилия должна быть отлична от NULL */ 
-                                                  'LITTLE', RPAD ('BIGBIGGERBIGGEST', 250, 'ABC'), /* Слишком длинное */ 
+      enames_with_errors namelist_t := namelist_t ('ABC', 'DEF', NULL,
+                                                  'LITTLE', RPAD ('BIGBIGGERBIGGEST', 250, 'ABC'),
                                                   'SMITHIE');
     BEGIN
       FORALL indx IN enames_with_errors.FIRST .. enames_with_errors.LAST SAVE EXCEPTIONS

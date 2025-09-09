@@ -6,11 +6,18 @@ import java.util.stream.Collectors;
 import ru.redsoft.ora2rdb.PlSqlParser.*;
 
 public class ScanListener extends PlSqlParserBaseListener {
-    Stack<StoredBlock> storedBlocksStack = new Stack<>();
-    String currentProcedureName;
-    String current_package_name = null;
-    StoredTrigger current_trigger = null;
-    String current_cursor_declaration = null;
+    private static final ScanListener INSTANCE = new ScanListener();
+
+    static Stack<StoredBlock> storedBlocksStack = new Stack<>();
+    static String currentProcedureName;
+    static String current_package_name = null;
+
+    private ScanListener() {
+    }
+
+    public static ScanListener getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public void enterCreate_package_body(Create_package_bodyContext ctx) {
@@ -48,23 +55,27 @@ public class ScanListener extends PlSqlParserBaseListener {
 
     @Override
     public void enterCreate_table(Create_tableContext ctx) {
-        if(ctx.relational_table() == null)
+        if (ctx.relational_table() == null)
             return;
         Table table = new Table();
         String name;
         name = Ora2rdb.getRealName(ctx.schema_and_name().name.getText());
         table.setName(name);
-            for (Relational_propertyContext rela_prop : ctx.relational_table().relational_property()) {
-                if (rela_prop.column_definition() == null)
-                    continue;
-                if (rela_prop.column_definition().datatype() != null)
-                    table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
-                            Ora2rdb.getRealName(rela_prop.column_definition().datatype().native_datatype_element().getText())
-                    );
-                else
-                    table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
-                            Ora2rdb.getRealName(rela_prop.column_definition().regular_id().getText())
-                    );
+        for (Relational_propertyContext rela_prop : ctx.relational_table().relational_property()) {
+            if (rela_prop.column_definition() == null)
+                continue;
+            if (rela_prop.column_definition().datatype() != null && rela_prop.column_definition().datatype().native_datatype_element() != null)
+                table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
+                        Ora2rdb.getRealName(rela_prop.column_definition().datatype().native_datatype_element().getText())
+                );
+            else if (rela_prop.column_definition().datatype() != null && rela_prop.column_definition().datatype().INTERVAL() != null)
+                table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
+                        Ora2rdb.getRealName(rela_prop.column_definition().datatype().getText())
+                );
+            else
+                table.setColumn(Ora2rdb.getRealName(rela_prop.column_definition().column_name().getText()),
+                        Ora2rdb.getRealName(rela_prop.column_definition().regular_id().getText())
+                );
 
         }
         StorageInfo.tables.add(table);
@@ -181,15 +192,15 @@ public class ScanListener extends PlSqlParserBaseListener {
     @Override
     public void exitTrigger_ordering_clause(Trigger_ordering_clauseContext ctx) {
         StoredTrigger currentTrigger = (StoredTrigger) storedBlocksStack.peek();
-        if (ctx.FOLLOWS() != null){
-            for (Trigger_nameContext stmt : ctx.trigger_name()){
+        if (ctx.FOLLOWS() != null) {
+            for (Trigger_nameContext stmt : ctx.trigger_name()) {
                 StoredTrigger storedTrigger = findStorageTrigger(Ora2rdb.getRealName(stmt.getText()));
                 storedTrigger.setPositionToZeroIfNecessary();
                 currentTrigger.increasePosition(storedTrigger.getPosition());
             }
         }
-        if (ctx.PRECEDES() != null){
-            for (Trigger_nameContext stmt : ctx.trigger_name()){
+        if (ctx.PRECEDES() != null) {
+            for (Trigger_nameContext stmt : ctx.trigger_name()) {
                 StoredTrigger storedTrigger = findStorageTrigger(Ora2rdb.getRealName(stmt.getText()));
 
                 currentTrigger.setFollowingTrigger(storedTrigger.getName());
@@ -208,7 +219,7 @@ public class ScanListener extends PlSqlParserBaseListener {
         currentTrigger.edition_clause = true;
     }
 
-    private StoredTrigger findStorageTrigger(String trigger_name){
+    private StoredTrigger findStorageTrigger(String trigger_name) {
         StoredTrigger storedTrigger = new StoredTrigger();
         storedTrigger.setName(trigger_name);
         return (StoredTrigger) StorageInfo.stored_blocks_list.stream()
@@ -217,8 +228,8 @@ public class ScanListener extends PlSqlParserBaseListener {
     }
 
 
-    private void findFollowingTrigger (StoredTrigger trigger){
-        if (trigger.getFollowingTrigger() != null){
+    private void findFollowingTrigger(StoredTrigger trigger) {
+        if (trigger.getFollowingTrigger() != null) {
             StoredTrigger followingTr = findStorageTrigger(trigger.getFollowingTrigger());
             followingTr.increasePosition(trigger.getPosition());
             findFollowingTrigger(findStorageTrigger(trigger.getFollowingTrigger()));
@@ -320,7 +331,7 @@ public class ScanListener extends PlSqlParserBaseListener {
 
         storedFunction.setName(functionName);
         storedFunction.setPackage_name(current_package_name);
-        if (ctx.type_spec().datatype() != null)
+        if (ctx.type_spec().datatype() != null && ctx.type_spec().datatype().native_datatype_element() != null)
             storedFunction.setFunction_returns_type(Ora2rdb.getRealName(ctx.type_spec().datatype().native_datatype_element().getText()));
         else
             storedFunction.setFunction_returns_type(Ora2rdb.getRealName(ctx.type_spec().getText()));
@@ -546,5 +557,11 @@ public class ScanListener extends PlSqlParserBaseListener {
             }
         }
         return type;
+    }
+
+    public static void clearInfo(){
+        storedBlocksStack.clear();
+        currentProcedureName = null;
+        current_package_name = null;
     }
 }

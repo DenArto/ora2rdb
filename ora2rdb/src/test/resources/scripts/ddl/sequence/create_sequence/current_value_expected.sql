@@ -1,4 +1,4 @@
 /*SELECT
-    ID_SEQ.CURRVAL
+    [-unconvertible RS-246219 ID_SEQ.CURRVAL]
 FROM
-    DUAL;*/
+    RDB$DATABASE;*/

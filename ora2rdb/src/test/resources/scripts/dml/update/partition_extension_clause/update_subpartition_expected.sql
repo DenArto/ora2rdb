@@ -1,3 +1,3 @@
-UPDATE SALES [-unconvertible SUBPARTITION (sales_2022_north)] s
+/*UPDATE SALES [-unconvertible RS-242238 SUBPARTITION (sales_2022_north)] s
 SET s.AMOUNT = s.AMOUNT * 1.1
-WHERE s.PRODUCT_ID = 101;
+WHERE s.PRODUCT_ID = 101;*/

@@ -3,7 +3,7 @@ INSERT INTO COUNTRY
 VALUES
     ( 'RUSSIA', 'RUBLE')
     RETURNING COUNTRY, CURRENCY INTO :BIND2 , :BIND1;
--- допускается использовать ключевое слово RETURN
+-- the keyword RETURN is allowed
 INSERT INTO COUNTRY
 (COUNTRY, CURRENCY)
 VALUES

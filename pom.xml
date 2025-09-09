@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.redsoft.ora2rdb</groupId>
   <artifactId>ora2rdb-root</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ora2rdb-root</name>
   <description>ora2rdb Root Project</description>

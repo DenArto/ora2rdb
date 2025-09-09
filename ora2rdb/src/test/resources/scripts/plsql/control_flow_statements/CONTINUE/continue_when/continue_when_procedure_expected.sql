@@ -1,19 +1,15 @@
 CREATE PROCEDURE P_Continue_When
-SQL SECURITY DEFINER
-AS
-  DECLARE i_FOR1 INTEGER;
-  DECLARE bound_i_FOR1 INTEGER;
+    SQL SECURITY DEFINER
+ AS
+    DECLARE VARIABLE i INTEGER;
 BEGIN
-  i_FOR1 = 1;
-  bound_i_FOR1 = 3;
-  WHILE (i_FOR1 <= bound_i_FOR1) DO
-  BEGIN 
-    if (i_FOR1 = 1) then 
+  i = 1;
+  WHILE ( i <= 3) DO
     BEGIN
-      i_FOR1 = i_FOR1 + 1;
-      CONTINUE;
+    IF (:i = 1) THEN BEGIN
+    	i = i + 1;
+        CONTINUE;
     END
-    i_FOR1 = i_FOR1 + 1;
+  i = i + 1;
   END
-  i_FOR1 = bound_i_FOR1;
 END;

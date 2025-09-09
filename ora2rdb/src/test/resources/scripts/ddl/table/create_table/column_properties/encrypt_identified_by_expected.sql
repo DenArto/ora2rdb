@@ -1,3 +1,3 @@
 /*CREATE TABLE employees (
-  salary NUMERIC(10,2) [-unconvertible ENCRYPT IDENTIFIED BY AES256]
+  salary NUMERIC(10,2) [-unconvertible RS-243328 ENCRYPT IDENTIFIED BY AES256]
 );*/

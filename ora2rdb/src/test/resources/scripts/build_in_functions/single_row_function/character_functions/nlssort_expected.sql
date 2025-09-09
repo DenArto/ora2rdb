@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLSSORT('Schach', 'NLS_SORT=XGERMAN')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245294 NLSSORT('Schach', 'NLS_SORT=XGERMAN')] FROM RDB$DATABASE;*/

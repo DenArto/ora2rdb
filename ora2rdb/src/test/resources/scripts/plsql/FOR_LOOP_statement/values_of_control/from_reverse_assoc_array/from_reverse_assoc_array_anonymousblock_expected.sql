@@ -1,24 +1,23 @@
-CREATE GLOBAL TEMPORARY TABLE VEC_AssArr_1 (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_AssArr_1 PRIMARY KEY (K)
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC PRIMARY KEY (K)
 );
 
+
 EXECUTE BLOCK 
-AS
-   /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-   /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-   DECLARE summa INTEGER = 0;
-   DECLARE i_FOR1 INTEGER;
+ AS 
+
+/*
+   --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+   --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+    DECLARE summa INTEGER = 0;
+*/
 BEGIN
-   UPDATE OR INSERT INTO VEC_AssArr_1 VALUES (3, 10);
-   UPDATE OR INSERT INTO VEC_AssArr_1 VALUES (1, 11);
-   UPDATE OR INSERT INTO VEC_AssArr_1 VALUES (100, 34);
-   FOR SELECT VAL FROM VEC_AssArr_1
-   ORDER BY K DESC
-   INTO :i_FOR1
-   DO
-   BEGIN
-     summa = summa + i_FOR1; -- 55
-   END
+/*
+   [-unconvertible RS-238760 FOR i IN REVERSE VALUES OF vec] LOOP
+      summa = :summa + i;   -- 55
+   END LOOP
+*/
 END;

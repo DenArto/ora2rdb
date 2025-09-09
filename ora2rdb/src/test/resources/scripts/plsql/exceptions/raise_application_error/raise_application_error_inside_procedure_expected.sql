@@ -1,10 +1,14 @@
-CREATE EXCEPTION invalid_company_id 'invalid_company_id exception';
+CREATE EXCEPTION CUSTOM_EXCEPTION
+	'error';
+CREATE EXCEPTION PAST_DUE
+	'PAST_DUE EXCEPTION';
+
 
 CREATE PROCEDURE calc_annual_sales
-    SQL SECURITY DEFINER
-AS
-    /*past_due  EXCEPTION;*/
-    /*PRAGMA EXCEPTION_INIT (past_due, -20000);*/
+
+ SQL SECURITY DEFINER
+ AS
+        --past_due  EXCEPTION;
 BEGIN
-    EXCEPTION past_due( 'Account past due.');
+    EXCEPTION CUSTOM_EXCEPTION( 'Account past due.');
 END;

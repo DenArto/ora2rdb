@@ -1,64 +1,46 @@
-CREATE OR ALTER PACKAGE Pack_For_With_While
-AS BEGIN
-   FUNCTION PF_For_With_While
-   RETURNS INTEGER;
-   PROCEDURE PP_For_With_While; 
-END; 
 
-/* Тело пакета */
-RECREATE PACKAGE BODY Pack_For_With_While
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_For_With_While
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_For_With_While
+   RETURNS INTEGER;  
+   PROCEDURE PP_For_With_While;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_For_With_While
+AS BEGIN  
    FUNCTION PF_For_With_While
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       IF (NOT(i_FOR1 != 2)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-       IF (NOT(i_FOR1 != 2)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238758 RS-239328 FOR i IN 1..3 WHILE i != 2, REVERSE 1..3 WHILE i != 2]
+     LOOP
+      summa = :summa + i;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_For_With_While
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       IF (NOT(i_FOR1 != 2)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 + 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-       IF (NOT(i_FOR1 != 2)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       i_FOR1 = i_FOR1 - 1;
-     END
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
+     [-unconvertible RS-238758 RS-239328 FOR i IN 1..3 WHILE i != 2, REVERSE 1..3 WHILE i != 2]
+     LOOP
+      summa = :summa + i;
+     END LOOP
+   */
+END   
+  END; 

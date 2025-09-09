@@ -1,7 +1,8 @@
 CREATE PROCEDURE P_Grade_meaning6 (grade CHAR)
-RETURNS (res CHAR)
-AS
-  DECLARE pass BOOLEAN = TRUE;
+ SQL SECURITY DEFINER
+ AS
+   DECLARE pass BOOLEAN = TRUE;
+   DECLARE res CHAR;
 BEGIN
     IF (:grade = 'A') THEN
     BEGIN
@@ -9,24 +10,28 @@ BEGIN
       pass = TRUE;
     END
     ELSE
+    BEGIN
       IF (:grade = 'B') THEN
       BEGIN
         res = 'Very Good';
         pass = TRUE;
       END
       ELSE
+      BEGIN
         IF (:grade = 'C') THEN
         BEGIN
           res = 'Good';
           pass = TRUE;
         END
         ELSE
+        BEGIN
           IF (:grade = 'D') THEN
           BEGIN
             res = 'Fair';
             pass = FALSE;
           END
           ELSE
+          BEGIN
             IF (:grade = 'F') THEN
             BEGIN
               res = 'Poor';
@@ -37,4 +42,8 @@ BEGIN
               res = 'Error';
               pass = FALSE;
             END
+          END
+        END
+      END
+    END
 END;

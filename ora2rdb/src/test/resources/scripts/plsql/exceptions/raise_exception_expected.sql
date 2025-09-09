@@ -1,9 +1,14 @@
-CREATE EXCEPTION salary_too_high 'salary_too_high exception';
+CREATE EXCEPTION SALARY_TOO_HIGH
+	'SALARY_TOO_HIGH EXCEPTION';
 
 EXECUTE BLOCK
-    AS
-    /*salary_too_high   EXCEPTION;*/
+ AS
+
+    --salary_too_high   EXCEPTION;
 BEGIN
     IF (current_salary > max_salary) THEN
-        EXCEPTION salary_too_high;   -- raise exception
+    BEGIN
+        EXCEPTION salary_too_high;
+    END   -- raise exception
+
 END;

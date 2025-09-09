@@ -1,27 +1,71 @@
-EXECUTE BLOCK 
-AS
-  DECLARE p1 VARCHAR(100) = 'January 15, 1989';
-  DECLARE p2 TIMESTAMP = LOCALTIMESTAMP;
-  DECLARE p3 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
-  DECLARE res DATE;
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+EXECUTE BLOCK
+ AS
+
+   DECLARE p1 VARCHAR(100) = 'January 15, 1989';
+   DECLARE p2 TIMESTAMP = LOCALTIMESTAMP;
+   DECLARE p3 TIMESTAMP WITH TIME ZONE = CURRENT_TIMESTAMP;
+   DECLARE res TIMESTAMP;
 BEGIN
-  select CAST(:p1 AS DATE FORMAT 'MONTH DD, YYYY') from rdb$database into :res;
-  select CAST(:p1 AS DATE FORMAT 'Month dd, YYYY') from rdb$database into :res;
-  select CAST(:p1 AS DATE FORMAT 'Month dd, YYYY') from rdb$database into :res;
+  select CAST(:p1 AS TIMESTAMP FORMAT 'Month dd, YYYY' )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1 AS TIMESTAMP FORMAT 'Month dd, YYYY'  )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1 AS TIMESTAMP FORMAT 'Month dd, YYYY'   )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 
-  select CAST(:p2 AS DATE) from rdb$database into :res;
-  select CAST(:p2 AS DATE) from rdb$database into :res;
+  select CAST(:p2 AS TIMESTAMP)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2 AS TIMESTAMP )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 
-  select CAST(:p3 AS DATE) from rdb$database into :res;
-  select CAST(:p3 AS DATE) from rdb$database into :res;
+  select CAST(:p3 AS TIMESTAMP)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p3 AS TIMESTAMP )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
 END;
+
+EXECUTE BLOCK
+ AS
 
 /*
-DECLARE
-  [-unconvertible p4 TIMESTAMP WITH LOCAL TIME ZONE := timestamp '2020-10-25 02:30:00+02:00'];
-  res DATE;
-BEGIN
-  select [-unconvertible CAST(p4 AS DATE)] into res from dual;
-  select [-unconvertible CAST(p4 AS DATE DEFAULT NULL ON CONVERSION ERROR)] into res from dual;
-END;
+   DECLARE p4 [-unconvertible RS-244046 TIMESTAMP WITH LOCAL TIME ZONE] = timestamp '2020-10-25 02:30:00+02:00';
+   DECLARE res TIMESTAMP;
 */
+BEGIN
+/*
+  select CAST(:p4 AS TIMESTAMP)
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p4 AS TIMESTAMP )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+*/
+END;

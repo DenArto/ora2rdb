@@ -1,3 +1,4 @@
+-- RS-243163
 CREATE SHARDED TABLE employees (
     emp_id NUMBER NOT NULL,
     name VARCHAR2(50),

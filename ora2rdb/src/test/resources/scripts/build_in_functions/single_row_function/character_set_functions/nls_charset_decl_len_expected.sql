@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible NLS_CHARSET_DECL_LEN(200, nls_charset_id('ja16eucfixed'))] FROM DUAL; 
-*/
+/*SELECT [-unconvertible RS-245294 NLS_CHARSET_DECL_LEN(200, [-unconvertible RS-245294 nls_charset_id('ja16eucfixed')])] FROM RDB$DATABASE;*/

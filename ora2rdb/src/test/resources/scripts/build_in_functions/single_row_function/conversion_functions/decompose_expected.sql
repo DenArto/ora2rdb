@@ -1,9 +1,5 @@
-/*
-SELECT [-unconvertible DECOMPOSE ('Châteaux')] FROM DUAL; 
-*/
-/*
-SELECT [-unconvertible DECOMPOSE ('Châteaux', 'CANONICAL')] FROM DUAL; 
-*/
-/*
-SELECT [-unconvertible DECOMPOSE ('Châteaux', 'COMPATIBILITY')] FROM DUAL; 
-*/
+/*SELECT [-unconvertible RS-245838 DECOMPOSE ('Chateaux')] FROM RDB$DATABASE;*/
+
+/*SELECT [-unconvertible RS-245838 DECOMPOSE ('Chateaux', 'CANONICAL')] FROM RDB$DATABASE;*/
+
+/*SELECT [-unconvertible RS-245838 DECOMPOSE ('Chateaux', 'COMPATIBILITY')] FROM RDB$DATABASE;*/

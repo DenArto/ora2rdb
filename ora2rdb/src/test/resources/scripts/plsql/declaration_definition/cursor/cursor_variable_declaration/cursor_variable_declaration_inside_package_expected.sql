@@ -1,63 +1,64 @@
--- Объявление внутри заголовка пакета
-/*CANNOT DECLARE CURSOR INSIDE PACKAGE DECLARATION*/
-CREATE PACKAGE BOOK_INFO
+
+/*CREATE PACKAGE BOOK_INFO
+ SQL SECURITY DEFINER
 AS BEGIN
-    /*[-unconvertible DECLARE cur CURSOR FOR
-    (SELECT * FROM employees)];*/
-    /*[-unconvertible DECLARE VARIABLE cur_rec TYPE OF TABLE cur];*/
-END;
+    [-unconvertible RS-233552 DECLARE cur CURSOR FOR
+    (SELECT * FROM employees);]
+     DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
+END;*/
+
 
 CREATE PACKAGE BODY BOOK_INFO
 AS BEGIN
 
 END;
 
--- Объявление курсора в заголовке пакета , а переменной внутри тела пакета
-/*CANNOT DECLARE CURSOR INSIDE PACKAGE DECLARATION*/
-CREATE PACKAGE BOOK_INFO
+/*CREATE OR ALTER PACKAGE BOOK_INFO
+ SQL SECURITY DEFINER
 AS BEGIN
-    /*[-unconvertible DECLARE cur CURSOR FOR
-            (SELECT * FROM employees)];*/
-END;
+    [-unconvertible RS-233552 DECLARE cur CURSOR FOR
+(SELECT * FROM employees);]
 
-CREATE PACKAGE BODY BOOK_INFO
+END;*/
+
+
+/*RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
-    /*[-unconvertible DECLARE VARIABLE cur_rec TYPE OF TABLE cur];*/
-END;
-
--- Объявление курсора и переменной в теле пакета
-CREATE PACKAGE BOOK_INFO
-AS BEGIN
-
-END;
-
-/*CANNOT CREATE CURSOR IN PACKAGE BODY*/
-CREATE PACKAGE BODY BOOK_INFO
-AS BEGIN
-    /*[-unconvertible DECLARE cur CURSOR FOR
-        (SELECT * FROM employees)];*/
-    /*[-unconvertible DECLARE VARIABLE cur_rec TYPE OF TABLE cur];*/
-END;
+     DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
+END;*/
 
 
--- Объявление в функции в пакете
 CREATE OR ALTER PACKAGE BOOK_INFO
+ SQL SECURITY DEFINER
+AS BEGIN
+
+END;
+
+/*RECREATE   PACKAGE BODY BOOK_INFO
+AS BEGIN
+    [-unconvertible RS-233552 DECLARE cur CURSOR FOR
+(SELECT * FROM employees);]
+ DECLARE VARIABLE [-unconvertible RS-246002 cur_rec TYPE OF TABLE cur;]
+END;*/
+
+
+CREATE OR ALTER PACKAGE BOOK_INFO
+ SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION TEST_F RETURNS BOOLEAN;
 END;
 
-RECREATE PACKAGE BODY BOOK_INFO
+RECREATE   PACKAGE BODY BOOK_INFO
 AS BEGIN
     FUNCTION TEST_F
-        RETURNS BOOLEAN
+    RETURNS BOOLEAN
     AS
-
-        DECLARE cur CURSOR FOR
-            (SELECT * FROM employees);
-
-        DECLARE VARIABLE cur_rec  TYPE OF TABLE cur;
+        DECLARE CUR CURSOR FOR
+            (SELECT * FROM EMPLOYEES);
+         DECLARE VARIABLE CUR_REC TYPE OF TABLE CUR;
     BEGIN
 
-    RETURN TRUE;
+        RETURN TRUE;
     END
+
 END;

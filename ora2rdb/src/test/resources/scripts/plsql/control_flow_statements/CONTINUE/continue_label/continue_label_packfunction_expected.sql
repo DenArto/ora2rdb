@@ -17,7 +17,9 @@ AS BEGIN
      BEGIN
        x = :x + 1;
        IF (:x < 3) THEN
-         CONTINUE loop1;
+        BEGIN
+            CONTINUE loop1;
+        END
        IF(:x = 5) THEN LEAVE;
      END 
      RETURN '';

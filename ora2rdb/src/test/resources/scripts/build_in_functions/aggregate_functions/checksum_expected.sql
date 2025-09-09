@@ -1,2 +1,2 @@
-select [-unconvertible checksum(sal)] as checksum_total
-from emp;
+/*select [-unconvertible RS-244710 checksum(sal)] as checksum_total
+from   emp;*/

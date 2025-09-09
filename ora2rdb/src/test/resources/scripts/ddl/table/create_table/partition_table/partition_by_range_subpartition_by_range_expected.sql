@@ -1,11 +1,19 @@
-/*CREATE TABLE shipments
-( order_id      NUMERIC(34, 8) NOT NULL
+/*Found error(s) in file while parsing
+Error at line 10:41 - no viable alternative at input 'CREATE TABLE shipments\n( order_id      NUMBER NOT NULL\n, order_date    DATE NOT NULL\n, delivery_date DATE NOT NULL\n, customer_id   NUMBER NOT NULL\n, sales_amount  NUMBER NOT NULL\n)\nPARTITION BY RANGE (order_date)\nSUBPARTITION BY RANGE (delivery_date)\n( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE'
+*/
+
+-- RS-243163
+
+/*
+Error at line 10:41 - no viable alternative at input 'CREATE TABLE shipments\n( order_id      NUMBER NOT NULL\n, order_date    DATE NOT NULL\n, delivery_date DATE NOT NULL\n, customer_id   NUMBER NOT NULL\n, sales_amount  NUMBER NOT NULL\n)\nPARTITION BY RANGE (order_date)\nSUBPARTITION BY RANGE (delivery_date)\n( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE'
+CREATE TABLE shipments
+( order_id      NUMBER NOT NULL
 , order_date    DATE NOT NULL
 , delivery_date DATE NOT NULL
-, customer_id   NUMERIC(34, 8) NOT NULL
-, sales_amount  NUMERIC(34, 8) NOT NULL
+, customer_id   NUMBER NOT NULL
+, sales_amount  NUMBER NOT NULL
 )
-[-unconvertible PARTITION BY RANGE (order_date)
+PARTITION BY RANGE (order_date)
 SUBPARTITION BY RANGE (delivery_date)
 ( PARTITION p_2006_jul VALUES LESS THAN (TO_DATE('01-AUG-2006','dd-MON-yyyy'))
   ( SUBPARTITION p06_jul_e VALUES LESS THAN (TO_DATE('15-AUG-2006','dd-MON-yyyy'))
@@ -37,4 +45,5 @@ SUBPARTITION BY RANGE (delivery_date)
   , SUBPARTITION p06_dec_a VALUES LESS THAN (TO_DATE('01-FEB-2007','dd-MON-yyyy'))
   , SUBPARTITION p06_dec_l VALUES LESS THAN (MAXVALUE)
   )
-)];*/
+);
+*/

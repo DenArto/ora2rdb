@@ -1,5 +1,5 @@
 EXECUTE BLOCK
-AS
+    AS
 BEGIN
-  EXIT;
+  RETURN;
 END;

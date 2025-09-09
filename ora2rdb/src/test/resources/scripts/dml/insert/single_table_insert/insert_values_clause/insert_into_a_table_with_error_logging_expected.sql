@@ -1,5 +1,4 @@
-/* Red Database does not support "LOG ERRORS" functionality*/
-INSERT INTO raises
+/*INSERT INTO raises
 SELECT employee_id, salary*1.1 FROM employees
 WHERE commission_pct > 1
-    [-unconvertible LOG ERRORS INTO errlog ('my_bad') REJECT LIMIT 10];
+    [-unconvertible RS-241764 LOG ERRORS INTO errlog ('my_bad') REJECT LIMIT 10];*/

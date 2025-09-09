@@ -1,10 +1,9 @@
-CREATE OR ALTER PACKAGE PACKAGE_NAME
+/*CREATE OR ALTER PACKAGE PACKAGE_NAME
 SQL SECURITY DEFINER
-AS BEGIN
-/*
-    [-unconvertible SUBTYPE subtype_age IS PLS_INTEGER RANGE 18 .. 65 NOT NULL];
+AS BEGIN 
 
-    [-unconvertible SUBTYPE subtype_emp_name IS VARCHAR2(100)];
+    [-unconvertible RS-197284 SUBTYPE subtype_age IS INTEGER RANGE 18 .. 65 NOT NULL;]  
 
-*/
-END /*PACKAGE_NAME*/;
+    [-unconvertible RS-197284 SUBTYPE subtype_emp_name IS VARCHAR(100);]  
+
+END ;*/

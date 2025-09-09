@@ -256,7 +256,7 @@ public class StoredProcedure implements StoredBlock{
                     param_type = Ora2rdb.getRealName(type_name.getText());
 
             }
-        } else if (ctx.type_spec().datatype()!= null) {
+        } else if (ctx.type_spec().datatype()!= null && ctx.type_spec().datatype().native_datatype_element() != null) {
             param_type = Ora2rdb.getRealName(ctx.type_spec().datatype().native_datatype_element().getText());
         }
         else param_type = Ora2rdb.getRealName(ctx.type_spec().getText());

@@ -1,20 +1,20 @@
 DECLARE
 
-TYPE POPULATION IS TABLE OF NUMBER
-    INDEX BY VARCHAR2(64);
+    TYPE POPULATION IS TABLE OF NUMBER INDEX BY VARCHAR2(64);
 
-    CITY_POPULATION  POPULATION;
+    v_city  POPULATION;
     I  VARCHAR2(64);
     VAL NUMBER;
 
 BEGIN
-    VAL := CITY_POPULATION(I);
-
-    I := CITY_POPULATION.LAST;
-    I := CITY_POPULATION.FIRST;
-    I := CITY_POPULATION.NEXT(I);
-    I := CITY_POPULATION.COUNT();
-    I := CITY_POPULATION.PRIOR('MIDLAND');
-    bool_val := CITY_POPULATION.EXISTS('MIDLAND');
-    CITY_POPULATION.DELETE('MIDLAND');
+    VAL := v_city(I);
+    I := v_city.LAST;
+    I := v_city.FIRST;
+    I := v_city.NEXT(I);
+    I := v_city.COUNT();
+    I := v_city.PRIOR('MIDLAND');
+    bool_val := v_city.EXISTS('MIDLAND');
+    v_city.DELETE('MIDLAND');
+    v_city.DELETE('Columbus','San Diego' );
+    v_city.DELETE();
 END;

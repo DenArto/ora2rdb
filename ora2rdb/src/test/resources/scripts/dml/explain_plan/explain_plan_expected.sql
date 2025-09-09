@@ -1,6 +1,4 @@
-/*
-[-unconvertible EXPLAIN PLAN 
+/*[-unconvertible RS-242306 EXPLAIN PLAN 
   SET STATEMENT_ID = 'ID1'  
   INTO plan_table
-  FOR select id from t1;]
-*/
+  FOR select id from t1];*/

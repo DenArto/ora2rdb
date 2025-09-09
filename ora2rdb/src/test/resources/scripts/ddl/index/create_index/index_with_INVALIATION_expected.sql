@@ -1,1 +1,1 @@
-/*create index i on countries(country_name) [-unconvertible DEFERRED INVALIDATION];*/
+create index i on countries(country_name) IN TABLESPACE PRIMARY;

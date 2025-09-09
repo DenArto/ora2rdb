@@ -1,10 +1,11 @@
 CREATE OR ALTER PACKAGE Pack_While_Label
+SQL SECURITY DEFINER
 AS 
 BEGIN 
    FUNCTION PF_While_Label
    RETURNS VARCHAR(32765);  
-   PROCEDURE PP_While_Label;  
-END /*PACK_WHILE_LABEL*/;
+   PROCEDURE PP_While_Label;
+END;
 
 RECREATE PACKAGE BODY Pack_While_Label
 AS 
@@ -20,7 +21,7 @@ BEGIN
      BEGIN
        done = TRUE;
        res = 'Hello, world!';
-     END /*loopA*/
+     END
      RETURN res;
    END  
 
@@ -34,6 +35,6 @@ BEGIN
      BEGIN
        done = TRUE;
        res = 'Hello, world!';
-     END /*loopA*/
-   END  
-END /*PACK_WHILE_LABEL*/;
+     END
+   END
+END;

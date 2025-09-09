@@ -1,9 +1,20 @@
-/*
-DECLARE
-  p1 VARCHAR2(100) := '3-6';
-  [-unconvertible res INTERVAL YEAR TO MONTH;]
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+/*EXECUTE BLOCK
+ AS
+
+   DECLARE p1 VARCHAR(100) = '3-6';
+   DECLARE res [-unconvertible RS-244046 INTERVAL YEAR TO MONTH];
 BEGIN
-  select [-unconvertible CAST(p1 AS INTERVAL YEAR TO MONTH)] into res from dual;
-  select [-unconvertible CAST(p1 AS INTERVAL YEAR TO MONTH DEFAULT NULL ON CONVERSION ERROR)] into res from dual;
-END;
-*/
+  select CAST(:p1 AS [-unconvertible RS-244046 INTERVAL YEAR TO MONTH])
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1 AS [-unconvertible RS-244046 INTERVAL YEAR TO MONTH] [-unconvertible RS-245741 DEFAULT NULL ON CONVERSION ERROR])
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+END;*/

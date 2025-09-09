@@ -1,9 +1,9 @@
-UPDATE books b
+/*UPDATE books b
     SET b.page_count = bpc.PAGE_COUNT
-    [-unconvertible FROM book_page_count bpc]
-WHERE b.ISBN = bpc.ISBN;
+    [-unconvertible RS-242233 FROM book_page_count bpc]
+WHERE b.ISBN = bpc.ISBN;*/
 
-UPDATE books b
+/*UPDATE books b
 SET b.page_count = bpc.PAGE_COUNT
-    [-unconvertible USING book_page_count bpc]
-WHERE b.ISBN = bpc.ISBN;
+    [-unconvertible RS-242233 USING book_page_count bpc]
+WHERE b.ISBN = bpc.ISBN;*/

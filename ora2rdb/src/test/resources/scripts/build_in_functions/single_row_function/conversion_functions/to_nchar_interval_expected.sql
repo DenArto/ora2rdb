@@ -1,15 +1,46 @@
+CREATE EXCEPTION NO_DATA_FOUND
+	'no data found';
+
+EXECUTE BLOCK
+ AS
+
 /*
-DECLARE
-  p1 INTERVAL DAY TO SECOND := INTERVAL '1' DAY;
-  p2 INTERVAL YEAR TO MONTH := interval '10' year;
-  res NVARCHAR2(100);
-BEGIN
-  select [-unconvertible TO_NCHAR(p1)] into res from dual;
-  select [-unconvertible TO_NCHAR(p1, 'DD')] into res from dual;
-  select [-unconvertible TO_NCHAR(p1, 'DD', 'NLS_DATE_LANGUAGE = american')] into res from dual;
-  
-  select [-unconvertible TO_NCHAR(p2)] into res from dual;
-  select [-unconvertible TO_NCHAR(p2, 'YYYY')] into res from dual;
-  select [-unconvertible TO_NCHAR(p2, 'YYYY', 'NLS_DATE_LANGUAGE = american')] into res from dual;
-END;
+   DECLARE p1 [-unconvertible RS-244046 INTERVAL DAY TO SECOND] = INTERVAL '1' DAY;
+   DECLARE p2 [-unconvertible RS-244046 INTERVAL YEAR TO MONTH] = interval '10' year;
+   DECLARE res VARCHAR(100);
 */
+BEGIN
+/*
+  select CAST(:p1 AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1  AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p1   AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+
+  select CAST(:p2 AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2  AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+  select CAST(:p2   AS NCHAR VARYING(32765) )
+  from RDB$DATABASE
+  into :res;
+  IF (ROW_COUNT = 0) THEN
+  	EXCEPTION NO_DATA_FOUND;
+*/
+END;

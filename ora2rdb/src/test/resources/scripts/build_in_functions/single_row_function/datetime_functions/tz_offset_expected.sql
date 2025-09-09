@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible TZ_OFFSET('US/Eastern')] FROM DUAL;
-*/
+/*SELECT [-unconvertible RS-245858 TZ_OFFSET('US/Eastern')] FROM RDB$DATABASE;*/

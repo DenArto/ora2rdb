@@ -5,7 +5,7 @@ CREATE PACKAGE PACKAGE_NAME
 SQL SECURITY DEFINER
 AS BEGIN
     FUNCTION simple_case_function RETURNS VARCHAR(32765);
-END /*PACKAGE_NAME*/;
+END;
 
 CREATE PACKAGE BODY PACKAGE_NAME
 AS BEGIN
@@ -16,13 +16,13 @@ AS BEGIN
         DECLARE appraisal VARCHAR(20);
     BEGIN
         grade = 50;
-    	IF (grade+25 = 100) THEN BEGIN
+    	IF (:grade+25 = 100) THEN BEGIN
 		    appraisal = 'Excellent';
 	    END
-	    ELSE IF (grade+25 = 75) THEN BEGIN
+	    ELSE IF (:grade+25 = 75) THEN BEGIN
 		    appraisal = 'Very Good';
 	    END
-	    ELSE IF (grade+25 = 50) THEN BEGIN
+	    ELSE IF (:grade+25 = 50) THEN BEGIN
 		    appraisal = 'Good';
     	END
 	    ELSE BEGIN
@@ -30,4 +30,4 @@ AS BEGIN
 	    END
         RETURN appraisal;
     END
-END /*PACKAGE_NAME*/;
+END;

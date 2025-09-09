@@ -13,8 +13,8 @@ IS
     WHERE salary > 50000
     ORDER BY last_name;
 
-  с1_recs c1%ROWTYPE;
-  с2_recs c2%ROWTYPE;
+  c1_recs c1%ROWTYPE;
+  c2_recs c2%ROWTYPE;
   res PLS_INTEGER := 0;
 BEGIN
   OPEN c1;
@@ -22,8 +22,8 @@ BEGIN
   IF c1%FOUND is NULL AND c2%FOUND is NULL
   THEN res := res + 1;
   end if;
-  FETCH c1 INTO с1_recs;  
-  FETCH c2 INTO с2_recs;  
+  FETCH c1 INTO c1_recs;  
+  FETCH c2 INTO c2_recs;
   IF c1%FOUND AND c2%FOUND THEN res := res + 10;
   end if;
   CLOSE c1;

@@ -1,13 +1,16 @@
+
 CREATE PROCEDURE P_Index_With_Label
-AS
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE summa INTEGER = 0;
+*/
 BEGIN
+/*
   forlabel:
-  WHILE (1=1) DO
-  BEGIN
-    i_FOR1 = 1;
-    summa = :summa + i_FOR1;
-    LEAVE;
-  END
+  [-unconvertible RS-238757 FOR i IN 1] LOOP
+      summa = :summa + [-unconvertible RS-239627 forlabel.i];
+  END LOOP 
+*/
 END; 

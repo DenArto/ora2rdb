@@ -10,4 +10,4 @@ FROM dept_costs)
 SELECT * FROM dept_costs
 WHERE dept_total >
       (SELECT avg FROM avg_cost)
-ORDER BY department_name;
+ORDER BY department_name ASC NULLS LAST;

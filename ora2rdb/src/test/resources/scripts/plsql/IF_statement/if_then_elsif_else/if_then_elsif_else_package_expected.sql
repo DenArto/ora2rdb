@@ -1,11 +1,14 @@
 CREATE OR ALTER PACKAGE Pack_Grade_meaning5
+SQL SECURITY DEFINER
 AS 
-BEGIN 
+BEGIN
+
    FUNCTION PF_Grade_meaning5 (grade CHAR)
-   RETURNS VARCHAR(32765);  
-   PROCEDURE PP_Grade_meaning5 (grade CHAR)
-   RETURNS (res CHAR);
-END /*Pack_Grade_meaning5*/;
+   RETURNS VARCHAR(32765);
+
+   PROCEDURE PP_Grade_meaning5 (grade CHAR);
+
+END;
 
 RECREATE PACKAGE BODY Pack_Grade_meaning5
 AS 
@@ -54,9 +57,9 @@ BEGIN
    END  
 
    PROCEDURE PP_Grade_meaning5 (grade CHAR)
-   RETURNS (res CHAR)
    AS
      DECLARE pass BOOLEAN = TRUE;
+     DECLARE res CHAR;
    BEGIN
        IF (:grade = 'A') THEN
        BEGIN
@@ -92,5 +95,5 @@ BEGIN
                  res = 'Error';
                  pass = FALSE;
                END
-   END  
-END /*Pack_Grade_meaning5*/;
+   END
+END;

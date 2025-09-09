@@ -1,10 +1,14 @@
-EXECUTE BLOCK
-AS
-/*
-    [-unconvertible DECLARE cursor_variable pkg.cursor_type];
-*/
+CREATE PROCEDURE PROCEDURE_NAME(in_p VARCHAR)
+ SQL SECURITY DEFINER
+ AS
 BEGIN
-/*
-    PROCEDURE_NAME([-unconvertible :cursor_variable]); -- call procedure
-*/
+
+END;
+
+EXECUTE BLOCK
+ AS
+
+     DECLARE cursor_variable pkg.cursor_type;
+BEGIN
+    EXECUTE PROCEDURE PROCEDURE_NAME(:cursor_variable); -- call procedure
 END;

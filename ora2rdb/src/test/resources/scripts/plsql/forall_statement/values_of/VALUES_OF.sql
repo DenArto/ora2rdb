@@ -1,13 +1,11 @@
 DECLARE
-    TYPE employee_aat IS TABLE OF employees.employee_id%TYPE
-          INDEX BY PLS_INTEGER;
+    TYPE employee_aat IS TABLE OF employees.employee_id%TYPE INDEX BY PLS_INTEGER;
 
-   l_employees           employee_aat;
+   l_employees employee_aat;
 
-   TYPE indices_aat IS TABLE OF PLS_INTEGER
-      INDEX BY PLS_INTEGER;
+   TYPE indices_aat IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER;
 
-   l_employee_indices   indices_aat;
+   l_employee_indices indices_aat;
 BEGIN
    l_employees (-77) := 7820;
    l_employees (13067) := 7799;

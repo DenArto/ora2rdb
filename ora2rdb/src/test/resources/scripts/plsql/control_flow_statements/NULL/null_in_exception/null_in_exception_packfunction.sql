@@ -10,9 +10,9 @@ AS
    RETURN VARCHAR2
    IS
    BEGIN
-     raise_application_error(-20134, 'Неправильный номер');
+     raise_application_error(-20134, 'Invalid number');
+     RETURN '';
      EXCEPTION
        WHEN OTHERS THEN NULL;
-     RETURN '';
    END;
 END;

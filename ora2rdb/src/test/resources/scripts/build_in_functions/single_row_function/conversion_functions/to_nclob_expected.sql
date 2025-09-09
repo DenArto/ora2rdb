@@ -1,1 +1,1 @@
-select CAST('Hello world!' AS BLOB SUB_TYPE TEXT CHARACTER SET ISO8859_1) from rdb$database;
+select CAST('Hello world!' AS BLOB SUB_TYPE TEXT CHARACTER SET ISO8859_1) from RDB$DATABASE;

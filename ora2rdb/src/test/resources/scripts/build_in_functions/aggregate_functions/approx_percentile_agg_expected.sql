@@ -1,6 +1,6 @@
-/*CREATE VIEW amt_sold_by_state_mv AS
+/*CREATE OR ALTER VIEW AMT_SOLD_BY_STATE_MV  AS
 SELECT country,
        state,
-       [-unconvertible APPROX_PERCENTILE_AGG(city_detail)] state_detail
+       [-unconvertible RS-244710 APPROX_PERCENTILE_AGG(city_detail)] state_detail
 FROM amt_sold_by_city_mv
-GROUP BY country, state;*/
+GROUP BY country, state ;*/

@@ -8,10 +8,7 @@ IS
 BEGIN
   OPEN c1 FOR 'SELECT * FROM employees WHERE job_id = :j' USING 'MANAGER';
   OPEN c2 FOR SELECT * FROM test_table;
-  IF tmp is NULL 
-  THEN 
-    raise_application_error(-20134, 'Неправильное целочисленное значение');
-  END IF; 
+
   CLOSE c1;
   CLOSE c2;
   EXCEPTION

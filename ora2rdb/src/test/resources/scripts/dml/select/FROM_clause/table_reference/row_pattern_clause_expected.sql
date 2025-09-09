@@ -1,5 +1,5 @@
 /*SELECT *
-FROM Ticker MATCH_RECOGNIZE (
+FROM Ticker [-unconvertible RS-241390 MATCH_RECOGNIZE (
                              PARTITION BY symbol
      ORDER BY tstamp
      MEASURES STRT.tstamp AS start_tstamp,
@@ -11,5 +11,5 @@ FROM Ticker MATCH_RECOGNIZE (
      DEFINE
         DOWN AS DOWN.price < PREV(DOWN.price),
                              UP AS UP.price > PREV(UP.price)
-    ) MR
-ORDER BY MR.symbol, MR.start_tstamp;*/
+    )] MR
+ORDER BY MR.symbol ASC NULLS LAST, MR.start_tstamp ASC NULLS LAST;*/

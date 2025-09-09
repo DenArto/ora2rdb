@@ -1,26 +1,25 @@
-CREATE GLOBAL TEMPORARY TABLE VEC_P_Mutable_Index (
-    K INTEGER,
-    VAL INTEGER,
-    CONSTRAINT PK_VEC_P_Mutable_Index PRIMARY KEY (K)
+--VEC INTVEC_T
+CREATE GLOBAL TEMPORARY TABLE VEC (
+	K INTEGER,
+	VAL INTEGER,
+	CONSTRAINT PK_VEC PRIMARY KEY (K)
 );
 
+
 CREATE PROCEDURE P_Mutable_Index
-AS
-  /* TYPE intvec_t IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER; */
-  /* vec intvec_t := intvec_t(3 => 10, 1 => 11, 100 => 34); */
-  DECLARE summa INTEGER = 0;
-  DECLARE i_FOR1 INTEGER;
-  DECLARE j_FOR1 INTEGER;
+
+ SQL SECURITY DEFINER 
+ AS
+/*
+   DECLARE summa INTEGER = 0;
+  --TYPE intvec_t IS TABLE OF INTEGER INDEX BY INTEGER;
+  --vec intvec_t = [-unconvertible RS-239362 intvec_t(3 => 10, 1 => 11, 100 => 34)];
+*/
 BEGIN
-  UPDATE OR INSERT INTO VEC_P_Mutable_Index VALUES (3, 10);
-  UPDATE OR INSERT INTO VEC_P_Mutable_Index VALUES (1, 11);
-  UPDATE OR INSERT INTO VEC_P_Mutable_Index VALUES (100, 34);
-  FOR SELECT K, VAL FROM VEC_P_Mutable_Index
-  ORDER BY K ASC
-  INTO :i_FOR1, :j_FOR1
-  DO
-  BEGIN
-    j_FOR1 = 100;
-    summa = summa + i_FOR1; 
-  END
+/*
+  [-unconvertible RS-238756 FOR i, j MUTABLE IN PAIRS OF vec] LOOP
+      j = 100;
+      summa = :summa + i;  
+  END LOOP
+*/
 END; 

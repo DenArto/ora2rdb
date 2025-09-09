@@ -1,1 +1,1 @@
-select json_arrayagg (option_r [-unconvertible order by id] returning varchar(50)) from options;
+/*select json_arrayagg (option_r [-unconvertible RS-244715 order by id] ASC NULLS LAST returning VARCHAR(50)) from options;*/

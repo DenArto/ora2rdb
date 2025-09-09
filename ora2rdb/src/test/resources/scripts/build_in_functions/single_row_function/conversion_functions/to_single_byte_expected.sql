@@ -1,3 +1,1 @@
-/*
-SELECT [-unconvertible TO_SINGLE_BYTE('A')] FROM DUAL; 
-*/
+/*SELECT [-unconvertible RS-245838 TO_SINGLE_BYTE('A')] FROM RDB$DATABASE;*/ 

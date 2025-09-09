@@ -1,81 +1,48 @@
-CREATE OR ALTER PACKAGE Pack_Index_With_Label
-AS BEGIN
-   FUNCTION PF_Index_With_Label
-   RETURNS INTEGER;
-   PROCEDURE PP_Index_With_Label; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Index_With_Label
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Index_With_Label
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Index_With_Label
+   RETURNS INTEGER;  
+   PROCEDURE PP_Index_With_Label;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Index_With_Label
+AS BEGIN  
    FUNCTION PF_Index_With_Label
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
      forlabel:
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        i_FOR1 = i_FOR1 + 1;
-     END /*forlabel*/
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     forlabel:
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        i_FOR1 = i_FOR1 - 1;
-     END /*forlabel*/
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 10;
-     bound_i_FOR1 = 12;
-     forlabel:
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        i_FOR1 = i_FOR1 + 1;
-     END /*forlabel*/
-     i_FOR1 = bound_i_FOR1;
+     [-unconvertible RS-239328 FOR i IN 1..3, REVERSE 1..3, 10..12] 
+     LOOP
+       summa = :summa + [-unconvertible RS-239627 forlabel.i];
+     END LOOP 
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Index_With_Label
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
+/*
+      DECLARE summa INTEGER = 0;
+   */
+BEGIN
+/*
      forlabel:
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        i_FOR1 = i_FOR1 + 1;
-     END /*forlabel*/
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 3;
-     bound_i_FOR1 = 1;
-     forlabel:
-     WHILE (i_FOR1 >= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        i_FOR1 = i_FOR1 - 1;
-     END /*forlabel*/
-     i_FOR1 = bound_i_FOR1;
-     i_FOR1 = 10;
-     bound_i_FOR1 = 12;
-     forlabel:
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-        summa = :summa + :i_FOR1;
-        i_FOR1 = i_FOR1 + 1;
-     END /*forlabel*/
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+     [-unconvertible RS-239328 FOR i IN 1..3, REVERSE 1..3, 10..12] 
+     LOOP
+       summa = :summa + [-unconvertible RS-239627 forlabel.i];
+     END LOOP 
+   */
+END   
+  END; 

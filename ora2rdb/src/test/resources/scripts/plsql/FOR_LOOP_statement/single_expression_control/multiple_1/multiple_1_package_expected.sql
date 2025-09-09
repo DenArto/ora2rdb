@@ -1,77 +1,52 @@
-CREATE OR ALTER PACKAGE Pack_Multiple1
-AS BEGIN
-   FUNCTION PF_Multiple1
-   RETURNS INTEGER;
-   PROCEDURE PP_Multiple1; 
-END; 
 
-RECREATE PACKAGE BODY Pack_Multiple1
-AS BEGIN
+
+
+CREATE OR ALTER PACKAGE Pack_Multiple1
+
+SQL SECURITY DEFINER
+AS BEGIN  
+   FUNCTION PF_Multiple1
+   RETURNS INTEGER;  
+   PROCEDURE PP_Multiple1;   
+  END;
+
+
+
+RECREATE   PACKAGE BODY Pack_Multiple1
+AS BEGIN  
    FUNCTION PF_Multiple1
    RETURNS INTEGER
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power INTEGER;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE power INTEGER;
+   */
+BEGIN
+/*
      power = 7;
-     WHILE (1=1) DO
-     BEGIN 
-       i_FOR1 = power+1;
-       IF (NOT (power < 20)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       power = power + 1;
-     END
-     WHILE (1=1) DO
-     BEGIN 
-       i_FOR1 = 21;
-       summa = :summa + :i_FOR1;
-       power = power + 1;
-       LEAVE;
-     END
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       summa = :summa + :i_FOR1;
-       power = power + 1;
-       i_FOR1 = i_FOR1 + 1; 
-     END
-     i_FOR1 = bound_i_FOR1;
+     [-unconvertible RS-238758 RS-238757 RS-239328 FOR i IN REPEAT :power+1 while :power < 20, 21, 1..3]
+     LOOP
+       summa = :summa + i;
+       power = :power + 1;
+     END LOOP
      RETURN summa;
-   END
+   */
+END  
 
    PROCEDURE PP_Multiple1
    AS
-     DECLARE summa INTEGER = 0;
-     DECLARE power INTEGER;
-     DECLARE i_FOR1 INTEGER;
-     DECLARE bound_i_FOR1 INTEGER;
-   BEGIN
+/*
+      DECLARE summa INTEGER = 0;
+      DECLARE power INTEGER;
+   */
+BEGIN
+/*
      power = 7;
-     WHILE (1=1) DO
-     BEGIN 
-       i_FOR1 = power+1;
-       IF (NOT (power < 20)) THEN LEAVE;
-       summa = :summa + :i_FOR1;
-       power = power + 1;
-     END
-     WHILE (1=1) DO
-     BEGIN 
-       i_FOR1 = 21;
-       summa = :summa + :i_FOR1;
-       power = power + 1;
-       LEAVE;
-     END
-     i_FOR1 = 1;
-     bound_i_FOR1 = 3;
-     WHILE (i_FOR1 <= bound_i_FOR1) DO
-     BEGIN 
-       summa = :summa + :i_FOR1;
-       power = power + 1;
-       i_FOR1 = i_FOR1 + 1; 
-     END
-     i_FOR1 = bound_i_FOR1;
-   END
-END; 
+     [-unconvertible RS-238758 RS-238757 RS-239328 FOR i IN REPEAT :power+1 while :power < 20, 21, 1..3]
+     LOOP
+       summa = :summa + i;
+       power = :power + 1;
+     END LOOP
+   */
+END   
+  END;
