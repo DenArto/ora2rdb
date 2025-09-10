@@ -227,13 +227,7 @@ public class Ora2rdb {
                 ScanListener scan_listener = ScanListener.getInstance();
                 walker.walk(scan_listener, currentTree);
             } catch (Exception e) {
-                String message = "/*This SQL statement was not converted due to an exception. Please contact to fix it." + e.getMessage()
-                        + "*/\n";
-                singleBlock = deleteMultiLineComment(singleBlock);
-                singleBlock = message + "/*" + singleBlock + "*/";
-
-                RewritingListener.blocksWithErrorsAndExceptions.add(singleBlock);
-                exceptions.append(e.getMessage()).append("\n");
+                e.printStackTrace();
             }
             blocksAfterScan.add(singleBlock);
         }

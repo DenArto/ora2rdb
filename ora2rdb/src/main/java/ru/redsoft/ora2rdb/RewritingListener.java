@@ -410,6 +410,7 @@ public class RewritingListener extends PlSqlParserBaseListener {
     public void exitCreate_table(Create_tableContext ctx) {
         if (ctx.relational_table() != null)
             convertRelationTable(ctx);
+        insertAfter(ctx, ";");
     }
 
     @Override
@@ -426,6 +427,9 @@ public class RewritingListener extends PlSqlParserBaseListener {
             Constraint_stateContext context = Finder.getFirstRuleContext(columnDefinition, Constraint_stateContext.class);
             if (context != null) {
                 delete(context.ENABLE(0));
+            }
+            if(columnDefinition.regular_id()!= null && columnDefinition.regular_id().getText().equals("SDO_GEOMETRY")){
+                replace(columnDefinition.regular_id(), "GEOMETRY");
             }
 
 
