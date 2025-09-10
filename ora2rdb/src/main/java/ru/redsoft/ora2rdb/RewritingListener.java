@@ -4209,4 +4209,139 @@ public class RewritingListener extends PlSqlParserBaseListener {
         currentAnonymousBlock = null;
     }
 
+
+    @Override
+    public void exitSingle_table_insert(Single_table_insertContext ctx) {
+        StringBuilder geoScript = new StringBuilder("ST_GeomFromText( ");
+        String typeGeo = "";
+        String srid = "";
+
+        if(ctx.values_clause() != null && ctx.values_clause().expressions_() != null){
+            Expressions_Context expressionsContext = ctx.values_clause().expressions_();
+            if(expressionsContext.expression(2)!= null){
+                General_element_partContext generalElementPartContext = Finder.getFirstRuleContext(expressionsContext.expression(2), General_element_partContext.class);
+                if(generalElementPartContext.function_argument() != null){
+                    Function_argumentContext functionArgumentContext = generalElementPartContext.function_argument();
+                    typeGeo = Ora2rdb.getRealName(functionArgumentContext.argument(0).getText());
+                    srid = Ora2rdb.getRealName(functionArgumentContext.argument(1).getText());
+
+                    if(typeGeo.equals("2001")){
+                        geoScript.append("'POINT( ");
+                        ArgumentContext argumentContext = functionArgumentContext.argument(2);
+                        if(argumentContext != null){
+                            Function_argumentContext fun = Finder.getFirstRuleContext(argumentContext, Function_argumentContext.class);
+                            if(fun != null){
+                                geoScript.append(fun.argument(0).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(1).getText());
+                                geoScript.append(")' , ");
+                            }
+                        }
+                    }
+                    else if(typeGeo.equals("2002")){
+                        geoScript.append("'LINESTRING( ");
+                        ArgumentContext argumentContext = functionArgumentContext.argument(4);
+                        if(argumentContext != null){
+                            Function_argumentContext fun = Finder.getFirstRuleContext(argumentContext, Function_argumentContext.class);
+                            if(fun != null){
+                                geoScript.append(fun.argument(0).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(1).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(2).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(3).getText());
+                                geoScript.append(")' , ");
+                            }
+                        }
+                    }
+                    else if(typeGeo.equals("2003")){
+                        geoScript.append("'POLYGON(( ");
+                        ArgumentContext argumentContext = functionArgumentContext.argument(4);
+                        if(argumentContext != null){
+                            Function_argumentContext fun = Finder.getFirstRuleContext(argumentContext, Function_argumentContext.class);
+                            if(fun != null){
+                                geoScript.append(fun.argument(0).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(1).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(2).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(3).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(4).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(5).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(6).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(7).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(8).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(9).getText());
+                                geoScript.append("))' , ");
+                            }
+                        }
+                    }
+                    else if(typeGeo.equals("2005")){
+                        geoScript.append("'MULTIPOINT(( ");
+                        ArgumentContext argumentContext = functionArgumentContext.argument(4);
+                        if(argumentContext != null){
+                            Function_argumentContext fun = Finder.getFirstRuleContext(argumentContext, Function_argumentContext.class);
+                            if(fun != null){
+                                geoScript.append(fun.argument(0).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(1).getText());
+                                geoScript.append("), (");
+                                geoScript.append(fun.argument(2).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(3).getText());
+                                geoScript.append("), (");
+                                geoScript.append(fun.argument(4).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(5).getText());
+                                geoScript.append("), (");
+                                geoScript.append(fun.argument(6).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(7).getText());
+
+                                geoScript.append("))' , ");
+                            }
+                        }
+                    }
+                    else if(typeGeo.equals("2006")){
+                        geoScript.append("'MULTILINESTRING(( ");
+                        ArgumentContext argumentContext = functionArgumentContext.argument(4);
+                        if(argumentContext != null){
+                            Function_argumentContext fun = Finder.getFirstRuleContext(argumentContext, Function_argumentContext.class);
+                            if(fun != null){
+                                geoScript.append(fun.argument(0).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(1).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(2).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(3).getText());
+                                geoScript.append("), (");
+                                geoScript.append(fun.argument(4).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(5).getText());
+                                geoScript.append(", ");
+                                geoScript.append(fun.argument(6).getText());
+                                geoScript.append(" ");
+                                geoScript.append(fun.argument(7).getText());
+
+                                geoScript.append("))' , ");
+                            }
+                        }
+                    }
+                }
+                geoScript.append(srid);
+                geoScript.append(")");
+                replace(expressionsContext.expression(2), geoScript);
+            }
+        }
+
+    }
 }
